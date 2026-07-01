@@ -115,6 +115,40 @@ button small{ display:block; font-size:10px; color:#6b6489; margin-top:4px; font
 .pixel-avatar-frame{ width:32px; height:32px; position:relative; flex:none; image-rendering:pixelated; }
 .pixel-avatar-dot{ position:absolute; top:0; left:0; width:4px; height:4px; }
 
+/* --- office view: top-down walking sprites, Game Dev Story style --- */
+.office-view{
+  position:relative; height:110px;
+  background:repeating-linear-gradient(90deg,#ffe9c2 0 20px,#ffdca0 20px 40px);
+  border:4px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow);
+}
+.office-label{
+  position:absolute; top:6px; left:6px; z-index:3;
+  background:rgba(255,255,255,0.85); border:2px solid var(--border); border-radius:8px;
+  padding:2px 8px; font-size:9px; font-weight:900; color:var(--ink);
+}
+.office-desk{
+  position:absolute; bottom:6px; width:44px; height:24px;
+  background:#a9713f; border:3px solid var(--border); border-radius:6px; z-index:1;
+}
+.office-monitor{
+  position:absolute; left:8px; top:-16px; width:22px; height:14px;
+  background:#2b2d42; border:2px solid var(--border); border-radius:3px;
+}
+.office-monitor::after{
+  content:''; position:absolute; left:2px; top:2px; width:14px; height:8px;
+  background:#7fd7ff; border-radius:2px;
+}
+.office-walker{
+  position:absolute;
+  animation-name:officePatrol; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  z-index:2;
+}
+@keyframes officePatrol{
+  0%{ transform:translateX(0); }
+  50%{ transform:translateX(var(--patrol-range,60px)); }
+  100%{ transform:translateX(0); }
+}
+
 .faction-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
 .faction-card{ display:flex; flex-direction:column; gap:4px; border-width:4px; border-radius:16px; background:var(--cream); }
 .faction-name{ font-weight:900; font-size:13px; }
@@ -384,35 +418,101 @@ function gridToShadows(grid, colorHex, yOffsetRows){
   return shadows.join(',');
 }
 
+const HEAD_GRID = [
+  '..####..',
+  '.######.',
+  '.######.',
+  '.######.',
+];
+const EYE_GRID = [
+  '........',
+  '........',
+  '..#..#..',
+  '........',
+];
+// Two leg poses for a simple walk cycle.
+const BODY_GRID_STAND = [
+  '##.##.##',
+  '.######.',
+  '.##..##.',
+  '.##..##.',
+];
+const BODY_GRID_STEP = [
+  '##.##.##',
+  '.######.',
+  '..##.##.',
+  '.##..#..',
+];
+
 function pixelAvatar(bodyColor){
   // Cute chibi-style 8x8 sprite (Kairosoft-ish): big round head + eyes + small body,
   // drawn as three 4px-pixel layers positioned absolutely inside a fixed 32x32 frame
   // so the box-shadow "pixels" can't bleed into sibling layout.
-  const headGrid = [
-    '..####..',
-    '.######.',
-    '.######.',
-    '.######.',
-  ];
-  const eyeGrid = [
-    '........',
-    '........',
-    '..#..#..',
-    '........',
-  ];
-  const bodyGrid = [
-    '##.##.##',
-    '.######.',
-    '.##..##.',
-    '.##..##.',
-  ];
-  const head = gridToShadows(headGrid, SKIN_TONE, 0);
-  const eyes = gridToShadows(eyeGrid, EYE_COLOR, 0);
-  const body = gridToShadows(bodyGrid, bodyColor, 4);
+  const head = gridToShadows(HEAD_GRID, SKIN_TONE, 0);
+  const eyes = gridToShadows(EYE_GRID, EYE_COLOR, 0);
+  const body = gridToShadows(BODY_GRID_STAND, bodyColor, 4);
   return `<div class="pixel-avatar-frame">
     <div class="pixel-avatar-dot" style="box-shadow:${body}"></div>
     <div class="pixel-avatar-dot" style="box-shadow:${head}"></div>
     <div class="pixel-avatar-dot" style="box-shadow:${eyes}"></div>
+  </div>`;
+}
+
+/* ---- office view: Game-Dev-Story-style top-down walking sprites ---- */
+const walkAnimCache = new Set();
+function walkAnimName(color){
+  return 'walk-' + color.replace('#','');
+}
+function ensureWalkAnimation(color){
+  const name = walkAnimName(color);
+  if(walkAnimCache.has(name)) return name;
+  walkAnimCache.add(name);
+  const a = gridToShadows(BODY_GRID_STAND, color, 4);
+  const b = gridToShadows(BODY_GRID_STEP, color, 4);
+  let styleEl = document.getElementById('dynamic-anim');
+  if(!styleEl){
+    styleEl = document.createElement('style');
+    styleEl.id = 'dynamic-anim';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent += `@keyframes ${name}{0%,49%{box-shadow:${a}}50%,100%{box-shadow:${b}}}`;
+  return name;
+}
+
+function officeWalker(color, opts){
+  const name = ensureWalkAnimation(color);
+  const head = gridToShadows(HEAD_GRID, SKIN_TONE, 0);
+  const eyes = gridToShadows(EYE_GRID, EYE_COLOR, 0);
+  const body = gridToShadows(BODY_GRID_STAND, color, 4);
+  const dur = opts.duration || 6;
+  const delay = opts.delay || 0;
+  const range = opts.range || 60;
+  const bottom = opts.bottom || 4;
+  return `<div class="office-walker" style="left:${opts.left}px; bottom:${bottom}px; --patrol-range:${range}px; animation-duration:${dur}s; animation-delay:-${delay}s;">
+    <div class="pixel-avatar-frame">
+      <div class="pixel-avatar-dot" style="box-shadow:${body}; animation:${name} 0.7s steps(1) infinite;"></div>
+      <div class="pixel-avatar-dot" style="box-shadow:${head}"></div>
+      <div class="pixel-avatar-dot" style="box-shadow:${eyes}"></div>
+    </div>
+  </div>`;
+}
+
+function renderOfficeView(playerColor){
+  const npcColors = ['#4d96ff','#2ec4b6'].filter(c=>c!==playerColor);
+  const walkers = [
+    officeWalker(playerColor, {left:20, duration:5.5, delay:0, range:70, bottom:6}),
+    officeWalker(npcColors[0]||'#4d96ff', {left:120, duration:7, delay:1.5, range:50, bottom:6}),
+    officeWalker(npcColors[1]||'#2ec4b6', {left:220, duration:6.2, delay:3, range:60, bottom:6}),
+  ];
+  const deskLefts = [30,110,190,270];
+  const desks = deskLefts.map(l=>`
+    <div class="office-desk" style="left:${l}px">
+      <div class="office-monitor"></div>
+    </div>`).join('');
+  return `<div class="office-view">
+    <div class="office-label">辦公室 Live</div>
+    ${desks}
+    ${walkers.join('')}
   </div>`;
 }
 
@@ -506,6 +606,7 @@ function renderHub(){
         </div>
         <div class="hub-currency">💰 ${state.gold} Gold ・ ⭐ ${state.rep} 聲望</div>
       </div>
+      ${renderOfficeView(cls.accent)}
       <div class="hub-bars">
         ${bar(state.hp,state.maxHP,'hp')}
         ${bar(state.mp,state.maxMP,'mp')}
