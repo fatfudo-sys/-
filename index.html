@@ -5,151 +5,170 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASUS Design Center: Pixel Odyssey</title>
 <style>
-@font-face {
-  font-family: 'PixelFallback';
-  src: local('Courier New');
-}
 :root{
-  --bg:#0b0e17;
-  --panel:#141a2b;
-  --panel-border:#3a4468;
-  --text:#e8ecff;
-  --accent:#39ff88;
-  --hp:#ff4d6d;
-  --mp:#4da8ff;
-  --sp:#ffd24d;
-  --exp:#c17bff;
+  --ink:#3a3552;
+  --cream:#fff8e7;
+  --cream-deep:#ffedc2;
+  --border:#3a3552;
+  --hp:#ff5d7a;
+  --mp:#4d96ff;
+  --sp:#ffc93c;
+  --exp:#9b5de5;
+  --teal:#2ec4b6;
+  --orange:#ff8c42;
+  --shadow: 0 4px 0 rgba(58,53,82,0.35);
 }
 *{ box-sizing:border-box; }
 html,body{
   margin:0; padding:0; min-height:100%;
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Courier New', 'PixelFallback', monospace;
-  image-rendering:pixelated;
+  color:var(--ink);
+  font-family:'Trebuchet MS','Verdana',sans-serif;
 }
 body{
-  background-image:
-    radial-gradient(circle at 20% 20%, rgba(57,255,136,0.06) 0, transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(255,77,109,0.06) 0, transparent 40%);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255,255,255,0.5) 0, transparent 45%),
+    linear-gradient(180deg,#9fe0ff 0%,#c8f0ff 35%,#eafff0 100%);
+  min-height:100vh;
 }
 #app{ max-width:900px; margin:0 auto; padding:16px 12px 60px; }
 
 .screen{ display:flex; flex-direction:column; gap:14px; }
 
 .game-title{
-  text-align:center; font-size:22px; letter-spacing:2px; line-height:1.5;
-  text-shadow:3px 3px 0 #000, 0 0 12px var(--accent);
+  text-align:center; font-size:24px; line-height:1.5; font-weight:900;
+  color:#ff6b3d;
+  text-shadow:2px 2px 0 #fff, 4px 4px 0 var(--ink);
   margin:10px 0 0;
 }
-.game-title span{ color:var(--accent); }
-.tagline{ text-align:center; color:#9fb0e8; font-size:12px; margin:0 0 10px; }
+.game-title span{ color:#2ec4b6; text-shadow:2px 2px 0 #fff, 4px 4px 0 var(--ink); }
+.tagline{ text-align:center; color:#5a5477; font-size:13px; margin:0 0 10px; font-weight:bold; }
 
-.section-title{ font-size:15px; letter-spacing:1px; border-left:4px solid var(--accent); padding-left:8px; margin:6px 0; }
-
-/* --- pixel panel / button base --- */
-.pixel-box{
-  background:var(--panel);
-  border:3px solid var(--panel-border);
-  box-shadow: 4px 4px 0 #000;
+.section-title{
+  font-size:15px; font-weight:900; color:#fff; background:var(--orange);
+  border:3px solid var(--border); border-radius:10px;
+  display:inline-block; padding:6px 14px; box-shadow:var(--shadow);
+  margin:6px 0;
 }
+
+/* --- buttons / panels: chunky rounded Kairosoft-ish style --- */
 button{
-  font-family:inherit; cursor:pointer; color:var(--text);
-  background:var(--panel);
-  border:3px solid var(--panel-border);
-  box-shadow: 3px 3px 0 #000;
+  font-family:inherit; cursor:pointer; color:var(--ink); font-weight:bold;
+  background:var(--cream);
+  border:3px solid var(--border);
+  border-radius:12px;
+  box-shadow: var(--shadow);
   padding:10px 12px; font-size:12px; text-align:left;
-  transition: transform 0.05s ease;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
 }
-button:hover:not(:disabled){ border-color:var(--accent); transform:translate(-1px,-1px); box-shadow:4px 4px 0 #000; }
-button:active:not(:disabled){ transform:translate(1px,1px); box-shadow:1px 1px 0 #000; }
-button:disabled{ opacity:0.4; cursor:not-allowed; }
-button small{ display:block; font-size:10px; color:#9fb0e8; margin-top:4px; font-weight:normal; }
+button:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 6px 0 rgba(58,53,82,0.35); }
+button:active:not(:disabled){ transform:translateY(2px); box-shadow:0 1px 0 rgba(58,53,82,0.35); }
+button:disabled{ opacity:0.45; cursor:not-allowed; }
+button small{ display:block; font-size:10px; color:#6b6489; margin-top:4px; font-weight:normal; }
 
-.btn-primary{ background:#1c3b2a; border-color:var(--accent); }
-.btn-secondary{ background:var(--panel); }
-.btn-danger{ background:#3b1c1c; border-color:var(--hp); }
+.btn-primary{ background:#baf7c9; border-color:#2a9d4f; }
+.btn-secondary{ background:var(--cream); }
+.btn-danger{ background:#ffd2da; border-color:var(--hp); }
 
 /* --- era / class select --- */
 .era-grid, .class-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-.era-card, .class-card{ display:flex; flex-direction:column; gap:4px; background:var(--panel); }
-.era-year{ font-size:18px; color:var(--accent); font-weight:bold; }
-.era-name, .class-name{ font-size:13px; font-weight:bold; color:#fff; }
-.era-desc, .class-passive{ font-size:11px; color:#9fb0e8; }
-.era-bonus{ font-size:11px; color:var(--sp); }
-.class-icon{ font-size:22px; }
-.class-stats{ font-size:10px; color:#7d8fc9; }
-.class-skill{ font-size:10px; color:var(--mp); }
+.era-card, .class-card{ display:flex; flex-direction:column; gap:4px; background:var(--cream); border-width:4px; border-radius:16px; }
+.era-year{ font-size:20px; color:#ff6b3d; font-weight:900; }
+.era-name, .class-name{ font-size:13px; font-weight:900; color:var(--ink); }
+.era-desc, .class-passive{ font-size:11px; color:#5a5477; font-weight:normal; }
+.era-bonus{ font-size:11px; color:#2a9d4f; font-weight:bold; }
+.class-icon{
+  font-size:20px; width:34px; height:34px; line-height:34px; text-align:center;
+  border-radius:50%; border:3px solid var(--border); box-shadow:var(--shadow);
+}
+.class-stats{ font-size:10px; color:#6b6489; font-weight:normal; }
+.class-skill{ font-size:10px; color:#1d6fc7; font-weight:bold; }
 .continue-row{ text-align:center; margin-top:10px; }
 
-/* --- bars --- */
-.bar{ position:relative; height:20px; background:#000; border:2px solid var(--panel-border); overflow:hidden; }
-.bar-fill{ height:100%; }
-.bar.hp .bar-fill{ background:var(--hp); }
-.bar.mp .bar-fill{ background:var(--mp); }
-.bar.sp .bar-fill{ background:var(--sp); }
-.bar.exp .bar-fill{ background:var(--exp); }
-.bar.boss .bar-fill{ background:#ff8a3d; }
+/* --- bars: rounded pill style --- */
+.bar{
+  position:relative; height:20px; background:#fff; border:3px solid var(--border);
+  border-radius:20px; overflow:hidden;
+}
+.bar-fill{ height:100%; border-radius:20px; transition:width 0.2s ease; }
+.bar.hp .bar-fill{ background:linear-gradient(180deg,#ff8fa3,var(--hp)); }
+.bar.mp .bar-fill{ background:linear-gradient(180deg,#8fc0ff,var(--mp)); }
+.bar.sp .bar-fill{ background:linear-gradient(180deg,#ffe08a,var(--sp)); }
+.bar.exp .bar-fill{ background:linear-gradient(180deg,#c9a3ff,var(--exp)); }
+.bar.boss .bar-fill{ background:linear-gradient(180deg,#ffab7a,var(--orange)); }
 .bar-text{
-  position:absolute; left:6px; top:1px; font-size:10px; text-shadow:1px 1px 0 #000; color:#fff;
+  position:absolute; left:8px; top:1px; font-size:10px; font-weight:900;
+  color:var(--ink); text-shadow:1px 1px 0 rgba(255,255,255,0.6);
 }
 
 /* --- hub --- */
-.hub-top{ display:flex; align-items:center; gap:14px; background:var(--panel); border:3px solid var(--panel-border); box-shadow:4px 4px 0 #000; padding:10px; flex-wrap:wrap; }
+.hub-top{
+  display:flex; align-items:center; gap:14px; background:var(--cream);
+  border:4px solid var(--border); border-radius:16px; box-shadow:var(--shadow);
+  padding:10px 14px; flex-wrap:wrap;
+}
 .hub-id{ flex:1; min-width:160px; }
-.hub-name{ font-size:14px; font-weight:bold; }
-.hub-title{ font-size:11px; color:var(--sp); }
-.hub-era{ font-size:10px; color:#7d8fc9; }
-.hub-currency{ font-size:12px; color:var(--accent); white-space:nowrap; }
+.hub-name{ font-size:14px; font-weight:900; }
+.hub-title{ font-size:11px; color:#c9660a; font-weight:bold; }
+.hub-era{ font-size:10px; color:#6b6489; }
+.hub-currency{ font-size:13px; color:#c9660a; font-weight:900; white-space:nowrap; }
 .hub-bars{ display:flex; flex-direction:column; gap:6px; }
 .pixel-avatar-frame{ width:32px; height:32px; position:relative; flex:none; image-rendering:pixelated; }
 .pixel-avatar-dot{ position:absolute; top:0; left:0; width:4px; height:4px; }
 
 .faction-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
-.faction-card{ display:flex; flex-direction:column; gap:4px; border-width:3px; }
-.faction-name{ font-weight:bold; font-size:13px; }
-.faction-desc{ font-size:11px; color:#9fb0e8; }
+.faction-card{ display:flex; flex-direction:column; gap:4px; border-width:4px; border-radius:16px; background:var(--cream); }
+.faction-name{ font-weight:900; font-size:13px; }
+.faction-desc{ font-size:11px; color:#5a5477; font-weight:normal; }
 
 .hub-actions{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
 
-.log-panel{ background:#0a0d16; border:2px dashed var(--panel-border); padding:8px 10px; max-height:220px; overflow-y:auto; }
+.log-panel{
+  background:#fffef6; border:3px dashed #c9c2e8; border-radius:14px;
+  padding:8px 10px; max-height:220px; overflow-y:auto;
+}
 .log-panel.small{ max-height:120px; }
-.log-panel h3{ margin:0 0 6px; font-size:12px; color:#7d8fc9; }
+.log-panel h3{ margin:0 0 6px; font-size:12px; color:#6b6489; }
 .log-panel ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
-.log-panel li{ font-size:11px; border-left:3px solid #444; padding-left:6px; }
-.log-good{ border-color:var(--accent) !important; color:#c8ffdf; }
-.log-bad{ border-color:var(--hp) !important; color:#ffd2da; }
-.log-event{ border-color:var(--sp) !important; color:#fff2c8; }
-.log-levelup{ border-color:var(--exp) !important; color:#eeddff; font-weight:bold; }
-.log-warn{ border-color:#ff8a3d !important; color:#ffe2c8; }
-.log-info{ color:#c7d2f5; }
+.log-panel li{ font-size:11px; border-left:4px solid #d8d2f0; padding-left:6px; font-weight:bold; }
+.log-good{ border-color:#2a9d4f !important; color:#1f7a3c; }
+.log-bad{ border-color:var(--hp) !important; color:#c23a54; }
+.log-event{ border-color:var(--sp) !important; color:#a8720a; }
+.log-levelup{ border-color:var(--exp) !important; color:#7c3fc4; }
+.log-warn{ border-color:var(--orange) !important; color:#c9660a; }
+.log-info{ color:#5a5477; }
 
 /* --- faction quests --- */
-.faction-desc-full{ font-size:12px; color:#9fb0e8; }
+.faction-desc-full{ font-size:12px; color:#5a5477; font-weight:bold; }
 .quest-list{ display:flex; flex-direction:column; gap:10px; }
-.quest-card{ background:var(--panel); border:3px solid var(--panel-border); box-shadow:4px 4px 0 #000; padding:10px; display:flex; flex-direction:column; gap:6px; }
-.quest-name{ font-weight:bold; font-size:13px; }
-.quest-meta{ font-size:10px; color:#9fb0e8; }
+.quest-card{
+  background:var(--cream); border:4px solid var(--border); border-radius:16px;
+  box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
+}
+.quest-name{ font-weight:900; font-size:13px; }
+.quest-meta{ font-size:10px; color:#6b6489; font-weight:normal; }
 
 /* --- boss --- */
-.boss-title{ color:var(--hp); text-align:center; }
-.boss-rounds{ text-align:center; font-size:12px; color:var(--sp); }
+.boss-title{ color:#e0396b; text-align:center; }
+.boss-rounds{ text-align:center; font-size:12px; color:#c9660a; font-weight:bold; }
 .card-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
 .card-btn{ text-align:center; }
-.skill-btn{ border-color:var(--exp); background:#241a3b; }
+.skill-btn{ border-color:var(--exp); background:#eee0ff; }
 
 /* --- shop --- */
-.currency-line{ font-size:13px; color:var(--accent); }
+.currency-line{ font-size:14px; color:#c9660a; font-weight:900; }
 .shop-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; }
-.shop-card{ display:flex; flex-direction:column; gap:6px; background:var(--panel); border:3px solid var(--panel-border); box-shadow:4px 4px 0 #000; padding:10px; }
-.shop-name{ font-weight:bold; font-size:13px; }
-.shop-desc{ font-size:11px; color:#9fb0e8; }
+.shop-card{
+  display:flex; flex-direction:column; gap:6px; background:var(--cream);
+  border:4px solid var(--border); border-radius:16px; box-shadow:var(--shadow); padding:10px;
+}
+.shop-name{ font-weight:900; font-size:13px; }
+.shop-desc{ font-size:11px; color:#5a5477; font-weight:normal; }
 
 /* --- weekend --- */
 .weekend-choices{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
 
 @media (max-width:480px){
-  .game-title{ font-size:17px; }
+  .game-title{ font-size:18px; }
   .hub-currency{ width:100%; }
 }
 </style>
@@ -169,28 +188,30 @@ const ERAS = [
 ];
 
 const CLASSES = [
-  { id:'ID', name:'工業設計師 ID', icon:'🖌️', stats:{CRE:70,PRO:55,COM:40,RES:45},
+  { id:'ID', name:'工業設計師 ID', icon:'🖌️', accent:'#ff8c42', stats:{CRE:70,PRO:55,COM:40,RES:45},
     skill:{name:'曲面魔法', desc:'消耗 MP，大幅提升產品外觀評價（本回合創意傷害 +80%）', type:'active', mp:20 },
     passiveText:'高空間感知與造型力' },
-  { id:'GRAPHIC', name:'視覺/平面設計師', icon:'🎨', stats:{CRE:65,PRO:50,COM:45,RES:40},
+  { id:'GRAPHIC', name:'視覺/平面設計師', icon:'🎨', accent:'#ff6b9d', stats:{CRE:65,PRO:50,COM:45,RES:40},
     skill:{name:'黃金比例', desc:'被動技能：所有出牌傷害 +20%', type:'passive', mult:1.2 },
     passiveText:'高美學與排版力' },
-  { id:'CMF', name:'色彩材質設計師 CMF', icon:'🧪', stats:{CRE:55,PRO:65,COM:40,RES:40},
+  { id:'CMF', name:'色彩材質設計師 CMF', icon:'🧪', accent:'#2ec4b6', stats:{CRE:55,PRO:65,COM:40,RES:40},
     skill:{name:'陽極處理', desc:'消耗 MP，賦予本次任務特殊光澤，獎金 +50%', type:'active', mp:15 },
     passiveText:'高元素感知' },
-  { id:'UEUX', name:'使用者體驗 UE/UX', icon:'🧭', stats:{CRE:45,PRO:55,COM:65,RES:45},
+  { id:'UEUX', name:'使用者體驗 UE/UX', icon:'🧭', accent:'#4d96ff', stats:{CRE:45,PRO:55,COM:65,RES:45},
     skill:{name:'痛點暴擊', desc:'消耗 MP，本次出牌無視 Boss 一半防禦力', type:'active', mp:20 },
     passiveText:'高同理心與邏輯力' },
-  { id:'PM', name:'設計專案經理 Design PM', icon:'📋', stats:{CRE:40,PRO:45,COM:70,RES:60},
+  { id:'PM', name:'設計專案經理 Design PM', icon:'📋', accent:'#ffd23f', stats:{CRE:40,PRO:45,COM:70,RES:60},
     skill:{name:'時程結界', desc:'消耗 MP，本週免疫一次「需求變更」隨機事件', type:'active', mp:15 },
     passiveText:'高溝通力與防禦力' },
-  { id:'TOOL', name:'模具工程師 Tooling', icon:'🛠️', stats:{CRE:35,PRO:60,COM:40,RES:70},
+  { id:'TOOL', name:'模具工程師 Tooling', icon:'🛠️', accent:'#8d99ae', stats:{CRE:35,PRO:60,COM:40,RES:70},
     skill:{name:'拔模角修正', desc:'消耗 MP，本場戰鬥 Boss 反擊傷害 -70%', type:'active', mp:15 },
     passiveText:'高物理防禦與結構力' },
-  { id:'RESEARCH', name:'研究員 / 包裝設計', icon:'🔍', stats:{CRE:50,PRO:60,COM:50,RES:50},
+  { id:'RESEARCH', name:'研究員 / 包裝設計', icon:'🔍', accent:'#9b5de5', stats:{CRE:50,PRO:60,COM:50,RES:50},
     skill:{name:'洞察眼', desc:'消耗 MP，看穿 Boss 弱點，本場戰鬥出牌傷害 +30%', type:'active', mp:15 },
     passiveText:'洞察眼與空間收納，提供隱藏加分 Buff' },
 ];
+const SKIN_TONE = '#ffd8a8';
+const EYE_COLOR = '#3a3552';
 
 const TITLES_GRADE = ['Junior Designer','Designer','Senior Designer','專員','主任','經理','處長','V.P.'];
 const GRADE_EXP = [0,120,300,600,1000,1600,2400,3400]; // exp thresholds
@@ -198,27 +219,27 @@ const TITLES_ROLE = ['無職位','課長 (Party Leader)','部長 (Raid Leader)',
 const ROLE_REP = [0,150,400,900,1800]; // reputation thresholds
 
 const FACTIONS = {
-  ROG: { name:'ROG Republic of Gamers', color:'#ff0033', desc:'賽博龐克地下城，極致效能與電競美學。', diff:1.5,
+  ROG: { name:'ROG Republic of Gamers', color:'#ff5d7a', desc:'賽博龐克地下城，極致效能與電競美學。', diff:1.5,
     quests:[
       {name:'ROG Falcata 人體工學鍵盤 (2023)', tier:3, statKey:'CRE', exp:60, gold:120},
       {name:'ROG Ally 掌機外殼結構優化', tier:3, statKey:'PRO', exp:55, gold:110},
       {name:'ROG Strix 電競筆電散熱造型', tier:2, statKey:'CRE', exp:35, gold:70},
       {name:'ROG Phone 燈效 CMF 提案', tier:2, statKey:'PRO', exp:35, gold:70},
     ]},
-  ASUS: { name:'ASUS 天空之城', color:'#0064ff', desc:'現代簡約，主打大眾市場與 Zen 美學。', diff:1.0,
+  ASUS: { name:'ASUS 天空之城', color:'#4d96ff', desc:'現代簡約，主打大眾市場與 Zen 美學。', diff:1.0,
     quests:[
       {name:'Zenbook 髮絲紋機身打樣', tier:2, statKey:'CRE', exp:30, gold:60},
       {name:'Vivobook 色彩多樣化提案', tier:1, statKey:'PRO', exp:18, gold:35},
       {name:'ZenFone 使用者介面排版', tier:2, statKey:'COM', exp:30, gold:60},
       {name:'Eee PC 復刻版懷舊設計提案', tier:1, statKey:'COM', exp:18, gold:35},
     ]},
-  TUF: { name:'TUF Gaming 重工業區', color:'#ffcc00', desc:'機甲與軍事風格，要求耐用度與軍規測試。', diff:1.3,
+  TUF: { name:'TUF Gaming 重工業區', color:'#e0a800', desc:'機甲與軍事風格，要求耐用度與軍規測試。', diff:1.3,
     quests:[
       {name:'TUF Gaming 筆電 MIL-STD-810H 耐摔測試', tier:3, statKey:'PRO', exp:50, gold:100},
       {name:'TUF 主機板散熱裝甲造型', tier:2, statKey:'CRE', exp:32, gold:65},
       {name:'TUF 電源供應器包裝結構', tier:1, statKey:'PRO', exp:18, gold:35},
     ]},
-  PROART: { name:'ProArt 寧靜畫廊', color:'#8a2be2', desc:'極致色準與創作者品味。', diff:1.4,
+  PROART: { name:'ProArt 寧靜畫廊', color:'#9b5de5', desc:'極致色準與創作者品味。', diff:1.4,
     quests:[
       {name:'ProArt Display 色準校正提案', tier:3, statKey:'PRO', exp:55, gold:110},
       {name:'ProArt StudioBook 創作者質感打樣', tier:2, statKey:'CRE', exp:33, gold:68},
@@ -352,26 +373,47 @@ function bar(value, max, cls){
   return `<div class="bar ${cls}"><div class="bar-fill" style="width:${pct}%"></div><span class="bar-text">${cls.toUpperCase()} ${Math.round(value)}/${max}</span></div>`;
 }
 
-function pixelAvatar(colorHex){
-  // 8x8 simple pixel humanoid; each shadow is a single 4px pixel, tiled on a 4px "dot"
-  // positioned absolutely inside a fixed 32x32 frame so it can't bleed into sibling layout.
-  const grid = [
+function gridToShadows(grid, colorHex, yOffsetRows){
+  const rowOffset = (yOffsetRows||0)*4;
+  let shadows = [];
+  grid.forEach((row,y)=>{
+    for(let x=0;x<row.length;x++){
+      if(row[x]==='#') shadows.push(`${x*4}px ${y*4+rowOffset}px 0 0 ${colorHex}`);
+    }
+  });
+  return shadows.join(',');
+}
+
+function pixelAvatar(bodyColor){
+  // Cute chibi-style 8x8 sprite (Kairosoft-ish): big round head + eyes + small body,
+  // drawn as three 4px-pixel layers positioned absolutely inside a fixed 32x32 frame
+  // so the box-shadow "pixels" can't bleed into sibling layout.
+  const headGrid = [
     '..####..',
     '.######.',
-    '.#.##.#.',
     '.######.',
+    '.######.',
+  ];
+  const eyeGrid = [
+    '........',
+    '........',
+    '..#..#..',
+    '........',
+  ];
+  const bodyGrid = [
     '##.##.##',
     '.######.',
     '.##..##.',
     '.##..##.',
   ];
-  let shadows = [];
-  grid.forEach((row,y)=>{
-    for(let x=0;x<row.length;x++){
-      if(row[x]==='#') shadows.push(`${x*4}px ${y*4}px 0 0 ${colorHex}`);
-    }
-  });
-  return `<div class="pixel-avatar-frame"><div class="pixel-avatar-dot" style="box-shadow:${shadows.join(',')}"></div></div>`;
+  const head = gridToShadows(headGrid, SKIN_TONE, 0);
+  const eyes = gridToShadows(eyeGrid, EYE_COLOR, 0);
+  const body = gridToShadows(bodyGrid, bodyColor, 4);
+  return `<div class="pixel-avatar-frame">
+    <div class="pixel-avatar-dot" style="box-shadow:${body}"></div>
+    <div class="pixel-avatar-dot" style="box-shadow:${head}"></div>
+    <div class="pixel-avatar-dot" style="box-shadow:${eyes}"></div>
+  </div>`;
 }
 
 function render(){
@@ -425,8 +467,8 @@ function renderClassSelect(){
       <h2 class="section-title">選擇你的初始職業</h2>
       <div class="class-grid">
         ${CLASSES.map(c=>`
-          <button class="class-card" data-cls="${c.id}">
-            <div class="class-icon">${c.icon}</div>
+          <button class="class-card" data-cls="${c.id}" style="border-color:${c.accent}">
+            <div class="class-icon" style="background:${c.accent}">${c.icon}</div>
             <div class="class-name">${c.name}</div>
             <div class="class-passive">${c.passiveText}</div>
             <div class="class-stats">
@@ -456,7 +498,7 @@ function renderHub(){
   root.innerHTML = `
     <div class="screen hub-screen">
       <div class="hub-top">
-        ${pixelAvatar('#39ff88')}
+        ${pixelAvatar(cls.accent)}
         <div class="hub-id">
           <div class="hub-name">${cls.icon} ${cls.name}</div>
           <div class="hub-title">${grade} ・ ${role}</div>
