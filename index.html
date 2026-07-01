@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASUS Design Center: Pixel Odyssey</title>
+<style>
+:root{
+  --ink:#3a3552;
+  --cream:#fff8e7;
+  --cream-deep:#ffedc2;
+  --border:#3a3552;
+  --hp:#ff5d7a;
+  --mp:#4d96ff;
+  --sp:#ffc93c;
+  --exp:#9b5de5;
+  --teal:#2ec4b6;
+  --orange:#ff8c42;
+  --shadow: 0 4px 0 rgba(58,53,82,0.35);
+}
+*{ box-sizing:border-box; }
+html,body{
+  margin:0; padding:0; min-height:100%;
+  color:var(--ink);
+  font-family:'Trebuchet MS','Verdana',sans-serif;
+}
+body{
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255,255,255,0.5) 0, transparent 45%),
+    linear-gradient(180deg,#9fe0ff 0%,#c8f0ff 35%,#eafff0 100%);
+  min-height:100vh;
+}
+#app{ max-width:900px; margin:0 auto; padding:16px 12px 60px; }
+
+.screen{ display:flex; flex-direction:column; gap:14px; }
+
+.game-title{
+  text-align:center; font-size:24px; line-height:1.5; font-weight:900;
+  color:#ff6b3d;
+  text-shadow:2px 2px 0 #fff, 4px 4px 0 var(--ink);
+  margin:10px 0 0;
+}
+.game-title span{ color:#2ec4b6; text-shadow:2px 2px 0 #fff, 4px 4px 0 var(--ink); }
+.tagline{ text-align:center; color:#5a5477; font-size:13px; margin:0 0 10px; font-weight:bold; }
+
+.section-title{
+  font-size:15px; font-weight:900; color:#fff; background:var(--orange);
+  border:3px solid var(--border); border-radius:10px;
+  display:inline-block; padding:6px 14px; box-shadow:var(--shadow);
+  margin:6px 0;
+}
+
+/* --- buttons / panels: chunky rounded Kairosoft-ish style --- */
+button{
+  font-family:inherit; cursor:pointer; color:var(--ink); font-weight:bold;
+  background:var(--cream);
+  border:3px solid var(--border);
+  border-radius:12px;
+  box-shadow: var(--shadow);
+  padding:10px 12px; font-size:12px; text-align:left;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+button:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 6px 0 rgba(58,53,82,0.35); }
+button:active:not(:disabled){ transform:translateY(2px); box-shadow:0 1px 0 rgba(58,53,82,0.35); }
+button:disabled{ opacity:0.45; cursor:not-allowed; }
+button small{ display:block; font-size:10px; color:#6b6489; margin-top:4px; font-weight:normal; }
+
+.btn-primary{ background:#baf7c9; border-color:#2a9d4f; }
+.btn-secondary{ background:var(--cream); }
+.btn-danger{ background:#ffd2da; border-color:var(--hp); }
+
+/* --- era / class select --- */
+.era-grid, .class-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+.era-card, .class-card{ display:flex; flex-direction:column; gap:4px; background:var(--cream); border-width:4px; border-radius:16px; }
+.era-year{ font-size:20px; color:#ff6b3d; font-weight:900; }
+.era-name, .class-name{ font-size:13px; font-weight:900; color:var(--ink); }
+.era-desc, .class-passive{ font-size:11px; color:#5a5477; font-weight:normal; }
+.era-bonus{ font-size:11px; color:#2a9d4f; font-weight:bold; }
+.class-icon{
+  font-size:20px; width:34px; height:34px; line-height:34px; text-align:center;
+  border-radius:50%; border:3px solid var(--border); box-shadow:var(--shadow);
+}
+.class-stats{ font-size:10px; color:#6b6489; font-weight:normal; }
+.class-skill{ font-size:10px; color:#1d6fc7; font-weight:bold; }
+.continue-row{ text-align:center; margin-top:10px; }
+
+/* --- bars: rounded pill style --- */
+.bar{
+  position:relative; height:20px; background:#fff; border:3px solid var(--border);
+  border-radius:20px; overflow:hidden;
+}
+.bar-fill{ height:100%; border-radius:20px; transition:width 0.2s ease; }
+.bar.hp .bar-fill{ background:linear-gradient(180deg,#ff8fa3,var(--hp)); }
+.bar.mp .bar-fill{ background:linear-gradient(180deg,#8fc0ff,var(--mp)); }
+.bar.sp .bar-fill{ background:linear-gradient(180deg,#ffe08a,var(--sp)); }
+.bar.exp .bar-fill{ background:linear-gradient(180deg,#c9a3ff,var(--exp)); }
+.bar.boss .bar-fill{ background:linear-gradient(180deg,#ffab7a,var(--orange)); }
+.bar-text{
+  position:absolute; left:8px; top:1px; font-size:10px; font-weight:900;
+  color:var(--ink); text-shadow:1px 1px 0 rgba(255,255,255,0.6);
+}
+
+/* --- hub --- */
+.hub-top{
+  display:flex; align-items:center; gap:14px; background:var(--cream);
+  border:4px solid var(--border); border-radius:16px; box-shadow:var(--shadow);
+  padding:10px 14px; flex-wrap:wrap;
+}
+.hub-id{ flex:1; min-width:160px; }
+.hub-name{ font-size:14px; font-weight:900; }
+.hub-title{ font-size:11px; color:#c9660a; font-weight:bold; }
+.hub-era{ font-size:10px; color:#6b6489; }
+.hub-currency{ font-size:13px; color:#c9660a; font-weight:900; white-space:nowrap; }
+.hub-bars{ display:flex; flex-direction:column; gap:6px; }
+.avatar-badge{
+  position:relative; flex:none; border-radius:50%; border:3px solid;
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+}
+.avatar-emoji{ line-height:1; }
+
+/* --- office view: top-down walking sprites, Game Dev Story style --- */
+.office-view{
+  position:relative; height:100px;
+  background:repeating-linear-gradient(90deg,#ffe9c2 0 20px,#ffdca0 20px 40px);
+  border:4px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow);
+}
+.office-label{
+  position:absolute; top:6px; left:6px; z-index:3;
+  background:rgba(255,255,255,0.85); border:2px solid var(--border); border-radius:8px;
+  padding:2px 8px; font-size:9px; font-weight:900; color:var(--ink);
+}
+.office-desk{
+  position:absolute; bottom:6px; width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+  z-index:1;
+}
+.office-walker{
+  position:absolute;
+  animation-name:officePatrol; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  z-index:2;
+}
+.office-walker-emoji{
+  display:inline-block; font-size:24px; line-height:1;
+  animation-name:officeBounce; animation-duration:0.5s; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+}
+@keyframes officePatrol{
+  0%{ transform:translateX(0); }
+  50%{ transform:translateX(var(--patrol-range,60px)); }
+  100%{ transform:translateX(0); }
+}
+@keyframes officeBounce{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-3px); }
+}
+
+.faction-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
+.faction-card{ display:flex; flex-direction:column; gap:4px; border-width:4px; border-radius:16px; background:var(--cream); }
+.faction-name{ font-weight:900; font-size:13px; }
+.faction-desc{ font-size:11px; color:#5a5477; font-weight:normal; }
+
+.hub-actions{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+
+.log-panel{
+  background:#fffef6; border:3px dashed #c9c2e8; border-radius:14px;
+  padding:8px 10px; max-height:220px; overflow-y:auto;
+}
+.log-panel.small{ max-height:120px; }
+.log-panel h3{ margin:0 0 6px; font-size:12px; color:#6b6489; }
+.log-panel ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
+.log-panel li{ font-size:11px; border-left:4px solid #d8d2f0; padding-left:6px; font-weight:bold; }
+.log-good{ border-color:#2a9d4f !important; color:#1f7a3c; }
+.log-bad{ border-color:var(--hp) !important; color:#c23a54; }
+.log-event{ border-color:var(--sp) !important; color:#a8720a; }
+.log-levelup{ border-color:var(--exp) !important; color:#7c3fc4; }
+.log-warn{ border-color:var(--orange) !important; color:#c9660a; }
+.log-info{ color:#5a5477; }
+
+/* --- faction quests --- */
+.faction-desc-full{ font-size:12px; color:#5a5477; font-weight:bold; }
+.quest-list{ display:flex; flex-direction:column; gap:10px; }
+.quest-card{
+  background:var(--cream); border:4px solid var(--border); border-radius:16px;
+  box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
+}
+.quest-name{ font-weight:900; font-size:13px; }
+.quest-meta{ font-size:10px; color:#6b6489; font-weight:normal; }
+
+/* --- boss --- */
+.boss-title{ color:#e0396b; text-align:center; }
+.boss-rounds{ text-align:center; font-size:12px; color:#c9660a; font-weight:bold; }
+.card-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+.card-btn{ text-align:center; }
+.skill-btn{ border-color:var(--exp); background:#eee0ff; }
+
+/* --- shop --- */
+.currency-line{ font-size:14px; color:#c9660a; font-weight:900; }
+.shop-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; }
+.shop-card{
+  display:flex; flex-direction:column; gap:6px; background:var(--cream);
+  border:4px solid var(--border); border-radius:16px; box-shadow:var(--shadow); padding:10px;
+}
+.shop-name{ font-weight:900; font-size:13px; }
+.shop-desc{ font-size:11px; color:#5a5477; font-weight:normal; }
+
+/* --- weekend --- */
+.weekend-choices{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+
+@media (max-width:480px){
+  .game-title{ font-size:18px; }
+  .hub-currency{ width:100%; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===================== ASUS Design Center: Pixel Odyssey ===================== */
+/* ---------- DATA ---------- */
+
+const ERAS = [
+  { id:'1989', year:'1989', name:'車庫創業期', desc:'施崇棠與夥伴在台北一間小辦公室創立華碩，一切從零開始。', bonus:{RES:8}, bonusText:'抗壓力 +8（草創精神，什麼苦都能吃）' },
+  { id:'2006', year:'2006', name:'ROG 電競基因覺醒', desc:'Republic of Gamers 品牌成立，設計開始追求極致效能與電競美學。', bonus:{CRE:8}, bonusText:'創意力 +8（電競魂覺醒）' },
+  { id:'2007', year:'2007', name:'Eee PC 小筆電革命', desc:'Eee PC 掀起全球小筆電風潮，「輕薄、便宜、好用」成為設計信仰。', bonus:{PRO:8}, bonusText:'專業力 +8（把限制變成賣點）' },
+  { id:'2011', year:'2011', name:'Zenbook 美學時代', desc:'ZenBook 以同心圓髮絲紋打開高端筆電設計語言，Zen 美學成為核心理念。', bonus:{COM:8}, bonusText:'溝通力 +8（開始學會講設計故事）' },
+  { id:'2020', year:'2020s', name:'永續與全球化設計', desc:'ASUS 邁向永續材料、跨國協作與全品類設計整合的新十年。', bonus:{CRE:4,PRO:4,COM:4,RES:4}, bonusText:'四維全部 +4（均衡發展的時代新人）' },
+];
+
+const CLASSES = [
+  { id:'ID', name:'工業設計師 ID', icon:'🖌️', avatar:'🧑‍🎨', accent:'#ff8c42', stats:{CRE:70,PRO:55,COM:40,RES:45},
+    skill:{name:'曲面魔法', desc:'消耗 MP，大幅提升產品外觀評價（本回合創意傷害 +80%）', type:'active', mp:20 },
+    passiveText:'高空間感知與造型力' },
+  { id:'GRAPHIC', name:'視覺/平面設計師', icon:'🎨', avatar:'👩‍🎨', accent:'#ff6b9d', stats:{CRE:65,PRO:50,COM:45,RES:40},
+    skill:{name:'黃金比例', desc:'被動技能：所有出牌傷害 +20%', type:'passive', mult:1.2 },
+    passiveText:'高美學與排版力' },
+  { id:'CMF', name:'色彩材質設計師 CMF', icon:'🧪', avatar:'🧑‍🔬', accent:'#2ec4b6', stats:{CRE:55,PRO:65,COM:40,RES:40},
+    skill:{name:'陽極處理', desc:'消耗 MP，賦予本次任務特殊光澤，獎金 +50%', type:'active', mp:15 },
+    passiveText:'高元素感知' },
+  { id:'UEUX', name:'使用者體驗 UE/UX', icon:'🧭', avatar:'🕵️', accent:'#4d96ff', stats:{CRE:45,PRO:55,COM:65,RES:45},
+    skill:{name:'痛點暴擊', desc:'消耗 MP，本次出牌無視 Boss 一半防禦力', type:'active', mp:20 },
+    passiveText:'高同理心與邏輯力' },
+  { id:'PM', name:'設計專案經理 Design PM', icon:'📋', avatar:'🧑‍💼', accent:'#ffd23f', stats:{CRE:40,PRO:45,COM:70,RES:60},
+    skill:{name:'時程結界', desc:'消耗 MP，本週免疫一次「需求變更」隨機事件', type:'active', mp:15 },
+    passiveText:'高溝通力與防禦力' },
+  { id:'TOOL', name:'模具工程師 Tooling', icon:'🛠️', avatar:'👷', accent:'#8d99ae', stats:{CRE:35,PRO:60,COM:40,RES:70},
+    skill:{name:'拔模角修正', desc:'消耗 MP，本場戰鬥 Boss 反擊傷害 -70%', type:'active', mp:15 },
+    passiveText:'高物理防禦與結構力' },
+  { id:'RESEARCH', name:'研究員 / 包裝設計', icon:'🔍', avatar:'🧐', accent:'#9b5de5', stats:{CRE:50,PRO:60,COM:50,RES:50},
+    skill:{name:'洞察眼', desc:'消耗 MP，看穿 Boss 弱點，本場戰鬥出牌傷害 +30%', type:'active', mp:15 },
+    passiveText:'洞察眼與空間收納，提供隱藏加分 Buff' },
+];
+
+const TITLES_GRADE = ['Junior Designer','Designer','Senior Designer','專員','主任','經理','處長','V.P.'];
+const GRADE_EXP = [0,120,300,600,1000,1600,2400,3400]; // exp thresholds
+const TITLES_ROLE = ['無職位','課長 (Party Leader)','部長 (Raid Leader)','處長 (Guild Master)','中心長 (Grandmaster)'];
+const ROLE_REP = [0,150,400,900,1800]; // reputation thresholds
+
+const FACTIONS = {
+  ROG: { name:'ROG Republic of Gamers', dot:'🔴', color:'#ff5d7a', desc:'賽博龐克地下城，極致效能與電競美學。', diff:1.5,
+    quests:[
+      {name:'ROG Falcata 人體工學鍵盤 (2023)', tier:3, statKey:'CRE', exp:60, gold:120},
+      {name:'ROG Ally 掌機外殼結構優化', tier:3, statKey:'PRO', exp:55, gold:110},
+      {name:'ROG Strix 電競筆電散熱造型', tier:2, statKey:'CRE', exp:35, gold:70},
+      {name:'ROG Phone 燈效 CMF 提案', tier:2, statKey:'PRO', exp:35, gold:70},
+    ]},
+  ASUS: { name:'ASUS 天空之城', dot:'🔵', color:'#4d96ff', desc:'現代簡約，主打大眾市場與 Zen 美學。', diff:1.0,
+    quests:[
+      {name:'Zenbook 髮絲紋機身打樣', tier:2, statKey:'CRE', exp:30, gold:60},
+      {name:'Vivobook 色彩多樣化提案', tier:1, statKey:'PRO', exp:18, gold:35},
+      {name:'ZenFone 使用者介面排版', tier:2, statKey:'COM', exp:30, gold:60},
+      {name:'Eee PC 復刻版懷舊設計提案', tier:1, statKey:'COM', exp:18, gold:35},
+    ]},
+  TUF: { name:'TUF Gaming 重工業區', dot:'🟡', color:'#e0a800', desc:'機甲與軍事風格，要求耐用度與軍規測試。', diff:1.3,
+    quests:[
+      {name:'TUF Gaming 筆電 MIL-STD-810H 耐摔測試', tier:3, statKey:'PRO', exp:50, gold:100},
+      {name:'TUF 主機板散熱裝甲造型', tier:2, statKey:'CRE', exp:32, gold:65},
+      {name:'TUF 電源供應器包裝結構', tier:1, statKey:'PRO', exp:18, gold:35},
+    ]},
+  PROART: { name:'ProArt 寧靜畫廊', dot:'⚫', color:'#9b5de5', desc:'極致色準與創作者品味。', diff:1.4,
+    quests:[
+      {name:'ProArt Display 色準校正提案', tier:3, statKey:'PRO', exp:55, gold:110},
+      {name:'ProArt StudioBook 創作者質感打樣', tier:2, statKey:'CRE', exp:33, gold:68},
+      {name:'ProArt 週邊包裝美學設計', tier:1, statKey:'COM', exp:18, gold:35},
+    ]},
+};
+
+const BOSSES = [
+  { emoji:'😤', name:'組長的靈魂拷問', hp:60, dmg:6 },
+  { emoji:'😠', name:'處長的 Design Review', hp:100, dmg:10 },
+  { emoji:'🤬', name:'V.P. 的終極提案會議', hp:160, dmg:16 },
+];
+
+const SHOP_ITEMS = [
+  { id:'chair', emoji:'🪑', name:'人體工學椅', desc:'MaxHP +20', cost:150, apply:s=>{s.maxHP+=20;s.hp+=20;} },
+  { id:'tablet', emoji:'🖊️', name:'高階手繪板', desc:'暴擊率 +8%', cost:180, apply:s=>{s.crit+=0.08;} },
+  { id:'grinder', emoji:'☕', name:'1Zpresso K-Ultra 手搖磨豆機', desc:'手沖儀式：立即恢復 HP/MP 各 40', cost:120, apply:s=>{s.hp=Math.min(s.maxHP,s.hp+40);s.mp=Math.min(s.maxMP,s.mp+40);} },
+  { id:'render', emoji:'🖥️', name:'進階渲染軟體課程', desc:'任務 MP 消耗 -3', cost:200, apply:s=>{s.questMpCostReduce=(s.questMpCostReduce||0)+3;} },
+  { id:'film', emoji:'📷', name:'底片攝影與老鏡頭收藏', desc:'品味 Taste +10（降低 Boss 防禦）', cost:220, apply:s=>{s.taste=(s.taste||0)+10;} },
+];
+
+const RANDOM_EVENTS = [
+  { id:'midnight_reply', name:'深夜的一句話回覆', desc:'V.P. 在會議紀錄上只回了「再想想」四個字。你必須消耗雙倍 MP 施放【讀心術】才能正確解讀，猜錯將觸發返工地獄。',
+    resolve(state, log){
+      const mpCost = 20;
+      if(state.mp>=mpCost && Math.random()<0.5+state.taste_ratio()){
+        state.mp-=mpCost; state.gold+=40; state.rep+=10;
+        log('你成功讀心成功，V.P. 滿意地點頭。獲得 40 Gold、10 聲望。','good');
+      } else {
+        state.mp=Math.max(0,state.mp-mpCost); state.hp=Math.max(1,state.hp-15);
+        log('你猜錯了真實需求，進入返工地獄！HP -15。','bad');
+      }
+    }},
+  { id:'budget_cut', name:'PM 突然說預算砍半', desc:'專案預算被砍半，所有人都要重新想辦法。',
+    resolve(state, log){
+      state.gold=Math.max(0,state.gold-30);
+      log('本次任務獎金被迫下修，Gold -30。（至少你還有工作）','bad');
+    }},
+  { id:'scope_change', name:'需求突然變更', desc:'客戶說「其實我們想要完全不一樣的方向」。',
+    resolve(state, log){
+      if(state.shieldScopeChange){ state.shieldScopeChange=false; log('【時程結界】發動，需求變更被完全擋下！','good'); return; }
+      state.mp=Math.max(0,state.mp-15);
+      log('需求變更席捲而來，MP -15。','bad');
+    }},
+  { id:'praise', name:'主管突然稱讚你', desc:'處長難得在茶水間說了一句「這次做得不錯」。',
+    resolve(state, log){ state.rep+=15; log('聲望 +15，你今天走路都有風。','good'); } },
+  { id:'coffee_break', name:'咖啡機故障', desc:'茶水間咖啡機壞了，全樓層陷入恐慌。',
+    resolve(state, log){ state.mp=Math.max(0,state.mp-10); log('沒有咖啡的一天，MP -10。','bad'); } },
+  { id:'colleague_help', name:'同事神助攻', desc:'隔壁工位的同事分享了一個超好用的參考案例。',
+    resolve(state, log){ state.hp=Math.min(state.maxHP,state.hp+10); state.mp=Math.min(state.maxMP,state.mp+10); log('HP/MP 各恢復 10，人間溫暖。','good'); } },
+];
+
+/* ---------- STATE ---------- */
+
+const SAVE_KEY = 'asus_pixel_odyssey_save_v1';
+
+function freshState(eraId, classId){
+  const era = ERAS.find(e=>e.id===eraId);
+  const cls = CLASSES.find(c=>c.id===classId);
+  const stats = Object.assign({}, cls.stats);
+  Object.keys(era.bonus).forEach(k=> stats[k]=(stats[k]||0)+era.bonus[k]);
+  const maxHP = 100 + Math.round(stats.RES*0.6);
+  const maxMP = 50 + Math.round(stats.PRO*0.3 + stats.CRE*0.3);
+  return {
+    eraId, classId, stats,
+    hp:maxHP, maxHP, mp:maxMP, maxMP, sp:100, maxSP:100,
+    crit:0.05, taste:0, gold:50, rep:0, exp:0,
+    questMpCostReduce:0, questsDone:0, skillUsedThisFight:false,
+    shieldScopeChange:false,
+    log:[],
+    taste_ratio(){ return Math.min(0.25, this.taste/100); },
+  };
+}
+
+function save(state){
+  const {log, ...rest} = state;
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify(rest)); }catch(e){}
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return null;
+    const data = JSON.parse(raw);
+    data.log = [];
+    data.taste_ratio = function(){ return Math.min(0.25, this.taste/100); };
+    return data;
+  }catch(e){ return null; }
+}
+function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+/* ---------- HELPERS ---------- */
+
+function getClass(state){ return CLASSES.find(c=>c.id===state.classId); }
+function getEra(state){ return ERAS.find(e=>e.id===state.eraId); }
+
+function gradeIndex(exp){
+  let idx=0;
+  for(let i=0;i<GRADE_EXP.length;i++){ if(exp>=GRADE_EXP[i]) idx=i; }
+  return idx;
+}
+function roleIndex(rep){
+  let idx=0;
+  for(let i=0;i<ROLE_REP.length;i++){ if(rep>=ROLE_REP[i]) idx=i; }
+  return idx;
+}
+
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+/* ---------- APP / RENDER ---------- */
+
+let state = null;
+let currentScreen = 'title'; // title, class, hub, faction, boss, shop, weekend
+let activeFaction = null;
+let activeBoss = null;
+let weekCounter = 0;
+
+const root = document.getElementById('app');
+
+function pushLog(msg, type){
+  if(!state) return;
+  state.log.unshift({msg, type: type||'info'});
+  state.log = state.log.slice(0,30);
+}
+
+function statLabel(key){
+  return {CRE:'創意力', PRO:'專業力', COM:'溝通力', RES:'抗壓力'}[key] || key;
+}
+
+function bar(value, max, cls, emoji){
+  const pct = clamp(Math.round(value/max*100),0,100);
+  return `<div class="bar ${cls}"><div class="bar-fill" style="width:${pct}%"></div><span class="bar-text">${emoji?emoji+' ':''}${cls.toUpperCase()} ${Math.round(value)}/${max}</span></div>`;
+}
+
+/* ---- avatar / office view: emoji-based sprites ---- */
+function avatarBadge(emoji, accent, size){
+  size = size || 44;
+  return `<div class="avatar-badge" style="width:${size}px;height:${size}px;border-color:${accent};background:${accent}33;">
+    <span class="avatar-emoji" style="font-size:${Math.round(size*0.55)}px;">${emoji}</span>
+  </div>`;
+}
+
+function officeWalker(emoji, opts){
+  const dur = opts.duration || 6;
+  const delay = opts.delay || 0;
+  const range = opts.range || 60;
+  const bottom = opts.bottom || 6;
+  return `<div class="office-walker" style="left:${opts.left}px; bottom:${bottom}px; --patrol-range:${range}px; animation-duration:${dur}s; animation-delay:-${delay}s;">
+    <div class="office-walker-emoji" style="animation-delay:-${(delay*0.4).toFixed(2)}s;">${emoji}</div>
+  </div>`;
+}
+
+function renderOfficeView(cls){
+  const npcs = CLASSES.filter(c=>c.id!==cls.id);
+  const walkers = [
+    officeWalker(cls.avatar, {left:20, duration:5.5, delay:0, range:70}),
+    officeWalker(npcs[0].avatar, {left:120, duration:7, delay:1.5, range:50}),
+    officeWalker(npcs[1].avatar, {left:220, duration:6.2, delay:3, range:60}),
+  ];
+  const deskEmojis = ['🖥️','💻','🖥️','💻'];
+  const deskLefts = [30,110,190,270];
+  const desks = deskLefts.map((l,i)=>`<div class="office-desk" style="left:${l}px">${deskEmojis[i]}</div>`).join('');
+  return `<div class="office-view">
+    <div class="office-label">🏢 辦公室 Live</div>
+    ${desks}
+    ${walkers.join('')}
+  </div>`;
+}
+
+function render(){
+  if(currentScreen==='class'){ renderClassSelect(); return; }
+  if(currentScreen==='title' || !state){ renderTitle(); return; }
+  save(state);
+  if(currentScreen==='hub') renderHub();
+  else if(currentScreen==='faction') renderFaction();
+  else if(currentScreen==='boss') renderBoss();
+  else if(currentScreen==='shop') renderShop();
+  else if(currentScreen==='weekend') renderWeekend();
+  else renderTitle();
+}
+
+/* ---- Title / Era select ---- */
+function renderTitle(){
+  root.innerHTML = `
+    <div class="screen title-screen">
+      <h1 class="game-title">ASUS Design Center<br><span>Pixel Odyssey</span></h1>
+      <p class="tagline">「每一個 Pixel 的偏移，都是一場史詩級的戰役。」</p>
+      <h2 class="section-title">🗓️ 選擇你入職的年代</h2>
+      <div class="era-grid">
+        ${ERAS.map(e=>`
+          <button class="era-card" data-era="${e.id}">
+            <div class="era-year">${e.year}</div>
+            <div class="era-name">${e.name}</div>
+            <div class="era-desc">${e.desc}</div>
+            <div class="era-bonus">${e.bonusText}</div>
+          </button>`).join('')}
+      </div>
+      <div class="continue-row">
+        ${load() ? '<button id="continueBtn" class="btn-secondary">▶ 繼續上次進度</button>' : ''}
+      </div>
+    </div>`;
+  root.querySelectorAll('.era-card').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ chosenEra = btn.dataset.era; currentScreen='class'; render(); });
+  });
+  const cont = document.getElementById('continueBtn');
+  if(cont) cont.addEventListener('click', ()=>{
+    const s = load();
+    if(s){ state=s; currentScreen='hub'; render(); }
+  });
+}
+
+let chosenEra = ERAS[0].id;
+
+/* ---- Class select ---- */
+function renderClassSelect(){
+  root.innerHTML = `
+    <div class="screen class-screen">
+      <h2 class="section-title">🎭 選擇你的初始職業</h2>
+      <div class="class-grid">
+        ${CLASSES.map(c=>`
+          <button class="class-card" data-cls="${c.id}" style="border-color:${c.accent}">
+            <div class="class-icon" style="background:${c.accent}">${c.icon}</div>
+            <div class="class-name">${c.name}</div>
+            <div class="class-passive">${c.passiveText}</div>
+            <div class="class-stats">
+              CRE ${c.stats.CRE} · PRO ${c.stats.PRO} · COM ${c.stats.COM} · RES ${c.stats.RES}
+            </div>
+            <div class="class-skill">【${c.skill.name}】${c.skill.desc}</div>
+          </button>`).join('')}
+      </div>
+      <button id="backTitle" class="btn-secondary">← 返回</button>
+    </div>`;
+  root.querySelectorAll('.class-card').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state = freshState(chosenEra, btn.dataset.cls);
+      pushLog(`歡迎入職！你選擇了「${getEra(state).name}」的 ${getClass(state).name}。`,'good');
+      currentScreen='hub'; render();
+    });
+  });
+  document.getElementById('backTitle').addEventListener('click', ()=>{ currentScreen='title'; render(); });
+}
+
+/* ---- Hub ---- */
+function renderHub(){
+  const cls = getClass(state);
+  const era = getEra(state);
+  const grade = TITLES_GRADE[gradeIndex(state.exp)];
+  const role = TITLES_ROLE[roleIndex(state.rep)];
+  root.innerHTML = `
+    <div class="screen hub-screen">
+      <div class="hub-top">
+        ${avatarBadge(cls.avatar, cls.accent)}
+        <div class="hub-id">
+          <div class="hub-name">${cls.icon} ${cls.name}</div>
+          <div class="hub-title">${grade} ・ ${role}</div>
+          <div class="hub-era">入職年代：${era.year} ${era.name}</div>
+        </div>
+        <div class="hub-currency">💰 ${state.gold} Gold ・ ⭐ ${state.rep} 聲望</div>
+      </div>
+      ${renderOfficeView(cls)}
+      <div class="hub-bars">
+        ${bar(state.hp,state.maxHP,'hp','❤️')}
+        ${bar(state.mp,state.maxMP,'mp','💙')}
+        ${bar(state.sp,state.maxSP,'sp','💚')}
+        ${bar(state.exp - GRADE_EXP[gradeIndex(state.exp)], (GRADE_EXP[gradeIndex(state.exp)+1]||GRADE_EXP[GRADE_EXP.length-1]+1000) - GRADE_EXP[gradeIndex(state.exp)], 'exp','📈')}
+      </div>
+      <h2 class="section-title">🗺️ 陣營地圖</h2>
+      <div class="faction-grid">
+        ${Object.entries(FACTIONS).map(([key,f])=>`
+          <button class="faction-card" data-f="${key}" style="border-color:${f.color}">
+            <div class="faction-name" style="color:${f.color}">${f.dot} ${f.name}</div>
+            <div class="faction-desc">${f.desc}</div>
+          </button>`).join('')}
+      </div>
+      <div class="hub-actions">
+        <button id="bossBtn" class="btn-primary">⚔️ 挑戰 Design Review (Boss 戰)</button>
+        <button id="shopBtn" class="btn-secondary">🛍️ 商店 / 養成</button>
+        <button id="weekendBtn" class="btn-secondary">🏠 週末時間</button>
+        <button id="restartBtn" class="btn-danger">🔄 重新開始</button>
+      </div>
+      <div class="log-panel">
+        <h3>事件紀錄</h3>
+        <ul>${state.log.map(l=>`<li class="log-${l.type}">${l.msg}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  root.querySelectorAll('.faction-card').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ activeFaction=btn.dataset.f; currentScreen='faction'; render(); });
+  });
+  document.getElementById('bossBtn').addEventListener('click', ()=>{ startBossFight(); });
+  document.getElementById('shopBtn').addEventListener('click', ()=>{ currentScreen='shop'; render(); });
+  document.getElementById('weekendBtn').addEventListener('click', ()=>{ currentScreen='weekend'; render(); });
+  document.getElementById('restartBtn').addEventListener('click', ()=>{
+    if(confirm('確定要重新開始嗎？目前進度將會消失。')){ clearSave(); state=null; currentScreen='title'; render(); }
+  });
+}
+
+/* ---- Faction quest list ---- */
+function renderFaction(){
+  const f = FACTIONS[activeFaction];
+  root.innerHTML = `
+    <div class="screen faction-screen">
+      <h2 class="section-title" style="color:${f.color}">${f.dot} ${f.name}</h2>
+      <p class="faction-desc-full">${f.desc}</p>
+      ${bar(state.hp,state.maxHP,'hp','❤️')}${bar(state.mp,state.maxMP,'mp','💙')}
+      <div class="quest-list">
+        ${f.quests.map((q,i)=>`
+          <div class="quest-card">
+            <div class="quest-name">${q.name}</div>
+            <div class="quest-meta">難度 ${'★'.repeat(q.tier)} ・ 主要能力：${statLabel(q.statKey)} ・ EXP +${q.exp} ・ Gold +${q.gold}</div>
+            <button class="btn-primary quest-btn" data-i="${i}">執行任務 (MP -${10+q.tier*4-(state.questMpCostReduce||0)})</button>
+          </div>`).join('')}
+      </div>
+      <button id="backHub" class="btn-secondary">← 返回地圖</button>
+    </div>`;
+  root.querySelectorAll('.quest-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> doQuest(f, f.quests[parseInt(btn.dataset.i,10)]));
+  });
+  document.getElementById('backHub').addEventListener('click', ()=>{ currentScreen='hub'; render(); });
+}
+
+function doQuest(faction, quest){
+  const mpCost = Math.max(2, 10 + quest.tier*4 - (state.questMpCostReduce||0));
+  if(state.mp < mpCost){
+    pushLog('MP 不足，無法執行任務！先去休息或喝咖啡吧。','bad');
+    render(); return;
+  }
+  state.mp -= mpCost;
+  const statVal = state.stats[quest.statKey];
+  let successChance = 0.45 + statVal/220 + state.taste_ratio() - (faction.diff-1)*0.15;
+  successChance = clamp(successChance, 0.1, 0.95);
+  const success = Math.random() < successChance;
+  if(success){
+    let expGain = quest.exp, goldGain = quest.gold;
+    if(Math.random() < state.crit){ expGain=Math.round(expGain*1.5); goldGain=Math.round(goldGain*1.5); pushLog('暴擊！這次的提案效果拔群。','good'); }
+    state.exp += expGain; state.gold += goldGain; state.rep += Math.round(quest.tier*3);
+    state.questsDone++;
+    pushLog(`完成任務「${quest.name}」，獲得 EXP +${expGain}、Gold +${goldGain}。`,'good');
+  } else {
+    state.hp = Math.max(1, state.hp - (4+quest.tier*2));
+    pushLog(`任務「${quest.name}」不太順利，產出了一版「大便設計」……HP -${4+quest.tier*2}`,'bad');
+  }
+  checkLevelUp();
+  maybeRandomEvent();
+  render();
+}
+
+/* ---- Boss fight ---- */
+function startBossFight(){
+  const idx = clamp(gradeIndex(state.exp), 0, BOSSES.length-1);
+  const template = BOSSES[idx];
+  activeBoss = { name:template.name, emoji:template.emoji, hp:template.hp, maxHp:template.hp, dmg:template.dmg, rounds:5 };
+  state.skillUsedThisFight = false;
+  state.skillEffects = {};
+  currentScreen='boss'; render();
+}
+
+function cardDamage(baseStatKey){
+  const cls = getClass(state);
+  let val = state.stats[baseStatKey];
+  let dmg = val * (0.6 + Math.random()*0.5);
+  if(cls.skill.type==='passive' && cls.skill.mult) dmg *= cls.skill.mult;
+  if(state.skillEffects && state.skillEffects.dmgMult) dmg *= state.skillEffects.dmgMult;
+  if(state.skillEffects && state.skillEffects.ignoreDefense) dmg *= 1.3;
+  dmg *= (1 + state.taste_ratio());
+  return Math.round(dmg);
+}
+
+function renderBoss(){
+  const cls = getClass(state);
+  root.innerHTML = `
+    <div class="screen boss-screen">
+      <h2 class="section-title boss-title">${activeBoss.emoji} ${activeBoss.name}</h2>
+      <div class="boss-hpbar">${bar(activeBoss.hp, activeBoss.maxHp,'boss','😤')}</div>
+      <div class="boss-rounds">剩餘回合：${activeBoss.rounds}</div>
+      ${bar(state.hp,state.maxHP,'hp','❤️')}${bar(state.mp,state.maxMP,'mp','💙')}
+      <div class="card-row">
+        <button class="card-btn" data-type="COM">🗣️ 簡報技巧<br><small>溝通力傷害</small></button>
+        <button class="card-btn" data-type="CRE">💡 設計理念<br><small>創意力傷害</small></button>
+        <button class="card-btn" data-type="PRO">📊 數據佐證<br><small>專業力傷害</small></button>
+        ${cls.skill.type==='active' ? `<button class="card-btn skill-btn" id="skillBtn">✨ ${cls.skill.name}<br><small>MP -${cls.skill.mp}（本場戰鬥限一次）</small></button>` : ''}
+      </div>
+      <div class="log-panel small">
+        <ul>${state.log.slice(0,6).map(l=>`<li class="log-${l.type}">${l.msg}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  root.querySelectorAll('.card-btn[data-type]').forEach(btn=>{
+    btn.addEventListener('click', ()=> playCard(btn.dataset.type));
+  });
+  const skillBtn = document.getElementById('skillBtn');
+  if(skillBtn) skillBtn.addEventListener('click', useSkill);
+}
+
+function playCard(statKey){
+  if(activeBoss.rounds<=0) return;
+  const mpCost = 12;
+  if(state.mp < mpCost){ pushLog('MP 不足，無法出牌！','bad'); render(); return; }
+  state.mp -= mpCost;
+  const dmg = cardDamage(statKey);
+  activeBoss.hp -= dmg;
+  pushLog(`你打出「${statKey==='COM'?'簡報技巧':statKey==='CRE'?'設計理念':'數據佐證'}」，造成 ${dmg} 挑剔值傷害！`,'good');
+  state.skillEffects = {};
+  resolveBossTurn();
+}
+
+function useSkill(){
+  const cls = getClass(state);
+  if(state.skillUsedThisFight){ pushLog('這場戰鬥已經用過必殺技了。','bad'); render(); return; }
+  if(state.mp < cls.skill.mp){ pushLog('MP 不足，無法施放必殺技！','bad'); render(); return; }
+  state.mp -= cls.skill.mp;
+  state.skillUsedThisFight = true;
+  state.skillEffects = state.skillEffects || {};
+  if(cls.id==='ID') state.skillEffects.dmgMult = 1.8;
+  else if(cls.id==='CMF') { activeBoss.bonusGold = true; pushLog('【陽極處理】發動，本次任務獎金將大幅提升！','good'); }
+  else if(cls.id==='UEUX') state.skillEffects.ignoreDefense = true;
+  else if(cls.id==='PM') { state.shieldScopeChange = true; pushLog('【時程結界】展開，下一次「需求變更」事件將被完全格擋。','good'); }
+  else if(cls.id==='TOOL') activeBoss.reduceCounter = true;
+  else if(cls.id==='RESEARCH') state.skillEffects.dmgMult = 1.3;
+  pushLog(`你發動了必殺技【${cls.skill.name}】！`,'good');
+  render();
+}
+
+function resolveBossTurn(){
+  activeBoss.rounds -= 1;
+  if(activeBoss.hp <= 0){
+    winBossFight(); return;
+  }
+  if(activeBoss.rounds <= 0){
+    loseBossFight(); return;
+  }
+  // boss counter-attack
+  const cls = getClass(state);
+  let dmg = activeBoss.dmg;
+  if(cls.id==='TOOL' && activeBoss.reduceCounter) dmg = Math.round(dmg*0.3);
+  state.hp = Math.max(1, state.hp - dmg);
+  pushLog(`${activeBoss.name} 反擊：「這個設計你自己會買嗎？」HP -${dmg}`,'bad');
+  render();
+}
+
+function winBossFight(){
+  const gradeIdx = gradeIndex(state.exp);
+  let expGain = 80 + gradeIdx*20, goldGain = activeBoss.bonusGold ? 240 : 160, repGain = 40;
+  state.exp += expGain; state.gold += goldGain; state.rep += repGain;
+  pushLog(`你擊破了${activeBoss.name}的挑剔值！獲得 S 級績效：EXP +${expGain}、Gold +${goldGain}、聲望 +${repGain}。`,'good');
+  checkLevelUp();
+  currentScreen='hub'; render();
+}
+
+function loseBossFight(){
+  state.sp = Math.max(0, state.sp - 15);
+  state.hp = Math.max(1, state.hp - 10);
+  pushLog(`會議結束，你的提案沒能撐到最後……HP -10、SP -15。下次準備更充分的簡報吧。`,'bad');
+  checkSPCollapse();
+  currentScreen='hub'; render();
+}
+
+/* ---- Shop ---- */
+function renderShop(){
+  root.innerHTML = `
+    <div class="screen shop-screen">
+      <h2 class="section-title">🛍️ 商店 / 養成</h2>
+      <div class="currency-line">💰 ${state.gold} Gold</div>
+      <div class="shop-grid">
+        ${SHOP_ITEMS.map(item=>`
+          <div class="shop-card">
+            <div class="shop-name">${item.emoji} ${item.name}</div>
+            <div class="shop-desc">${item.desc}</div>
+            <button class="btn-primary buy-btn" data-id="${item.id}" ${state.gold<item.cost?'disabled':''}>購買 (${item.cost} Gold)</button>
+          </div>`).join('')}
+      </div>
+      <button id="backHub" class="btn-secondary">← 返回地圖</button>
+    </div>`;
+  root.querySelectorAll('.buy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const item = SHOP_ITEMS.find(i=>i.id===btn.dataset.id);
+      if(state.gold < item.cost) return;
+      state.gold -= item.cost;
+      item.apply(state);
+      pushLog(`購入「${item.name}」。${item.desc}`,'good');
+      render();
+    });
+  });
+  document.getElementById('backHub').addEventListener('click', ()=>{ currentScreen='hub'; render(); });
+}
+
+/* ---- Weekend ---- */
+function renderWeekend(){
+  root.innerHTML = `
+    <div class="screen weekend-screen">
+      <h2 class="section-title">🏠 週末時間</h2>
+      <p>這個週末，你想怎麼度過？</p>
+      ${bar(state.sp,state.maxSP,'sp','💚')}
+      <div class="weekend-choices">
+        <button id="familyBtn" class="btn-primary">👨‍👩‍👧 陪伴家人 / 朋友聚餐<br><small>SP +30，獲得「愛與支持」Buff（免疫一次 Boss 無情批評）</small></button>
+        <button id="overtimeBtn" class="btn-secondary">💻 拼績效加班<br><small>Gold +80、EXP +40，但 SP -20</small></button>
+      </div>
+      <button id="backHub" class="btn-secondary">← 返回地圖</button>
+    </div>`;
+  document.getElementById('familyBtn').addEventListener('click', ()=>{
+    state.sp = Math.min(state.maxSP, state.sp+30);
+    state.loveSupportBuff = true;
+    pushLog('你度過了充實的週末，SP +30，獲得「愛與支持」Buff。','good');
+    currentScreen='hub'; render();
+  });
+  document.getElementById('overtimeBtn').addEventListener('click', ()=>{
+    state.gold += 80; state.exp += 40;
+    state.sp = Math.max(0, state.sp-20);
+    pushLog('你選擇了拼績效加班，Gold +80、EXP +40，SP -20。','warn');
+    checkSPCollapse();
+    checkLevelUp();
+    currentScreen='hub'; render();
+  });
+  document.getElementById('backHub').addEventListener('click', ()=>{ currentScreen='hub'; render(); });
+}
+
+/* ---- Random events / level ups ---- */
+function maybeRandomEvent(){
+  if(Math.random() < 0.3){
+    const ev = RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];
+    pushLog(`【隨機事件】${ev.name}：${ev.desc}`,'event');
+    ev.resolve(state, pushLog);
+  }
+}
+
+function checkSPCollapse(){
+  if(state.sp<=0 && !state.spCollapsed){
+    state.spCollapsed = true;
+    state.maxMP = Math.round(state.maxMP*0.8);
+    state.mp = Math.min(state.mp, state.maxMP);
+    pushLog('SP 歸零，觸發「後院起火 / 孤家寡人」Debuff：MaxMP 永久 -20%，直到你花時間修復關係。','bad');
+  } else if(state.sp>30 && state.spCollapsed){
+    state.spCollapsed = false;
+    state.maxMP = Math.round(state.maxMP/0.8);
+    pushLog('你花了不少心力修復關係，Debuff 解除，MaxMP 恢復正常。','good');
+  }
+}
+
+function checkLevelUp(){
+  const newGrade = gradeIndex(state.exp);
+  if(newGrade !== (state.lastGrade||0)){
+    state.lastGrade = newGrade;
+    state.maxHP += 10; state.maxMP += 5; state.hp=state.maxHP; state.mp=state.maxMP;
+    pushLog(`🎉 升職！你現在是「${TITLES_GRADE[newGrade]}」了。MaxHP/MaxMP 提升，並完全恢復。`,'levelup');
+  }
+  const newRole = roleIndex(state.rep);
+  if(newRole !== (state.lastRole||0)){
+    state.lastRole = newRole;
+    pushLog(`🏆 職位晉升！你現在是「${TITLES_ROLE[newRole]}」，可以帶領更多人了。`,'levelup');
+  }
+}
+
+/* ---- init ---- */
+(function init(){
+  const s = load();
+  if(s){ state=s; currentScreen='hub'; }
+  render();
+})();
+</script>
+</body>
+</html>
