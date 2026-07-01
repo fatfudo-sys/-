@@ -112,12 +112,15 @@ button small{ display:block; font-size:10px; color:#6b6489; margin-top:4px; font
 .hub-era{ font-size:10px; color:#6b6489; }
 .hub-currency{ font-size:13px; color:#c9660a; font-weight:900; white-space:nowrap; }
 .hub-bars{ display:flex; flex-direction:column; gap:6px; }
-.pixel-avatar-frame{ width:32px; height:32px; position:relative; flex:none; image-rendering:pixelated; }
-.pixel-avatar-dot{ position:absolute; top:0; left:0; width:4px; height:4px; }
+.avatar-badge{
+  position:relative; flex:none; border-radius:50%; border:3px solid;
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+}
+.avatar-emoji{ line-height:1; }
 
 /* --- office view: top-down walking sprites, Game Dev Story style --- */
 .office-view{
-  position:relative; height:110px;
+  position:relative; height:100px;
   background:repeating-linear-gradient(90deg,#ffe9c2 0 20px,#ffdca0 20px 40px);
   border:4px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow);
 }
@@ -127,26 +130,27 @@ button small{ display:block; font-size:10px; color:#6b6489; margin-top:4px; font
   padding:2px 8px; font-size:9px; font-weight:900; color:var(--ink);
 }
 .office-desk{
-  position:absolute; bottom:6px; width:44px; height:24px;
-  background:#a9713f; border:3px solid var(--border); border-radius:6px; z-index:1;
-}
-.office-monitor{
-  position:absolute; left:8px; top:-16px; width:22px; height:14px;
-  background:#2b2d42; border:2px solid var(--border); border-radius:3px;
-}
-.office-monitor::after{
-  content:''; position:absolute; left:2px; top:2px; width:14px; height:8px;
-  background:#7fd7ff; border-radius:2px;
+  position:absolute; bottom:6px; width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+  z-index:1;
 }
 .office-walker{
   position:absolute;
   animation-name:officePatrol; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
   z-index:2;
 }
+.office-walker-emoji{
+  display:inline-block; font-size:24px; line-height:1;
+  animation-name:officeBounce; animation-duration:0.5s; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+}
 @keyframes officePatrol{
   0%{ transform:translateX(0); }
   50%{ transform:translateX(var(--patrol-range,60px)); }
   100%{ transform:translateX(0); }
+}
+@keyframes officeBounce{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-3px); }
 }
 
 .faction-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
@@ -222,30 +226,28 @@ const ERAS = [
 ];
 
 const CLASSES = [
-  { id:'ID', name:'工業設計師 ID', icon:'🖌️', accent:'#ff8c42', stats:{CRE:70,PRO:55,COM:40,RES:45},
+  { id:'ID', name:'工業設計師 ID', icon:'🖌️', avatar:'🧑‍🎨', accent:'#ff8c42', stats:{CRE:70,PRO:55,COM:40,RES:45},
     skill:{name:'曲面魔法', desc:'消耗 MP，大幅提升產品外觀評價（本回合創意傷害 +80%）', type:'active', mp:20 },
     passiveText:'高空間感知與造型力' },
-  { id:'GRAPHIC', name:'視覺/平面設計師', icon:'🎨', accent:'#ff6b9d', stats:{CRE:65,PRO:50,COM:45,RES:40},
+  { id:'GRAPHIC', name:'視覺/平面設計師', icon:'🎨', avatar:'👩‍🎨', accent:'#ff6b9d', stats:{CRE:65,PRO:50,COM:45,RES:40},
     skill:{name:'黃金比例', desc:'被動技能：所有出牌傷害 +20%', type:'passive', mult:1.2 },
     passiveText:'高美學與排版力' },
-  { id:'CMF', name:'色彩材質設計師 CMF', icon:'🧪', accent:'#2ec4b6', stats:{CRE:55,PRO:65,COM:40,RES:40},
+  { id:'CMF', name:'色彩材質設計師 CMF', icon:'🧪', avatar:'🧑‍🔬', accent:'#2ec4b6', stats:{CRE:55,PRO:65,COM:40,RES:40},
     skill:{name:'陽極處理', desc:'消耗 MP，賦予本次任務特殊光澤，獎金 +50%', type:'active', mp:15 },
     passiveText:'高元素感知' },
-  { id:'UEUX', name:'使用者體驗 UE/UX', icon:'🧭', accent:'#4d96ff', stats:{CRE:45,PRO:55,COM:65,RES:45},
+  { id:'UEUX', name:'使用者體驗 UE/UX', icon:'🧭', avatar:'🕵️', accent:'#4d96ff', stats:{CRE:45,PRO:55,COM:65,RES:45},
     skill:{name:'痛點暴擊', desc:'消耗 MP，本次出牌無視 Boss 一半防禦力', type:'active', mp:20 },
     passiveText:'高同理心與邏輯力' },
-  { id:'PM', name:'設計專案經理 Design PM', icon:'📋', accent:'#ffd23f', stats:{CRE:40,PRO:45,COM:70,RES:60},
+  { id:'PM', name:'設計專案經理 Design PM', icon:'📋', avatar:'🧑‍💼', accent:'#ffd23f', stats:{CRE:40,PRO:45,COM:70,RES:60},
     skill:{name:'時程結界', desc:'消耗 MP，本週免疫一次「需求變更」隨機事件', type:'active', mp:15 },
     passiveText:'高溝通力與防禦力' },
-  { id:'TOOL', name:'模具工程師 Tooling', icon:'🛠️', accent:'#8d99ae', stats:{CRE:35,PRO:60,COM:40,RES:70},
+  { id:'TOOL', name:'模具工程師 Tooling', icon:'🛠️', avatar:'👷', accent:'#8d99ae', stats:{CRE:35,PRO:60,COM:40,RES:70},
     skill:{name:'拔模角修正', desc:'消耗 MP，本場戰鬥 Boss 反擊傷害 -70%', type:'active', mp:15 },
     passiveText:'高物理防禦與結構力' },
-  { id:'RESEARCH', name:'研究員 / 包裝設計', icon:'🔍', accent:'#9b5de5', stats:{CRE:50,PRO:60,COM:50,RES:50},
+  { id:'RESEARCH', name:'研究員 / 包裝設計', icon:'🔍', avatar:'🧐', accent:'#9b5de5', stats:{CRE:50,PRO:60,COM:50,RES:50},
     skill:{name:'洞察眼', desc:'消耗 MP，看穿 Boss 弱點，本場戰鬥出牌傷害 +30%', type:'active', mp:15 },
     passiveText:'洞察眼與空間收納，提供隱藏加分 Buff' },
 ];
-const SKIN_TONE = '#ffd8a8';
-const EYE_COLOR = '#3a3552';
 
 const TITLES_GRADE = ['Junior Designer','Designer','Senior Designer','專員','主任','經理','處長','V.P.'];
 const GRADE_EXP = [0,120,300,600,1000,1600,2400,3400]; // exp thresholds
@@ -253,27 +255,27 @@ const TITLES_ROLE = ['無職位','課長 (Party Leader)','部長 (Raid Leader)',
 const ROLE_REP = [0,150,400,900,1800]; // reputation thresholds
 
 const FACTIONS = {
-  ROG: { name:'ROG Republic of Gamers', color:'#ff5d7a', desc:'賽博龐克地下城，極致效能與電競美學。', diff:1.5,
+  ROG: { name:'ROG Republic of Gamers', dot:'🔴', color:'#ff5d7a', desc:'賽博龐克地下城，極致效能與電競美學。', diff:1.5,
     quests:[
       {name:'ROG Falcata 人體工學鍵盤 (2023)', tier:3, statKey:'CRE', exp:60, gold:120},
       {name:'ROG Ally 掌機外殼結構優化', tier:3, statKey:'PRO', exp:55, gold:110},
       {name:'ROG Strix 電競筆電散熱造型', tier:2, statKey:'CRE', exp:35, gold:70},
       {name:'ROG Phone 燈效 CMF 提案', tier:2, statKey:'PRO', exp:35, gold:70},
     ]},
-  ASUS: { name:'ASUS 天空之城', color:'#4d96ff', desc:'現代簡約，主打大眾市場與 Zen 美學。', diff:1.0,
+  ASUS: { name:'ASUS 天空之城', dot:'🔵', color:'#4d96ff', desc:'現代簡約，主打大眾市場與 Zen 美學。', diff:1.0,
     quests:[
       {name:'Zenbook 髮絲紋機身打樣', tier:2, statKey:'CRE', exp:30, gold:60},
       {name:'Vivobook 色彩多樣化提案', tier:1, statKey:'PRO', exp:18, gold:35},
       {name:'ZenFone 使用者介面排版', tier:2, statKey:'COM', exp:30, gold:60},
       {name:'Eee PC 復刻版懷舊設計提案', tier:1, statKey:'COM', exp:18, gold:35},
     ]},
-  TUF: { name:'TUF Gaming 重工業區', color:'#e0a800', desc:'機甲與軍事風格，要求耐用度與軍規測試。', diff:1.3,
+  TUF: { name:'TUF Gaming 重工業區', dot:'🟡', color:'#e0a800', desc:'機甲與軍事風格，要求耐用度與軍規測試。', diff:1.3,
     quests:[
       {name:'TUF Gaming 筆電 MIL-STD-810H 耐摔測試', tier:3, statKey:'PRO', exp:50, gold:100},
       {name:'TUF 主機板散熱裝甲造型', tier:2, statKey:'CRE', exp:32, gold:65},
       {name:'TUF 電源供應器包裝結構', tier:1, statKey:'PRO', exp:18, gold:35},
     ]},
-  PROART: { name:'ProArt 寧靜畫廊', color:'#9b5de5', desc:'極致色準與創作者品味。', diff:1.4,
+  PROART: { name:'ProArt 寧靜畫廊', dot:'⚫', color:'#9b5de5', desc:'極致色準與創作者品味。', diff:1.4,
     quests:[
       {name:'ProArt Display 色準校正提案', tier:3, statKey:'PRO', exp:55, gold:110},
       {name:'ProArt StudioBook 創作者質感打樣', tier:2, statKey:'CRE', exp:33, gold:68},
@@ -282,17 +284,17 @@ const FACTIONS = {
 };
 
 const BOSSES = [
-  { name:'組長的靈魂拷問', hp:60, dmg:6 },
-  { name:'處長的 Design Review', hp:100, dmg:10 },
-  { name:'V.P. 的終極提案會議', hp:160, dmg:16 },
+  { emoji:'😤', name:'組長的靈魂拷問', hp:60, dmg:6 },
+  { emoji:'😠', name:'處長的 Design Review', hp:100, dmg:10 },
+  { emoji:'🤬', name:'V.P. 的終極提案會議', hp:160, dmg:16 },
 ];
 
 const SHOP_ITEMS = [
-  { id:'chair', name:'人體工學椅', desc:'MaxHP +20', cost:150, apply:s=>{s.maxHP+=20;s.hp+=20;} },
-  { id:'tablet', name:'高階手繪板', desc:'暴擊率 +8%', cost:180, apply:s=>{s.crit+=0.08;} },
-  { id:'grinder', name:'1Zpresso K-Ultra 手搖磨豆機', desc:'手沖儀式：立即恢復 HP/MP 各 40', cost:120, apply:s=>{s.hp=Math.min(s.maxHP,s.hp+40);s.mp=Math.min(s.maxMP,s.mp+40);} },
-  { id:'render', name:'進階渲染軟體課程', desc:'任務 MP 消耗 -3', cost:200, apply:s=>{s.questMpCostReduce=(s.questMpCostReduce||0)+3;} },
-  { id:'film', name:'底片攝影與老鏡頭收藏', desc:'品味 Taste +10（降低 Boss 防禦）', cost:220, apply:s=>{s.taste=(s.taste||0)+10;} },
+  { id:'chair', emoji:'🪑', name:'人體工學椅', desc:'MaxHP +20', cost:150, apply:s=>{s.maxHP+=20;s.hp+=20;} },
+  { id:'tablet', emoji:'🖊️', name:'高階手繪板', desc:'暴擊率 +8%', cost:180, apply:s=>{s.crit+=0.08;} },
+  { id:'grinder', emoji:'☕', name:'1Zpresso K-Ultra 手搖磨豆機', desc:'手沖儀式：立即恢復 HP/MP 各 40', cost:120, apply:s=>{s.hp=Math.min(s.maxHP,s.hp+40);s.mp=Math.min(s.maxMP,s.mp+40);} },
+  { id:'render', emoji:'🖥️', name:'進階渲染軟體課程', desc:'任務 MP 消耗 -3', cost:200, apply:s=>{s.questMpCostReduce=(s.questMpCostReduce||0)+3;} },
+  { id:'film', emoji:'📷', name:'底片攝影與老鏡頭收藏', desc:'品味 Taste +10（降低 Boss 防禦）', cost:220, apply:s=>{s.taste=(s.taste||0)+10;} },
 ];
 
 const RANDOM_EVENTS = [
@@ -402,115 +404,41 @@ function statLabel(key){
   return {CRE:'創意力', PRO:'專業力', COM:'溝通力', RES:'抗壓力'}[key] || key;
 }
 
-function bar(value, max, cls){
+function bar(value, max, cls, emoji){
   const pct = clamp(Math.round(value/max*100),0,100);
-  return `<div class="bar ${cls}"><div class="bar-fill" style="width:${pct}%"></div><span class="bar-text">${cls.toUpperCase()} ${Math.round(value)}/${max}</span></div>`;
+  return `<div class="bar ${cls}"><div class="bar-fill" style="width:${pct}%"></div><span class="bar-text">${emoji?emoji+' ':''}${cls.toUpperCase()} ${Math.round(value)}/${max}</span></div>`;
 }
 
-function gridToShadows(grid, colorHex, yOffsetRows){
-  const rowOffset = (yOffsetRows||0)*4;
-  let shadows = [];
-  grid.forEach((row,y)=>{
-    for(let x=0;x<row.length;x++){
-      if(row[x]==='#') shadows.push(`${x*4}px ${y*4+rowOffset}px 0 0 ${colorHex}`);
-    }
-  });
-  return shadows.join(',');
-}
-
-const HEAD_GRID = [
-  '..####..',
-  '.######.',
-  '.######.',
-  '.######.',
-];
-const EYE_GRID = [
-  '........',
-  '........',
-  '..#..#..',
-  '........',
-];
-// Two leg poses for a simple walk cycle.
-const BODY_GRID_STAND = [
-  '##.##.##',
-  '.######.',
-  '.##..##.',
-  '.##..##.',
-];
-const BODY_GRID_STEP = [
-  '##.##.##',
-  '.######.',
-  '..##.##.',
-  '.##..#..',
-];
-
-function pixelAvatar(bodyColor){
-  // Cute chibi-style 8x8 sprite (Kairosoft-ish): big round head + eyes + small body,
-  // drawn as three 4px-pixel layers positioned absolutely inside a fixed 32x32 frame
-  // so the box-shadow "pixels" can't bleed into sibling layout.
-  const head = gridToShadows(HEAD_GRID, SKIN_TONE, 0);
-  const eyes = gridToShadows(EYE_GRID, EYE_COLOR, 0);
-  const body = gridToShadows(BODY_GRID_STAND, bodyColor, 4);
-  return `<div class="pixel-avatar-frame">
-    <div class="pixel-avatar-dot" style="box-shadow:${body}"></div>
-    <div class="pixel-avatar-dot" style="box-shadow:${head}"></div>
-    <div class="pixel-avatar-dot" style="box-shadow:${eyes}"></div>
+/* ---- avatar / office view: emoji-based sprites ---- */
+function avatarBadge(emoji, accent, size){
+  size = size || 44;
+  return `<div class="avatar-badge" style="width:${size}px;height:${size}px;border-color:${accent};background:${accent}33;">
+    <span class="avatar-emoji" style="font-size:${Math.round(size*0.55)}px;">${emoji}</span>
   </div>`;
 }
 
-/* ---- office view: Game-Dev-Story-style top-down walking sprites ---- */
-const walkAnimCache = new Set();
-function walkAnimName(color){
-  return 'walk-' + color.replace('#','');
-}
-function ensureWalkAnimation(color){
-  const name = walkAnimName(color);
-  if(walkAnimCache.has(name)) return name;
-  walkAnimCache.add(name);
-  const a = gridToShadows(BODY_GRID_STAND, color, 4);
-  const b = gridToShadows(BODY_GRID_STEP, color, 4);
-  let styleEl = document.getElementById('dynamic-anim');
-  if(!styleEl){
-    styleEl = document.createElement('style');
-    styleEl.id = 'dynamic-anim';
-    document.head.appendChild(styleEl);
-  }
-  styleEl.textContent += `@keyframes ${name}{0%,49%{box-shadow:${a}}50%,100%{box-shadow:${b}}}`;
-  return name;
-}
-
-function officeWalker(color, opts){
-  const name = ensureWalkAnimation(color);
-  const head = gridToShadows(HEAD_GRID, SKIN_TONE, 0);
-  const eyes = gridToShadows(EYE_GRID, EYE_COLOR, 0);
-  const body = gridToShadows(BODY_GRID_STAND, color, 4);
+function officeWalker(emoji, opts){
   const dur = opts.duration || 6;
   const delay = opts.delay || 0;
   const range = opts.range || 60;
-  const bottom = opts.bottom || 4;
+  const bottom = opts.bottom || 6;
   return `<div class="office-walker" style="left:${opts.left}px; bottom:${bottom}px; --patrol-range:${range}px; animation-duration:${dur}s; animation-delay:-${delay}s;">
-    <div class="pixel-avatar-frame">
-      <div class="pixel-avatar-dot" style="box-shadow:${body}; animation:${name} 0.7s steps(1) infinite;"></div>
-      <div class="pixel-avatar-dot" style="box-shadow:${head}"></div>
-      <div class="pixel-avatar-dot" style="box-shadow:${eyes}"></div>
-    </div>
+    <div class="office-walker-emoji" style="animation-delay:-${(delay*0.4).toFixed(2)}s;">${emoji}</div>
   </div>`;
 }
 
-function renderOfficeView(playerColor){
-  const npcColors = ['#4d96ff','#2ec4b6'].filter(c=>c!==playerColor);
+function renderOfficeView(cls){
+  const npcs = CLASSES.filter(c=>c.id!==cls.id);
   const walkers = [
-    officeWalker(playerColor, {left:20, duration:5.5, delay:0, range:70, bottom:6}),
-    officeWalker(npcColors[0]||'#4d96ff', {left:120, duration:7, delay:1.5, range:50, bottom:6}),
-    officeWalker(npcColors[1]||'#2ec4b6', {left:220, duration:6.2, delay:3, range:60, bottom:6}),
+    officeWalker(cls.avatar, {left:20, duration:5.5, delay:0, range:70}),
+    officeWalker(npcs[0].avatar, {left:120, duration:7, delay:1.5, range:50}),
+    officeWalker(npcs[1].avatar, {left:220, duration:6.2, delay:3, range:60}),
   ];
+  const deskEmojis = ['🖥️','💻','🖥️','💻'];
   const deskLefts = [30,110,190,270];
-  const desks = deskLefts.map(l=>`
-    <div class="office-desk" style="left:${l}px">
-      <div class="office-monitor"></div>
-    </div>`).join('');
+  const desks = deskLefts.map((l,i)=>`<div class="office-desk" style="left:${l}px">${deskEmojis[i]}</div>`).join('');
   return `<div class="office-view">
-    <div class="office-label">辦公室 Live</div>
+    <div class="office-label">🏢 辦公室 Live</div>
     ${desks}
     ${walkers.join('')}
   </div>`;
@@ -534,7 +462,7 @@ function renderTitle(){
     <div class="screen title-screen">
       <h1 class="game-title">ASUS Design Center<br><span>Pixel Odyssey</span></h1>
       <p class="tagline">「每一個 Pixel 的偏移，都是一場史詩級的戰役。」</p>
-      <h2 class="section-title">選擇你入職的年代</h2>
+      <h2 class="section-title">🗓️ 選擇你入職的年代</h2>
       <div class="era-grid">
         ${ERAS.map(e=>`
           <button class="era-card" data-era="${e.id}">
@@ -564,7 +492,7 @@ let chosenEra = ERAS[0].id;
 function renderClassSelect(){
   root.innerHTML = `
     <div class="screen class-screen">
-      <h2 class="section-title">選擇你的初始職業</h2>
+      <h2 class="section-title">🎭 選擇你的初始職業</h2>
       <div class="class-grid">
         ${CLASSES.map(c=>`
           <button class="class-card" data-cls="${c.id}" style="border-color:${c.accent}">
@@ -598,7 +526,7 @@ function renderHub(){
   root.innerHTML = `
     <div class="screen hub-screen">
       <div class="hub-top">
-        ${pixelAvatar(cls.accent)}
+        ${avatarBadge(cls.avatar, cls.accent)}
         <div class="hub-id">
           <div class="hub-name">${cls.icon} ${cls.name}</div>
           <div class="hub-title">${grade} ・ ${role}</div>
@@ -606,18 +534,18 @@ function renderHub(){
         </div>
         <div class="hub-currency">💰 ${state.gold} Gold ・ ⭐ ${state.rep} 聲望</div>
       </div>
-      ${renderOfficeView(cls.accent)}
+      ${renderOfficeView(cls)}
       <div class="hub-bars">
-        ${bar(state.hp,state.maxHP,'hp')}
-        ${bar(state.mp,state.maxMP,'mp')}
-        ${bar(state.sp,state.maxSP,'sp')}
-        ${bar(state.exp - GRADE_EXP[gradeIndex(state.exp)], (GRADE_EXP[gradeIndex(state.exp)+1]||GRADE_EXP[GRADE_EXP.length-1]+1000) - GRADE_EXP[gradeIndex(state.exp)], 'exp')}
+        ${bar(state.hp,state.maxHP,'hp','❤️')}
+        ${bar(state.mp,state.maxMP,'mp','💙')}
+        ${bar(state.sp,state.maxSP,'sp','💚')}
+        ${bar(state.exp - GRADE_EXP[gradeIndex(state.exp)], (GRADE_EXP[gradeIndex(state.exp)+1]||GRADE_EXP[GRADE_EXP.length-1]+1000) - GRADE_EXP[gradeIndex(state.exp)], 'exp','📈')}
       </div>
-      <h2 class="section-title">陣營地圖</h2>
+      <h2 class="section-title">🗺️ 陣營地圖</h2>
       <div class="faction-grid">
         ${Object.entries(FACTIONS).map(([key,f])=>`
           <button class="faction-card" data-f="${key}" style="border-color:${f.color}">
-            <div class="faction-name" style="color:${f.color}">${f.name}</div>
+            <div class="faction-name" style="color:${f.color}">${f.dot} ${f.name}</div>
             <div class="faction-desc">${f.desc}</div>
           </button>`).join('')}
       </div>
@@ -648,9 +576,9 @@ function renderFaction(){
   const f = FACTIONS[activeFaction];
   root.innerHTML = `
     <div class="screen faction-screen">
-      <h2 class="section-title" style="color:${f.color}">${f.name}</h2>
+      <h2 class="section-title" style="color:${f.color}">${f.dot} ${f.name}</h2>
       <p class="faction-desc-full">${f.desc}</p>
-      ${bar(state.hp,state.maxHP,'hp')}${bar(state.mp,state.maxMP,'mp')}
+      ${bar(state.hp,state.maxHP,'hp','❤️')}${bar(state.mp,state.maxMP,'mp','💙')}
       <div class="quest-list">
         ${f.quests.map((q,i)=>`
           <div class="quest-card">
@@ -697,7 +625,7 @@ function doQuest(faction, quest){
 function startBossFight(){
   const idx = clamp(gradeIndex(state.exp), 0, BOSSES.length-1);
   const template = BOSSES[idx];
-  activeBoss = { name:template.name, hp:template.hp, maxHp:template.hp, dmg:template.dmg, rounds:5 };
+  activeBoss = { name:template.name, emoji:template.emoji, hp:template.hp, maxHp:template.hp, dmg:template.dmg, rounds:5 };
   state.skillUsedThisFight = false;
   state.skillEffects = {};
   currentScreen='boss'; render();
@@ -718,10 +646,10 @@ function renderBoss(){
   const cls = getClass(state);
   root.innerHTML = `
     <div class="screen boss-screen">
-      <h2 class="section-title boss-title">${activeBoss.name}</h2>
-      <div class="boss-hpbar">${bar(activeBoss.hp, activeBoss.maxHp,'boss')}</div>
+      <h2 class="section-title boss-title">${activeBoss.emoji} ${activeBoss.name}</h2>
+      <div class="boss-hpbar">${bar(activeBoss.hp, activeBoss.maxHp,'boss','😤')}</div>
       <div class="boss-rounds">剩餘回合：${activeBoss.rounds}</div>
-      ${bar(state.hp,state.maxHP,'hp')}${bar(state.mp,state.maxMP,'mp')}
+      ${bar(state.hp,state.maxHP,'hp','❤️')}${bar(state.mp,state.maxMP,'mp','💙')}
       <div class="card-row">
         <button class="card-btn" data-type="COM">🗣️ 簡報技巧<br><small>溝通力傷害</small></button>
         <button class="card-btn" data-type="CRE">💡 設計理念<br><small>創意力傷害</small></button>
@@ -811,7 +739,7 @@ function renderShop(){
       <div class="shop-grid">
         ${SHOP_ITEMS.map(item=>`
           <div class="shop-card">
-            <div class="shop-name">${item.name}</div>
+            <div class="shop-name">${item.emoji} ${item.name}</div>
             <div class="shop-desc">${item.desc}</div>
             <button class="btn-primary buy-btn" data-id="${item.id}" ${state.gold<item.cost?'disabled':''}>購買 (${item.cost} Gold)</button>
           </div>`).join('')}
@@ -837,7 +765,7 @@ function renderWeekend(){
     <div class="screen weekend-screen">
       <h2 class="section-title">🏠 週末時間</h2>
       <p>這個週末，你想怎麼度過？</p>
-      ${bar(state.sp,state.maxSP,'sp')}
+      ${bar(state.sp,state.maxSP,'sp','💚')}
       <div class="weekend-choices">
         <button id="familyBtn" class="btn-primary">👨‍👩‍👧 陪伴家人 / 朋友聚餐<br><small>SP +30，獲得「愛與支持」Buff（免疫一次 Boss 無情批評）</small></button>
         <button id="overtimeBtn" class="btn-secondary">💻 拼績效加班<br><small>Gold +80、EXP +40，但 SP -20</small></button>
