@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>PROFOLIO — Bubble Flow Map</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#3a3a3a;
+    --brand:#ffc400;
+    --brand-deep:#ffb300;
+    --brand-soft:#ffd54a;
+    --leaf:#bdbdbd;
+    --leaf-ring:#f2c200;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"PingFang SC","Microsoft JhengHei",sans-serif;
+    overflow:hidden;
+    letter-spacing:.02em;
+  }
+  #stage{position:fixed;inset:0;cursor:default}
+  svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+  /* labels & UI drawn in DOM on top of the SVG */
+  #labels{position:absolute;inset:0;pointer-events:none}
+  .label{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    line-height:1.05;
+    color:#fff;
+    font-weight:600;
+    white-space:pre;
+    text-shadow:0 1px 3px rgba(180,130,0,.28);
+    transition:opacity .35s ease, font-size .35s ease;
+    user-select:none;
+  }
+  .label.leaf{ color:#4a4a4a; text-shadow:none; font-weight:600;}
+  .label.hollow{ color:var(--brand-deep); text-shadow:none; font-weight:600;}
+
+  /* HUD */
+  .hud{position:absolute;pointer-events:auto;user-select:none}
+  #breadcrumb{
+    top:22px;left:26px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    max-width:70vw;font-size:13px;font-weight:600;color:#c9a200;
+  }
+  #breadcrumb .crumb{cursor:pointer;padding:3px 9px;border-radius:20px;background:rgba(255,196,0,.12);transition:.2s}
+  #breadcrumb .crumb:hover{background:rgba(255,196,0,.28);color:#8a6d00}
+  #breadcrumb .sep{opacity:.4;font-weight:400}
+  #breadcrumb .crumb.current{background:var(--brand);color:#fff}
+
+  #hint{
+    bottom:20px;left:0;right:0;text-align:center;font-size:12.5px;color:#c2c2c2;
+    letter-spacing:.06em;transition:opacity .6s ease;
+  }
+  #brandmark{
+    bottom:18px;right:24px;font-size:12px;font-weight:700;letter-spacing:.18em;color:#e2c86a;
+  }
+  .fade-out{opacity:0 !important}
+  @media (max-width:640px){
+    #breadcrumb{font-size:11px;max-width:86vw}
+  }
+
+  /* ---- gooey liquid-orbit loading intro (from the reference technique) ---- */
+  #loader{
+    position:fixed;inset:0;z-index:50;background:#fff;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  #loader.done{opacity:0;visibility:hidden}
+  .goo-orbit{
+    position:relative;width:230px;height:230px;
+    filter:url(#gooeyLoader);
+    animation:orbit-rot 4s ease-in-out infinite;
+  }
+  @keyframes orbit-rot{ 0%{transform:rotate(0)} 50%{transform:rotate(360deg)} 100%{transform:rotate(360deg)} }
+  .goo-orbit .drop{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:78px;height:78px;border-radius:50%;
+    background:radial-gradient(circle at 36% 32%, #ffd94a, #ffc400 55%, #ffb300);
+  }
+  /* center coalescing core */
+  .goo-orbit .core{width:96px;height:96px}
+  .goo-orbit .d1{animation:orb1 4s linear infinite}
+  .goo-orbit .d2{animation:orb2 4s linear infinite}
+  .goo-orbit .d3{animation:orb3 4s linear infinite}
+  .goo-orbit .d4{animation:orb4 4s linear infinite}
+  @keyframes orb1{0%{top:0}50%{top:100%}100%{top:100%}}
+  @keyframes orb2{0%{left:0}50%{left:100%}100%{left:100%}}
+  @keyframes orb3{0%{left:100%}50%{left:0}100%{left:0}}
+  @keyframes orb4{0%{top:100%}50%{top:0}100%{top:0}}
+  #loader .brand{
+    margin-top:26px;font-size:13px;font-weight:700;letter-spacing:.42em;
+    color:#e0b400;padding-left:.42em;
+    animation:brand-pulse 1.9s ease-in-out infinite;
+  }
+  @keyframes brand-pulse{0%,100%{opacity:.35}50%{opacity:1}}
+</style>
+</head>
+<body>
+<!-- gooey liquid-orbit loading intro -->
+<div id="loader">
+  <div class="goo-orbit">
+    <div class="drop core"></div>
+    <div class="drop d1"></div>
+    <div class="drop d2"></div>
+    <div class="drop d3"></div>
+    <div class="drop d4"></div>
+  </div>
+  <div class="brand">PROFOLIO</div>
+</div>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="gooeyLoader">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur"/>
+      <feColorMatrix in="blur" mode="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8" result="goo"/>
+      <feBlend in="SourceGraphic" in2="goo"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="stage">
+  <svg id="scene" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- the gooey / metaball filter: blur then hard-threshold alpha -->
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="13" result="blur"/>
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="goo"/>
+        <feBlend in="SourceGraphic" in2="goo"/>
+      </filter>
+
+      <radialGradient id="bubbleGrad" cx="38%" cy="34%" r="72%">
+        <stop offset="0%"  stop-color="#ffd633"/>
+        <stop offset="55%" stop-color="#ffc400"/>
+        <stop offset="100%" stop-color="#ffb300"/>
+      </radialGradient>
+      <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="#ffd54a" stop-opacity="0"/>
+        <stop offset="72%" stop-color="#ffd54a" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#ffcf2e" stop-opacity=".55"/>
+      </radialGradient>
+    </defs>
+
+    <!-- everything inside this group is fused by the goo filter -->
+    <g id="gooLayer" filter="url(#goo)"></g>
+    <!-- crisp overlay: inner highlight rings, hollow bubbles, leaves -->
+    <g id="overlay"></g>
+  </svg>
+  <div id="labels"></div>
+
+  <div id="breadcrumb" class="hud"></div>
+  <div id="hint" class="hud">click a bubble to dive deeper &nbsp;·&nbsp; click empty space to surface</div>
+  <div id="brandmark" class="hud">PROFOLIO</div>
+</div>
+
+<script>
+/* =========================================================================
+   PROFOLIO — interactive bubble flow map
+   Single-file. SVG metaball ("goo") filter + spring physics navigation.
+   ========================================================================= */
+
+/* ---- 1. Portfolio data tree ---------------------------------------------
+   size  = relative bubble radius weight
+   kind  = 'flow' (gooey yellow) | 'leaf' (portfolio piece, grey card-bubble)
+*/
+const TREE = {
+  id:'profolio', label:'PROFOLIO', size:1.15, children:[
+    { id:'audio', label:'AUDIO', size:.9, children:[
+        { id:'a-hp',  label:'headphone', size:.72, children:leaves('audio') },
+        { id:'a-iem', label:'IEM',       size:.66, children:leaves('audio') },
+        { id:'a-dac', label:'DAC / AMP', size:.6,  children:leaves('audio') },
+    ]},
+    { id:'life', label:'LIFE\nSTYLE', size:.92, children:[
+        { id:'l-bag', label:'bag',   size:.66, children:leaves('life') },
+        { id:'l-wear',label:'wear',  size:.7,  children:leaves('life') },
+        { id:'l-home',label:'home',  size:.64, children:leaves('life') },
+    ]},
+    { id:'lux', label:'LUX', size:.82, children:[
+        { id:'lx-watch', label:'watch', size:.66, children:leaves('lux') },
+        { id:'lx-pen',   label:'pen',   size:.58, children:leaves('lux') },
+    ]},
+    { id:'computer', label:'COMPUTER', size:1.35, children:[
+        { id:'gaming', label:'GAMING\nGEAR', size:.95, children:[
+            { id:'g-kb',  label:'keyboard',  size:.74, children:leaves('kb') },
+            { id:'g-ms',  label:'mouse',     size:.7,  children:leaves('ms') },
+            { id:'g-hp',  label:'headphone', size:.72, children:leaves('ghp') },
+            { id:'g-ch',  label:'chair',     size:.68, children:leaves('chair') },
+        ]},
+        { id:'pcdiy', label:'PC\nDIY', size:.72, children:[
+            { id:'d-gpu', label:'GPU',  size:.66, children:leaves('pcdiy') },
+            { id:'d-mb',  label:'board',size:.62, children:leaves('pcdiy') },
+            { id:'d-case',label:'case', size:.6,  children:leaves('pcdiy') },
+        ]},
+        { id:'pc', label:'PC', size:.66, children:[
+            { id:'p-lap', label:'laptop',  size:.64, children:leaves('pc') },
+            { id:'p-mini',label:'mini',    size:.56, children:leaves('pc') },
+        ]},
+    ]},
+  ]
+};
+
+/* project code-names used as portfolio leaves (from the reference boards) */
+function leaves(tag){
+  const NAMES = ['CLAYMORE','FLARE','SCOPE','FALCHION','AZOTH','FALCATA','GLAIVE','RAPIER'];
+  // deterministic-ish subset so each branch feels distinct
+  const start = Math.abs(hash(tag)) % NAMES.length;
+  const n = 4 + (Math.abs(hash(tag+'n')) % 3); // 4..6 pieces
+  const out = [];
+  for(let i=0;i<n;i++){
+    out.push({ id:tag+'-'+i, label:NAMES[(start+i)%NAMES.length], size:.62, kind:'leaf' });
+  }
+  return out;
+}
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return h;}
+
+/* mark node kinds + parent links */
+(function link(node,parent){
+  node.parent = parent || null;
+  node.kind = node.kind || 'flow';
+  (node.children||[]).forEach(c=>link(c,node));
+})(TREE,null);
+
+/* ---- 2. Runtime state ---------------------------------------------------- */
+const svgNS='http://www.w3.org/2000/svg';
+const scene   = document.getElementById('scene');
+const gooLayer= document.getElementById('gooLayer');
+const overlay = document.getElementById('overlay');
+const labelsEl= document.getElementById('labels');
+const crumbEl = document.getElementById('breadcrumb');
+const hintEl  = document.getElementById('hint');
+
+let W=window.innerWidth, H=window.innerHeight;
+let focus = TREE;          // currently expanded node
+let sprites = new Map();   // node.id -> sprite {node, x,y,vx,vy, r, tr, born, dying, role, els...}
+let baseR = 60;            // base radius unit, recomputed on resize
+
+function resize(){
+  W=window.innerWidth; H=window.innerHeight;
+  scene.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  baseR = Math.max(38, Math.min(W,H)*0.085);
+  layout();
+}
+window.addEventListener('resize',resize);
+
+/* radius for a node given its role */
+function radiusOf(node, role){
+  const r = baseR * node.size;
+  if(role==='focus')   return r*1.02;
+  if(role==='child')   return r*0.92;
+  if(role==='ancestor')return Math.max(30, r*0.62);
+  return r;
+}
+
+/* ---- 3. Layout: focus centered-ish, children radiate, ancestors trail --- */
+function layout(){
+  const active = new Set();
+
+  // focus node
+  const fx = W*0.5, fy = H*0.52;
+  ensure(focus, 'focus', fx, fy);
+  active.add(focus.id);
+
+  // children radiate around focus
+  const kids = (focus.children||[]);
+  if(kids.length){
+    const isLeaf = kids[0].kind==='leaf';
+    const ring = radiusOf(focus,'focus') + baseR*(isLeaf?1.9:2.15);
+    const spread = isLeaf ? Math.PI*2 : Math.PI*2;
+    const startA = -Math.PI/2 - (kids.length>1? (isLeaf? 0 : 0.0):0);
+    kids.forEach((k,i)=>{
+      const a = startA + spread*(i/Math.max(1,kids.length)) + (isLeaf?0:0);
+      // slight golden offset so clusters aren't perfectly symmetric
+      const rr = ring + (i%2? baseR*0.35 : 0);
+      const x = fx + Math.cos(a)*rr;
+      const y = fy + Math.sin(a)*rr*0.86;
+      ensure(k, k.kind==='leaf'?'leaf':'child', x, y);
+      active.add(k.id);
+    });
+  }
+
+  // ancestor trail: a receding diagonal stack anchored in the top-left,
+  // nearest parent closest to the focus so it reads as "where you came from"
+  const trail=[];
+  for(let a=focus.parent; a; a=a.parent) trail.push(a);   // [parent, grandparent, ...]
+  const gap = baseR*1.55;
+  trail.forEach((anc,i)=>{
+    // i=0 is the immediate parent -> place it lowest/largest, older ones recede up-left
+    const step = trail.length-1-i;            // reverse so root is farthest
+    const x = baseR*1.4 + step*gap*0.62;
+    const y = baseR*1.4 + step*gap*0.9;
+    ensure(anc,'ancestor', x, y);
+    active.add(anc.id);
+  });
+
+  // retire sprites no longer in the active set
+  sprites.forEach((s,id)=>{ if(!active.has(id)) retire(s); });
+
+  renderCrumbs();
+}
+
+function ensure(node, role, tx, ty){
+  let s = sprites.get(node.id);
+  if(!s){
+    // spawn near parent (so it appears to flow out) or center
+    const p = node.parent && sprites.get(node.parent.id);
+    const ox = p? p.x : W/2, oy = p? p.y : H/2;
+    s = { node, role, x:ox, y:oy, vx:0, vy:0,
+          r:2, tr:radiusOf(node,role), tx, ty,
+          born:performance.now(), dying:false,
+          phase:Math.random()*Math.PI*2, wob:0.6+Math.random()*0.7 };
+    createEls(s);
+    sprites.set(node.id, s);
+  }
+  s.role = role;
+  s.tx = tx; s.ty = ty;
+  s.tr = radiusOf(node, role);
+  s.dying = false;
+  updateElKind(s);
+  return s;
+}
+
+function retire(s){
+  if(s.dying) return;
+  s.dying = true;
+  s.tr = 0.5;
+  s.retireAt = performance.now();
+}
+
+/* ---- 4. SVG element creation per sprite ---------------------------------- */
+function createEls(s){
+  const node=s.node;
+  // goo blob (only for flow bubbles + connector); leaves/hollow live in overlay
+  s.blob = el('circle', {fill:'url(#bubbleGrad)'});
+  s.connector = el('path', {fill:'#ffc400'});
+  gooLayer.appendChild(s.connector);
+  gooLayer.appendChild(s.blob);
+
+  // crisp inner ring highlight
+  s.ring = el('circle', {fill:'none', stroke:'rgba(255,255,255,.32)','stroke-width':2});
+  s.halo = el('circle', {fill:'url(#haloGrad)'});
+  overlay.appendChild(s.halo);
+  overlay.appendChild(s.ring);
+
+  // leaf / hollow bubble bodies live in overlay (not gooified)
+  s.leafBody = el('circle', {});
+  overlay.appendChild(s.leafBody);
+
+  // label
+  s.label = document.createElement('div');
+  s.label.className='label';
+  s.label.textContent=node.label;
+  labelsEl.appendChild(s.label);
+}
+function el(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+
+function updateElKind(s){
+  const leaf = s.node.kind==='leaf';
+  const focusLeaves = (focus.children||[])[0]?.kind==='leaf';
+  // when the focus expands leaves, its non-focus siblings/children turn hollow
+  s.blob.style.display    = leaf? 'none':'block';
+  s.connector.style.display = (leaf||s.role==='ancestor')? 'none':'block';
+  s.halo.style.display    = leaf? 'none':'block';
+  s.ring.style.display    = leaf? 'none':'block';
+  s.leafBody.style.display= leaf? 'block':'none';
+
+  if(leaf){
+    s.leafBody.setAttribute('fill','#c9c9c9');
+    s.leafBody.setAttribute('stroke','var(--leaf-ring)');
+    s.leafBody.setAttribute('stroke-width','2.5');
+    s.label.className='label leaf';
+  } else {
+    s.label.className='label';
+    s.label.style.opacity = s.role==='ancestor'? .82 : 1;
+  }
+}
+
+/* ---- 5. Interaction ------------------------------------------------------ */
+scene.addEventListener('click', onSceneClick);
+labelsEl.addEventListener('click', onSceneClick);
+
+function onSceneClick(e){
+  const p = pointFromEvent(e);
+  // hit-test sprites (topmost / smallest first feels natural)
+  let hit=null, best=Infinity;
+  sprites.forEach(s=>{
+    const d=Math.hypot(p.x-s.x, p.y-s.y);
+    if(d<=s.r*1.02 && d<best){best=d;hit=s;}
+  });
+  if(hit){
+    handleHit(hit);
+  } else {
+    // empty space -> surface one level
+    if(focus.parent) setFocus(focus.parent);
+  }
+  fadeHint();
+}
+
+function handleHit(s){
+  const node=s.node;
+  if(node===focus){
+    // clicking the focus itself surfaces (unless it's root)
+    if(node.parent) setFocus(node.parent);
+    else pulse(s);
+    return;
+  }
+  if(node.kind==='leaf'){
+    pulse(s); flashLeaf(s);        // portfolio piece — no deeper layer
+    return;
+  }
+  if(node.children && node.children.length){
+    setFocus(node);
+  } else {
+    pulse(s);
+  }
+}
+
+function setFocus(node){
+  if(node===focus) return;
+  focus=node;
+  layout();
+}
+
+function pointFromEvent(e){
+  const r=scene.getBoundingClientRect();
+  const cx=(e.touches?e.touches[0].clientX:e.clientX);
+  const cy=(e.touches?e.touches[0].clientY:e.clientY);
+  return { x:(cx-r.left)/r.width*W, y:(cy-r.top)/r.height*H };
+}
+
+function pulse(s){ s.pulse=1; }
+function flashLeaf(s){
+  s.leafBody.setAttribute('fill','#ffca28');
+  clearTimeout(s._ft);
+  s._ft=setTimeout(()=>s.leafBody.setAttribute('fill','#c9c9c9'),260);
+}
+
+/* ---- 6. Breadcrumb ------------------------------------------------------- */
+function renderCrumbs(){
+  const chain=[]; let n=focus; while(n){chain.unshift(n);n=n.parent;}
+  crumbEl.innerHTML='';
+  chain.forEach((n,i)=>{
+    if(i>0){const sep=document.createElement('span');sep.className='sep';sep.textContent='›';crumbEl.appendChild(sep);}
+    const c=document.createElement('span');
+    c.className='crumb'+(n===focus?' current':'');
+    c.textContent=(n.label||'').replace('\n',' ');
+    c.onclick=(e)=>{e.stopPropagation();setFocus(n);};
+    crumbEl.appendChild(c);
+  });
+}
+
+/* ---- 7. Animation loop: springs + idle wobble + collision ---------------- */
+let last=performance.now();
+function tick(now){
+  const dt=Math.min(48, now-last)/1000; last=now;
+  const t=now/1000;
+
+  // physics integrate
+  sprites.forEach(s=>{
+    // idle float offset
+    const fx = Math.cos(t*0.7*s.wob + s.phase)*4.5;
+    const fy = Math.sin(t*0.9*s.wob + s.phase)*4.5;
+    const gx = s.tx + fx, gy = s.ty + fy;
+
+    // spring toward target
+    const k=9.5, damp=0.82;
+    s.vx += (gx - s.x)*k*dt;
+    s.vy += (gy - s.y)*k*dt;
+    s.vx *= damp; s.vy *= damp;
+    s.x += s.vx*dt*6; s.y += s.vy*dt*6;
+
+    // radius spring
+    s.r += (s.tr - s.r)*Math.min(1, dt*10);
+
+    // pulse decay
+    if(s.pulse){ s.pulse*=0.9; if(s.pulse<0.02)s.pulse=0; }
+  });
+
+  // soft collision between same-cluster bubbles (skip ancestors)
+  const arr=[...sprites.values()].filter(s=>s.role!=='ancestor' && !s.dying);
+  for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){
+    const a=arr[i],b=arr[j];
+    const dx=b.x-a.x, dy=b.y-a.y; let d=Math.hypot(dx,dy)||.001;
+    const min=(a.r+b.r)*0.92;
+    if(d<min){
+      const push=(min-d)/d*0.5;
+      const ox=dx*push, oy=dy*push;
+      a.x-=ox;a.y-=oy;b.x+=ox;b.y+=oy;
+    }
+  }
+
+  // draw
+  sprites.forEach(drawSprite);
+
+  // remove fully-dead sprites
+  sprites.forEach((s,id)=>{
+    if(s.dying && (s.r<3)){
+      [s.blob,s.connector,s.ring,s.halo,s.leafBody].forEach(e=>e&&e.remove());
+      s.label&&s.label.remove();
+      sprites.delete(id);
+    }
+  });
+
+  requestAnimationFrame(tick);
+}
+
+function drawSprite(s){
+  const r=Math.max(0.5,s.r)*(1+ (s.pulse||0)*0.12);
+  s.blob.setAttribute('cx',s.x); s.blob.setAttribute('cy',s.y); s.blob.setAttribute('r',r);
+  s.ring.setAttribute('cx',s.x); s.ring.setAttribute('cy',s.y); s.ring.setAttribute('r',Math.max(0.5,r-7));
+  s.halo.setAttribute('cx',s.x); s.halo.setAttribute('cy',s.y); s.halo.setAttribute('r',r);
+  s.leafBody.setAttribute('cx',s.x); s.leafBody.setAttribute('cy',s.y); s.leafBody.setAttribute('r',r);
+
+  // connector: tapered capsule from parent(focus) to this child so the goo fuses them
+  if(s.connector.style.display!=='none' && s.node.parent){
+    const p=sprites.get(s.node.parent.id);
+    if(p){
+      s.connector.setAttribute('d', capsule(p.x,p.y, s.x,s.y, r*0.6, p.r*0.6));
+      const opacity = clamp((s.r/ s.tr)||0,0,1);
+      s.connector.setAttribute('opacity', s.dying?0:opacity);
+    }
+  }
+
+  // label
+  const L=s.label;
+  L.style.left=s.x+'px'; L.style.top=s.y+'px';
+  const fs = Math.max(9, r*0.30);
+  L.style.fontSize = (s.node.label.includes('\n')? fs*0.86 : fs).toFixed(1)+'px';
+  L.style.opacity = s.dying?0 : (s.r/s.tr<0.4?0: (s.role==='ancestor'?0.85:1));
+  L.style.display = r<8?'none':'block';
+}
+
+/* rounded tapered link between two circles -> reads as stretching liquid */
+function capsule(x1,y1,x2,y2,r1,r2){
+  const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy)||.001;
+  const nx=-dy/len, ny=dx/len;
+  // narrow the neck in the middle for a "flow" pinch
+  const a1x=x1+nx*r1, a1y=y1+ny*r1;
+  const a2x=x2+nx*r2, a2y=y2+ny*r2;
+  const b2x=x2-nx*r2, b2y=y2-ny*r2;
+  const b1x=x1-nx*r1, b1y=y1-ny*r1;
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  const neck=Math.min(r1,r2)*0.55;
+  return `M${a1x},${a1y} Q${mx+nx*neck},${my+ny*neck} ${a2x},${a2y}
+          L${b2x},${b2y} Q${mx-nx*neck},${my-ny*neck} ${b1x},${b1y} Z`;
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+/* ---- 8. Intro & boot ----------------------------------------------------- */
+let hintFaded=false;
+function fadeHint(){ if(hintFaded)return; hintFaded=true; hintEl.classList.add('fade-out'); }
+
+/* gooey loader hands off to the map after the orbit resolves */
+const loaderEl=document.getElementById('loader');
+function dismissLoader(){
+  if(!loaderEl || loaderEl.classList.contains('done')) return;
+  loaderEl.classList.add('done');
+  setTimeout(()=>loaderEl && loaderEl.remove(), 800);
+  setTimeout(fadeHint, 6500);
+}
+// let the liquid orbit merge/split ~once, then reveal the map
+setTimeout(dismissLoader, 2600);
+// allow skipping the intro with a click/keypress
+loaderEl && loaderEl.addEventListener('click', dismissLoader);
+window.addEventListener('keydown', dismissLoader, {once:true});
+
+resize();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
