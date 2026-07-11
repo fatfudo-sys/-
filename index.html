@@ -65,9 +65,66 @@
   @media (max-width:640px){
     #breadcrumb{font-size:11px;max-width:86vw}
   }
+
+  /* ---- gooey liquid-orbit loading intro (from the reference technique) ---- */
+  #loader{
+    position:fixed;inset:0;z-index:50;background:#fff;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  #loader.done{opacity:0;visibility:hidden}
+  .goo-orbit{
+    position:relative;width:230px;height:230px;
+    filter:url(#gooeyLoader);
+    animation:orbit-rot 4s ease-in-out infinite;
+  }
+  @keyframes orbit-rot{ 0%{transform:rotate(0)} 50%{transform:rotate(360deg)} 100%{transform:rotate(360deg)} }
+  .goo-orbit .drop{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:78px;height:78px;border-radius:50%;
+    background:radial-gradient(circle at 36% 32%, #ffd94a, #ffc400 55%, #ffb300);
+  }
+  /* center coalescing core */
+  .goo-orbit .core{width:96px;height:96px}
+  .goo-orbit .d1{animation:orb1 4s linear infinite}
+  .goo-orbit .d2{animation:orb2 4s linear infinite}
+  .goo-orbit .d3{animation:orb3 4s linear infinite}
+  .goo-orbit .d4{animation:orb4 4s linear infinite}
+  @keyframes orb1{0%{top:0}50%{top:100%}100%{top:100%}}
+  @keyframes orb2{0%{left:0}50%{left:100%}100%{left:100%}}
+  @keyframes orb3{0%{left:100%}50%{left:0}100%{left:0}}
+  @keyframes orb4{0%{top:100%}50%{top:0}100%{top:0}}
+  #loader .brand{
+    margin-top:26px;font-size:13px;font-weight:700;letter-spacing:.42em;
+    color:#e0b400;padding-left:.42em;
+    animation:brand-pulse 1.9s ease-in-out infinite;
+  }
+  @keyframes brand-pulse{0%,100%{opacity:.35}50%{opacity:1}}
 </style>
 </head>
 <body>
+<!-- gooey liquid-orbit loading intro -->
+<div id="loader">
+  <div class="goo-orbit">
+    <div class="drop core"></div>
+    <div class="drop d1"></div>
+    <div class="drop d2"></div>
+    <div class="drop d3"></div>
+    <div class="drop d4"></div>
+  </div>
+  <div class="brand">PROFOLIO</div>
+</div>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="gooeyLoader">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur"/>
+      <feColorMatrix in="blur" mode="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8" result="goo"/>
+      <feBlend in="SourceGraphic" in2="goo"/>
+    </filter>
+  </defs>
+</svg>
+
 <div id="stage">
   <svg id="scene" preserveAspectRatio="xMidYMid slice">
     <defs>
@@ -498,7 +555,20 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 /* ---- 8. Intro & boot ----------------------------------------------------- */
 let hintFaded=false;
 function fadeHint(){ if(hintFaded)return; hintFaded=true; hintEl.classList.add('fade-out'); }
-setTimeout(fadeHint, 7000);
+
+/* gooey loader hands off to the map after the orbit resolves */
+const loaderEl=document.getElementById('loader');
+function dismissLoader(){
+  if(!loaderEl || loaderEl.classList.contains('done')) return;
+  loaderEl.classList.add('done');
+  setTimeout(()=>loaderEl && loaderEl.remove(), 800);
+  setTimeout(fadeHint, 6500);
+}
+// let the liquid orbit merge/split ~once, then reveal the map
+setTimeout(dismissLoader, 2600);
+// allow skipping the intro with a click/keypress
+loaderEl && loaderEl.addEventListener('click', dismissLoader);
+window.addEventListener('keydown', dismissLoader, {once:true});
 
 resize();
 requestAnimationFrame(tick);
