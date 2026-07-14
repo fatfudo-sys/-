@@ -38,17 +38,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:none}
 #spot{position:fixed;inset:0;pointer-events:none;z-index:6;mix-blend-mode:screen;
   background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.10),rgba(255,255,255,.03) 40%,transparent 62%);
   transition:opacity .6s var(--f-cubic)}
-#cx-h,#cx-v{position:fixed;pointer-events:none;z-index:48;opacity:.9;transition:opacity .5s var(--f-cubic)}
-#cx-h{left:0;right:0;height:1px;top:0;transform:translateY(var(--my,50vh));
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.32) 30%,var(--bright) 50%,rgba(255,255,255,.32) 70%,transparent)}
-#cx-v{top:0;bottom:0;width:1px;left:0;transform:translateX(var(--mx,50vw));
-  background:linear-gradient(180deg,transparent,rgba(255,255,255,.28) 30%,var(--bright) 50%,rgba(255,255,255,.28) 70%,transparent)}
-#cx-dot{position:fixed;z-index:49;top:0;left:0;width:9px;height:9px;border-radius:50%;background:var(--bright);
-  transform:translate(calc(var(--mx,50vw) - 4.5px),calc(var(--my,50vh) - 4.5px));pointer-events:none;
-  box-shadow:0 0 22px 7px rgba(255,255,255,.55),0 0 4px 1px rgba(255,255,255,.9);transition:width .3s,height .3s,background .3s}
-#cx-ring{position:fixed;z-index:47;top:0;left:0;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.35);
-  transform:translate(calc(var(--rx,50vw) - 19px),calc(var(--ry,50vh) - 19px));pointer-events:none;transition:width .35s var(--f-cubic),height .35s var(--f-cubic),opacity .4s}
-body.tap #cx-dot{width:15px;height:15px}
+#trail{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:48;mix-blend-mode:screen}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .vignette{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(140% 100% at 50% 40%,transparent 45%,rgba(0,0,0,.55))}
@@ -89,7 +79,7 @@ body.tap #cx-dot{width:15px;height:15px}
 .wall{position:relative;height:100svh;overflow:hidden;z-index:5}
 .wall.native{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
 .wall-track{position:absolute;top:50%;left:0;transform:translateY(-50%);display:grid;grid-auto-flow:column;
-  grid-template-rows:repeat(3,minmax(0,1fr));grid-auto-columns:300px;gap:30px;padding:130px 9vw 40px;
+  grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-columns:300px;gap:34px;padding:120px 9vw 56px;
   align-content:center;will-change:transform}
 .wall.native .wall-track{position:relative;top:auto;transform:none;grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-columns:78vw;padding:120px 5vw 40px}
 
@@ -246,7 +236,7 @@ footer .base .mono{color:var(--faint)}
 <div id="spot"></div>
 <div class="grain"></div>
 <div class="vignette"></div>
-<div id="cx-h"></div><div id="cx-v"></div><div id="cx-ring"></div><div id="cx-dot"></div>
+<canvas id="trail"></canvas>
 
 <div class="topbar">
   <a href="#top" class="brand">Johnny <b>Chan</b><span style="color:var(--faint)">⟡</span></a>
@@ -443,21 +433,42 @@ function updatePan(x,y){
 
 /* ---------- mouse light ---------- */
 const root=document.documentElement;
-let rx=innerWidth/2,ry=innerHeight/2;
-function ringLoop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;
-  root.style.setProperty('--rx',rx+'px');root.style.setProperty('--ry',ry+'px');requestAnimationFrame(ringLoop);}
 let mx=innerWidth/2,my=innerHeight/2;
 addEventListener('pointermove',e=>{
   mx=e.clientX;my=e.clientY;
   root.style.setProperty('--mx',mx+'px');root.style.setProperty('--my',my+'px');
+  pushTrail(mx,my);
   updatePan(mx,my);
 },{passive:true});
-addEventListener('pointerdown',()=>document.body.classList.add('tap'));
-addEventListener('pointerup',()=>document.body.classList.remove('tap'));
-// enlarge ring over interactive cards
-addEventListener('pointerover',e=>{const c=e.target.closest('.card,.le,.chip,.jump,.big-link,.close,.row');
-  const r=document.getElementById('cx-ring'); r.style.width=c?'58px':'38px'; r.style.height=c?'58px':'38px';
-  r.style.opacity=c?'.7':'.35';},{passive:true});
+
+/* flowing light tail (comet trail) */
+const cv=document.getElementById('trail'),ctx=cv.getContext('2d');
+let dpr=1,pts=[];
+function sizeTrail(){dpr=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+sizeTrail(); addEventListener('resize',sizeTrail,{passive:true});
+function pushTrail(x,y,t){pts.push({x,y,t:t||performance.now()});if(pts.length>60)pts.shift();}
+function trailLoop(now){
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  const life=560;
+  while(pts.length&&now-pts[0].t>life)pts.shift();
+  if(pts.length>1){
+    ctx.lineCap='round';ctx.lineJoin='round';
+    for(let i=1;i<pts.length;i++){
+      const p0=pts[i-1],p1=pts[i],a=1-(now-p1.t)/life;
+      if(a<=0)continue;
+      ctx.strokeStyle='rgba(255,255,255,'+(a*0.5).toFixed(3)+')';
+      ctx.lineWidth=0.6+a*a*7;
+      ctx.shadowColor='rgba(255,255,255,'+(a*0.85).toFixed(3)+')';ctx.shadowBlur=14*a;
+      ctx.beginPath();ctx.moveTo(p0.x,p0.y);ctx.lineTo(p1.x,p1.y);ctx.stroke();
+    }
+    const h=pts[pts.length-1];ctx.shadowBlur=0;
+    const g=ctx.createRadialGradient(h.x,h.y,0,h.x,h.y,18);
+    g.addColorStop(0,'rgba(255,255,255,.95)');g.addColorStop(.4,'rgba(255,255,255,.35)');g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(h.x,h.y,18,0,Math.PI*2);ctx.fill();
+  }
+  requestAnimationFrame(trailLoop);
+}
+requestAnimationFrame(trailLoop);
 
 /* ---------- recognition / disc / ledger / modal ---------- */
 function buildAwards(){
@@ -544,7 +555,7 @@ function init(){
   detectMode(); addEventListener('resize',()=>{detectMode();},{passive:true});
   buildFilters(); buildWall(); buildAwards(); buildDisc(); buildLedger();
   document.getElementById('total').textContent=WORKS.length;
-  panLoop(); ringLoop();
+  panLoop();
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.12});
   document.querySelectorAll('.rev').forEach(e=>io.observe(e));
   addEventListener('scroll',()=>{document.getElementById('tofile').classList.toggle('show',scrollY>innerHeight*.8);},{passive:true});
