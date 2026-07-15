@@ -60,9 +60,18 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:none}
 @media(max-width:720px){.topbar .rt .c.hideS{display:none}}
 
 /* filter rail */
-.rail{position:fixed;top:60px;left:0;right:0;z-index:39;display:flex;gap:8px;align-items:center;justify-content:center;
-  flex-wrap:wrap;padding:6px var(--pad);pointer-events:none}
+.rail{position:fixed;top:54px;left:0;right:0;z-index:39;display:flex;flex-direction:column;gap:9px;align-items:center;
+  padding:6px var(--pad);pointer-events:none}
 .rail>*{pointer-events:auto}
+.rail .line{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.rail .sep{width:1px;height:16px;background:var(--line);margin:0 2px}
+.rail .sub{display:none}
+.rail .sub.show{display:flex;animation:subin .5s var(--f-cubic)}
+@keyframes subin{from{opacity:0;transform:translateY(-7px)}}
+.rail .sub-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);align-self:center}
+.chip.sm{font-size:9.5px;padding:5px 10px;letter-spacing:.08em;color:var(--faint);border-color:var(--line-2)}
+.chip.sm:hover{color:var(--paper);border-color:var(--line)}
+.chip.sm.on{background:var(--accent);color:var(--ink);border-color:var(--accent)}
 .chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px 13px;
   border:1px solid var(--line);border-radius:100px;color:var(--dim);background:rgba(10,11,11,.5);backdrop-filter:blur(8px);
   transition:.35s var(--f-cubic)}
@@ -248,9 +257,16 @@ footer .base .mono{color:var(--faint)}
 </div>
 
 <div class="rail">
-  <div id="f-group" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-  <div id="f-award" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-  <div class="sb"><span class="mono" style="letter-spacing:0">⌕</span><input id="search" type="text" placeholder="Search…" autocomplete="off"></div>
+  <div class="line">
+    <div id="f-group" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    <span class="sep"></span>
+    <div id="f-award" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    <div class="sb"><span class="mono" style="letter-spacing:0">⌕</span><input id="search" type="text" placeholder="Search…" autocomplete="off"></div>
+  </div>
+  <div class="line sub" id="subwrap">
+    <span class="sub-lbl" id="sublbl"></span>
+    <div id="f-cat" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  </div>
 </div>
 
 <div class="wall" id="wall">
@@ -309,7 +325,7 @@ footer .base .mono{color:var(--faint)}
     <div class="fc rev">
       <div class="k">Practice</div>
       <p><b style="color:var(--paper)">Product · Industrial · CMF</b><br>Gaming hardware, computing, furniture,
-        jewellery &amp; consumer objects. Working with houses including ASUS, Qeelin and Arctic .</p>
+        jewellery &amp; consumer objects. Working with houses including ASUS, Qeelin and Arctic.</p>
     </div>
     <div class="fc rev">
       <div class="k">Presence</div>
@@ -361,10 +377,11 @@ function badgesHTML(w,compact){const list=badgeList(w);if(!list.length)return ''
   if(compact&&list.length>2)h+=`<span class="badge">+${list.length-2}</span>`;return h;}
 
 /* ---------- WALL ---------- */
-const state={group:'all',award:'all',q:''};
+const state={group:'all',cat:'all',award:'all',q:''};
 const track=document.getElementById('track');
 function match(w){
   if(state.group!=='all'&&w.group!==state.group)return false;
+  if(state.cat!=='all'&&w.category!==state.cat)return false;
   if(state.award==='reddot'&&!w.reddot)return false;
   if(state.award==='if'&&!w.if)return false;
   if(state.award==='gmark'&&!w.gmark)return false;
@@ -543,8 +560,23 @@ function buildFilters(){
   [['all','All awards'],['reddot','Red Dot'],['if','iF'],['gmark','G-Mark'],['any','Any award']].forEach(([k,l])=>{
     const c=el('button','chip'+(k==='all'?' on':''),l);c.dataset.a=k;c.onclick=()=>{state.award=k;sync();buildWall();};as.appendChild(c);});
   document.getElementById('search').addEventListener('input',e=>{state.q=e.target.value.trim().toLowerCase();buildWall();});
+  buildSubIndex();
 }
-function setGroup(g){state.group=g;sync();buildWall();}
+function buildSubIndex(){
+  const wrap=document.getElementById('subwrap'),box=document.getElementById('f-cat'),lbl=document.getElementById('sublbl');
+  box.innerHTML='';
+  if(state.group==='all'){wrap.classList.remove('show');return;}
+  const gnames={computer:'Computing',lifestyle:'Lifestyle',consumer:'Consumer',PROJECT:'Brand Projects'};
+  lbl.textContent=(gnames[state.group]||state.group)+' ›';
+  const items=WORKS.filter(w=>w.group===state.group);
+  const cats=[...new Set(items.map(w=>w.category))];
+  const mk=(c,label)=>{const b=el('button','chip sm'+(state.cat===c?' on':''),label);b.dataset.c=c;b.onclick=()=>setCat(c);return b;};
+  box.appendChild(mk('all','All '+items.length));
+  cats.forEach(c=>box.appendChild(mk(c,fixCat(c)+' · '+items.filter(w=>w.category===c).length)));
+  wrap.classList.add('show');
+}
+function setGroup(g){state.group=g;state.cat='all';sync();buildSubIndex();buildWall();}
+function setCat(c){state.cat=c;document.querySelectorAll('#f-cat .chip').forEach(x=>x.classList.toggle('on',x.dataset.c===state.cat));buildWall();}
 function sync(){
   document.querySelectorAll('#f-group .chip').forEach(c=>c.classList.toggle('on',c.dataset.g===state.group));
   document.querySelectorAll('#f-award .chip').forEach(c=>c.classList.toggle('on',c.dataset.a===state.award));
