@@ -38,7 +38,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:none}
 #spot{position:fixed;inset:0;pointer-events:none;z-index:2147483646;mix-blend-mode:screen;
   background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.10),rgba(255,255,255,.03) 40%,transparent 62%);
   transition:opacity .5s var(--f-cubic)}
-body.gaming #spot,body.gaming #trail{opacity:0}
+body.gaming #spot,body.gaming #trail,body.tooling #spot,body.tooling #trail{opacity:0}
 #trail{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2147483647;mix-blend-mode:screen;transition:opacity .5s var(--f-cubic)}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -257,7 +257,7 @@ footer .base .mono{color:var(--faint)}
 .game .g-ov{position:absolute;inset:0;background:rgba(5,6,6,.92);backdrop-filter:blur(16px);animation:fade .5s var(--f-cubic)}
 .g-shell{position:relative;z-index:2;width:min(1240px,96vw);height:min(880px,94vh);background:#0d1117;
   border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:pop .6s var(--f-cubic);box-shadow:0 50px 140px -40px #000}
-#g-frame{width:100%;height:100%;border:0;display:block;background:#0d1117}
+.g-shell iframe{width:100%;height:100%;border:0;display:block;background:#0d1117}
 .game .g-close{z-index:5}
 .g-close{position:absolute;top:14px;right:14px;z-index:3;width:40px;height:40px;border:1px solid var(--line);border-radius:100px;
   display:flex;align-items:center;justify-content:center;background:rgba(10,11,11,.6);transition:.4s var(--f-cubic)}
@@ -320,6 +320,7 @@ footer .base .mono{color:var(--faint)}
   <a href="#top" class="brand">Johnny <b>Chan</b><span style="color:var(--faint)">⟡</span></a>
   <div class="rt">
     <div class="c hideS"><b id="shown">92</b> / <span id="total">92</span> works</div>
+    <button class="jump" id="colorbtn">🎨 Color</button>
     <button class="jump play" id="playbtn">▶ Play</button>
     <a href="#read" class="jump">Read ↓</a>
   </div>
@@ -417,6 +418,14 @@ footer .base .mono{color:var(--faint)}
   <div class="g-shell">
     <button class="g-close" data-gclose aria-label="Close">✕</button>
     <iframe id="g-frame" title="設計中心生存記 · Design Center Survivor"></iframe>
+  </div>
+</div>
+
+<div class="game" id="tool">
+  <div class="g-ov" data-tclose></div>
+  <div class="g-shell">
+    <button class="g-close" data-tclose aria-label="Close">✕</button>
+    <iframe id="t-frame" title="Color Picker — Pantone / LAB / RGB / CMYK"></iframe>
   </div>
 </div>
 
@@ -673,6 +682,18 @@ function closeGame(){
   document.body.classList.remove('gaming');
   document.body.style.overflow='';
 }
+const tFrame=document.getElementById('t-frame');
+function openTool(){
+  if(!tFrame.getAttribute('src'))tFrame.setAttribute('src','colorpicker.html');
+  document.getElementById('tool').classList.add('open');
+  document.body.classList.add('tooling');
+  document.body.style.overflow='hidden';
+}
+function closeTool(){
+  document.getElementById('tool').classList.remove('open');
+  document.body.classList.remove('tooling');
+  document.body.style.overflow='';
+}
 
 
 /* ---------- init ---------- */
@@ -686,8 +707,12 @@ function init(){
   addEventListener('scroll',()=>{document.getElementById('tofile').classList.toggle('show',scrollY>innerHeight*.8);},{passive:true});
   document.getElementById('playbtn').onclick=openGame;
   document.getElementById('playfab').onclick=openGame;
+  document.getElementById('colorbtn').onclick=openTool;
   document.querySelectorAll('#game [data-gclose]').forEach(e=>e.onclick=closeGame);
-  addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('game').classList.contains('open'))closeGame();});
+  document.querySelectorAll('#tool [data-tclose]').forEach(e=>e.onclick=closeTool);
+  addEventListener('keydown',e=>{if(e.key!=='Escape')return;
+    if(document.getElementById('game').classList.contains('open'))closeGame();
+    if(document.getElementById('tool').classList.contains('open'))closeTool();});
 }
 if(document.readyState!=='loading')init(); else document.addEventListener('DOMContentLoaded',init);
 </script>
