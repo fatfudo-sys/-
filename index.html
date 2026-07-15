@@ -35,10 +35,11 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:none}
 .serif{font-family:var(--serif)}
 
 /* ===== mouse light system ===== */
-#spot{position:fixed;inset:0;pointer-events:none;z-index:6;mix-blend-mode:screen;
+#spot{position:fixed;inset:0;pointer-events:none;z-index:2147483646;mix-blend-mode:screen;
   background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.10),rgba(255,255,255,.03) 40%,transparent 62%);
-  transition:opacity .6s var(--f-cubic)}
-#trail{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:48;mix-blend-mode:screen}
+  transition:opacity .5s var(--f-cubic)}
+body.gaming #spot,body.gaming #trail{opacity:0}
+#trail{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2147483647;mix-blend-mode:screen;transition:opacity .5s var(--f-cubic)}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .vignette{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(140% 100% at 50% 40%,transparent 45%,rgba(0,0,0,.55))}
@@ -254,8 +255,10 @@ footer .base .mono{color:var(--faint)}
 .game{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:var(--pad)}
 .game.open{display:flex}
 .game .g-ov{position:absolute;inset:0;background:rgba(5,6,6,.92);backdrop-filter:blur(16px);animation:fade .5s var(--f-cubic)}
-.g-box{position:relative;z-index:2;width:100%;max-width:780px;max-height:92vh;overflow:auto;background:var(--ink-2);
-  border:1px solid var(--line);border-radius:18px;padding:clamp(24px,4vw,46px);animation:pop .6s var(--f-cubic)}
+.g-shell{position:relative;z-index:2;width:min(1240px,96vw);height:min(880px,94vh);background:#0d1117;
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:pop .6s var(--f-cubic);box-shadow:0 50px 140px -40px #000}
+#g-frame{width:100%;height:100%;border:0;display:block;background:#0d1117}
+.game .g-close{z-index:5}
 .g-close{position:absolute;top:14px;right:14px;z-index:3;width:40px;height:40px;border:1px solid var(--line);border-radius:100px;
   display:flex;align-items:center;justify-content:center;background:rgba(10,11,11,.6);transition:.4s var(--f-cubic)}
 .g-close:hover{background:var(--bright);color:var(--ink);transform:rotate(90deg)}
@@ -411,9 +414,9 @@ footer .base .mono{color:var(--faint)}
 
 <div class="game" id="game">
   <div class="g-ov" data-gclose></div>
-  <div class="g-box">
+  <div class="g-shell">
     <button class="g-close" data-gclose aria-label="Close">✕</button>
-    <div id="g-view"></div>
+    <iframe id="g-frame" title="設計中心生存記 · Design Center Survivor"></iframe>
   </div>
 </div>
 
@@ -657,112 +660,20 @@ function sync(){
   document.querySelectorAll('#f-award .chip').forEach(c=>c.classList.toggle('on',c.dataset.a===state.award));
 }
 
-/* ---------- POP-UP GAME: The Jury Room ---------- */
-const G_ROUNDS=8, G_AW=[['reddot','Red Dot'],['if','iF Design'],['gmark','G-Mark']];
-let G={i:0,score:0,deck:[],pick:{},answered:false};
-const gView=()=>document.getElementById('g-view');
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function openGame(){buildDeck();G.i=0;G.score=0;renderIntro();
-  document.getElementById('game').classList.add('open');document.body.style.overflow='hidden';}
-function closeGame(){document.getElementById('game').classList.remove('open');document.body.style.overflow='';}
-function buildDeck(){
-  const pool=shuffle(WORKS.filter(w=>w.image));
-  const awarded=pool.filter(w=>w.reddot||w.if||w.gmark);
-  const none=pool.filter(w=>!(w.reddot||w.if||w.gmark));
-  let deck=[...awarded.slice(0,5),...none.slice(0,3)];
-  for(const w of pool){if(deck.length>=G_ROUNDS)break;if(!deck.includes(w))deck.push(w);}
-  G.deck=shuffle(deck).slice(0,G_ROUNDS);
+/* ---------- POP-UP GAME: Design Center Survivor (embedded) ---------- */
+const gFrame=document.getElementById('g-frame');
+function openGame(){
+  if(!gFrame.getAttribute('src'))gFrame.setAttribute('src','game.html');
+  document.getElementById('game').classList.add('open');
+  document.body.classList.add('gaming');
+  document.body.style.overflow='hidden';
 }
-function gPhoto(w,id){
-  return `<div class="g-ph" id="${id}"><div class="fallback">${titleCase(w.name)}</div></div>`;
+function closeGame(){
+  document.getElementById('game').classList.remove('open');
+  document.body.classList.remove('gaming');
+  document.body.style.overflow='';
 }
-function loadGPhoto(w,id){
-  const ph=document.getElementById(id);if(!ph||!w.image)return;
-  const fb=ph.querySelector('.fallback');
-  const im=new Image();im.alt=titleCase(w.name);
-  im.onload=()=>{im.classList.add('ld');fb.style.display='none';};im.onerror=()=>{};
-  ph.insertBefore(im,fb);im.src=w.image;
-}
-function renderIntro(){
-  gView().innerHTML=`
-    <div class="g-kicker">A Portfolio Game · 體驗當設計師</div>
-    <h1 class="g-title">The <em>Jury Room</em></h1>
-    <p class="g-lede">Step into a product designer's shoes. <b>${G_ROUNDS} real designs</b> from Johnny Chan's
-      archive will cross your desk — one at a time. For each, predict which international honours the jury awarded:
-      <b>Red Dot</b>, <b>iF</b> or <b>G-Mark</b>. Read it right and the photograph rewards you — colour returns.
-      The closer your eye to the jury's, the higher you rise.</p>
-    <div class="g-actions"><button class="g-btn" id="g-start">Enter the room →</button>
-      <button class="g-btn ghost" data-gclose>Maybe later</button></div>`;
-  document.getElementById('g-start').onclick=()=>{G.i=0;G.score=0;renderRound();};
-}
-function renderRound(){
-  const w=G.deck[G.i]; G.pick={reddot:false,if:false,gmark:false}; G.answered=false;
-  const prog=Math.round((G.i)/G_ROUNDS*100);
-  gView().innerHTML=`
-    <div class="g-top"><span>Brief <b>${String(G.i+1).padStart(2,'0')}</b> / ${G_ROUNDS}</span>
-      <span>Jury match · <b>${G.score}</b> pts</span></div>
-    <div class="g-bar"><i style="width:${prog}%"></i></div>
-    <div class="g-stage">
-      ${gPhoto(w,'g-ph')}
-      <div class="g-brief">
-        <div class="bk">${fixCat(w.category)} · ${titleCase(w.type)}</div>
-        <h4>${titleCase(w.name)}</h4>
-        <div class="meta">${(w.brand||'').toUpperCase()} · ${w.year||'—'}</div>
-        <div class="g-ask">Which honours did the jury award this design? Toggle any that apply — or leave all off if you think it won nothing.</div>
-        <div class="g-opts" id="g-opts">
-          ${G_AW.map(([k,l])=>`<button class="g-opt" data-k="${k}"><span class="box"></span>${l}<span class="tag"></span></button>`).join('')}
-        </div>
-      </div>
-    </div>
-    <div class="g-verdict" id="g-verdict" style="display:none"></div>
-    <div class="g-actions" style="margin-top:22px"><button class="g-btn" id="g-submit">Submit to jury</button></div>`;
-  loadGPhoto(w,'g-ph');
-  gView().querySelectorAll('.g-opt').forEach(o=>o.onclick=()=>{
-    if(G.answered)return;const k=o.dataset.k;G.pick[k]=!G.pick[k];
-    o.classList.toggle('sel',G.pick[k]);o.querySelector('.box').textContent=G.pick[k]?'✓':'';
-  });
-  document.getElementById('g-submit').onclick=submitRound;
-}
-function submitRound(){
-  if(G.answered)return; G.answered=true;
-  const w=G.deck[G.i]; let gained=0;
-  G_AW.forEach(([k,l])=>{
-    const won=!!w[k], guessed=!!G.pick[k], ok=won===guessed; if(ok)gained++;
-    const o=gView().querySelector(`.g-opt[data-k="${k}"]`);
-    o.classList.add(ok?'correct':'wrong');
-    o.querySelector('.tag').textContent=won?'Jury: awarded':'Jury: —';
-  });
-  G.score+=gained;
-  document.getElementById('g-ph').classList.add('reveal');
-  const others=(w.others||[]);
-  const remark=['The jury surprised you this round.','Not quite — they saw it differently.',
-    'Close. A designer\'s instinct at work.','Spot on — you read the jury perfectly.'][gained];
-  const v=document.getElementById('g-verdict'); v.style.display='block';
-  v.innerHTML=`<div class="v">“${remark}”</div>
-    <div class="vs">${gained} / 3 calls matched${w.reddot_best?' · Red Dot Best of the Best':''}</div>
-    ${others.length?`<div class="vn">Also recognised: ${others.map(titleCase).join(', ')}.</div>`:''}
-    ${w.intro?`<div class="vn">${w.intro.length>220?w.intro.slice(0,218)+'…':w.intro}</div>`:''}`;
-  const btn=document.getElementById('g-submit');
-  btn.textContent = G.i+1>=G_ROUNDS?'See your review →':'Next brief →';
-  btn.onclick=()=>{G.i++; if(G.i>=G_ROUNDS)renderResult(); else renderRound();};
-}
-function renderResult(){
-  const max=G_ROUNDS*3, pct=G.score/max;
-  const ranks=[[.0,'Design Intern','A first day on the studio floor — every jury teaches you something.'],
-    [.4,'Junior Designer','You are learning to see what the jury sees.'],
-    [.6,'Senior Designer','A trained eye. The archive is starting to make sense to you.'],
-    [.78,'Design Lead','You think like the room. Few surprises get past you.'],
-    [.9,'Chief Design Officer','Extraordinary. You read design honours the way Johnny designs them.']];
-  let r=ranks[0]; ranks.forEach(x=>{if(pct>=x[0])r=x;});
-  gView().innerHTML=`
-    <div class="g-kicker">Portfolio Review · Your verdict</div>
-    <h1 class="g-title">You're a <em>${r[1]}</em></h1>
-    <div class="g-scoreline"><span class="big">${G.score}</span><span class="of">/ ${max} jury calls matched · ${Math.round(pct*100)}%</span></div>
-    <p class="g-lede">${r[2]}</p>
-    <div class="g-actions"><button class="g-btn" id="g-again">Play again</button>
-      <button class="g-btn ghost" data-gclose>Explore the archive</button></div>`;
-  document.getElementById('g-again').onclick=openGame;
-}
+
 
 /* ---------- init ---------- */
 function init(){
