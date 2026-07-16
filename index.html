@@ -358,6 +358,8 @@ footer .base .mono{color:var(--faint)}
   border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:pop .6s var(--f-cubic);box-shadow:0 50px 140px -40px #000}
 .g-shell iframe{width:100%;height:100%;border:0;display:block;background:#0d1117}
 .game .g-close{z-index:5}
+#tool{padding:0}
+#tool .g-shell{width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;border:0;border-radius:0;box-shadow:none}
 .g-close{position:absolute;top:14px;right:14px;z-index:3;width:40px;height:40px;border:1px solid var(--line);border-radius:100px;
   display:flex;align-items:center;justify-content:center;background:rgba(10,11,11,.6);transition:.4s var(--f-cubic)}
 .g-close:hover{background:var(--bright);color:var(--ink);transform:rotate(90deg)}
@@ -885,14 +887,17 @@ function closeGame(){
 const tFrame=document.getElementById('t-frame');
 function openTool(src){
   if(tFrame.getAttribute('src')!==src)tFrame.setAttribute('src',src);
-  document.getElementById('tool').classList.add('open');
+  const el=document.getElementById('tool');
+  el.classList.add('open');
   document.body.classList.add('tooling');
   document.body.style.overflow='hidden';
+  if(el.requestFullscreen){el.requestFullscreen().catch(()=>{});}
 }
 function closeTool(){
   document.getElementById('tool').classList.remove('open');
   document.body.classList.remove('tooling');
   document.body.style.overflow='';
+  if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});}
 }
 
 /* ---------- PRESENTATION MODE (slide deck) ---------- */
