@@ -264,8 +264,14 @@ footer .base .mono{color:var(--faint)}
   opacity:0;pointer-events:none;transition:opacity .5s var(--f-cubic),background .4s}
 .tofile.show{opacity:1;pointer-events:auto}
 .tofile:hover{background:var(--bright);color:var(--ink)}
-.topbar .jump.play{color:var(--ink);background:var(--paper);border-color:var(--paper)}
-.topbar .jump.play:hover{background:var(--bright);border-color:var(--bright)}
+.iconbtn{width:38px;height:38px;border-radius:100px;border:1px solid var(--line);display:inline-flex;
+  align-items:center;justify-content:center;color:var(--paper);background:transparent;padding:0;
+  transition:background .35s var(--f-cubic),color .35s,border-color .35s,transform .35s}
+.iconbtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.iconbtn:hover{background:var(--paper);color:var(--ink);border-color:var(--paper);transform:translateY(-1px)}
+.iconbtn.play{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.iconbtn.play svg{fill:currentColor;stroke:none;width:14px}
+.iconbtn.play:hover{background:var(--bright);border-color:var(--bright)}
 .playfab{position:fixed;bottom:22px;left:22px;z-index:35;display:flex;align-items:center;gap:8px;
   font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);
   border:1px solid var(--line);border-radius:100px;padding:11px 18px;background:rgba(10,11,11,.7);backdrop-filter:blur(8px);
@@ -344,8 +350,9 @@ footer .base .mono{color:var(--faint)}
   <a href="#top" class="brand">Johnny <b>Chan</b><span style="color:var(--faint)">⟡</span></a>
   <div class="rt">
     <div class="c hideS"><b id="shown">92</b> / <span id="total">92</span> works</div>
-    <button class="jump" id="colorbtn">🎨 Color</button>
-    <button class="jump play" id="playbtn">▶ Play</button>
+    <button class="iconbtn" id="colorbtn" title="Color Picker" aria-label="Color Picker"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.4 6 10.2A6 6 0 0 1 6 13.2C6 9.4 12 3 12 3Z"/></svg></button>
+    <button class="iconbtn" id="clockbtn" title="Clock &amp; Timer" aria-label="Clock and Timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.4V12l3.3 2"/></svg></button>
+    <button class="iconbtn play" id="playbtn" title="Play — Design Center Survivor" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M7 4.5 19 12 7 19.5Z"/></svg></button>
     <a href="#read" class="jump">Read ↓</a>
   </div>
 </div>
@@ -785,8 +792,8 @@ function closeGame(){
   document.body.style.overflow='';
 }
 const tFrame=document.getElementById('t-frame');
-function openTool(){
-  if(!tFrame.getAttribute('src'))tFrame.setAttribute('src','colorpicker.html');
+function openTool(src){
+  if(tFrame.getAttribute('src')!==src)tFrame.setAttribute('src',src);
   document.getElementById('tool').classList.add('open');
   document.body.classList.add('tooling');
   document.body.style.overflow='hidden';
@@ -809,7 +816,8 @@ function init(){
   addEventListener('scroll',()=>{document.getElementById('tofile').classList.toggle('show',scrollY>innerHeight*.8);},{passive:true});
   document.getElementById('playbtn').onclick=openGame;
   document.getElementById('playfab').onclick=openGame;
-  document.getElementById('colorbtn').onclick=openTool;
+  document.getElementById('colorbtn').onclick=()=>openTool('colorpicker.html');
+  document.getElementById('clockbtn').onclick=()=>openTool('clock.html');
   document.querySelectorAll('#game [data-gclose]').forEach(e=>e.onclick=closeGame);
   document.querySelectorAll('#tool [data-tclose]').forEach(e=>e.onclick=closeTool);
   addEventListener('keydown',e=>{if(e.key!=='Escape')return;
