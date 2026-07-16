@@ -210,23 +210,27 @@ section{padding:clamp(80px,12vh,150px) var(--pad);position:relative}
   background:linear-gradient(var(--accent),var(--accent)) no-repeat 0 100%/0 1px;transition:background-size .5s var(--f-cubic)}
 .cv-link:hover{background-size:100% 1px}
 .worldwrap{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  background:radial-gradient(120% 120% at 50% 35%,#12211d,#0a0b0b 70%);padding:clamp(8px,1.5vw,18px)}
+  background:radial-gradient(120% 120% at 50% 35%,#191a1a,#0a0b0b 72%);padding:clamp(8px,1.5vw,18px)}
 #worldmap{width:100%;height:auto;display:block}
-#worldmap .land{fill:rgba(199,204,200,.05);stroke:rgba(160,235,205,.55);stroke-width:.7;stroke-linejoin:round;
-  filter:drop-shadow(0 0 3px rgba(120,235,195,.55))}
-#worldmap #grat line{stroke:rgba(160,235,205,.08);stroke-width:.5}
-.cdot{fill:#ecfff8;filter:drop-shadow(0 0 5px rgba(120,255,214,.95)) drop-shadow(0 0 10px rgba(120,255,214,.55))}
-.cpulse{fill:none;stroke:rgba(150,255,220,.8);stroke-width:.8;transform-box:fill-box;transform-origin:center;
+#worldmap .land{fill:rgba(237,237,236,.045);stroke:rgba(237,237,236,.5);stroke-width:.7;stroke-linejoin:round;
+  filter:drop-shadow(0 0 3px rgba(255,255,255,.32))}
+#worldmap #grat line{stroke:rgba(237,237,236,.07);stroke-width:.5}
+.cdot{fill:#fff;filter:drop-shadow(0 0 5px rgba(255,255,255,.9)) drop-shadow(0 0 10px rgba(255,255,255,.4))}
+.cpulse{fill:none;stroke:rgba(255,255,255,.7);stroke-width:.8;transform-box:fill-box;transform-origin:center;
   animation:cityPulse 3.4s ease-out infinite}
-@keyframes cityPulse{0%{r:1.2;opacity:.9}70%{opacity:0}100%{r:11;opacity:0}}
+@keyframes cityPulse{0%{r:1.2;opacity:.85}70%{opacity:0}100%{r:11;opacity:0}}
 #cityDots g{cursor:default}
-#cityDots .clabel{fill:#eafff6;font-family:var(--mono);font-size:8px;letter-spacing:.05em;opacity:0;
+#cityDots .clabel{fill:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.05em;opacity:0;
   transition:opacity .3s var(--f-cubic);text-anchor:middle}
 #cityDots g:hover .clabel{opacity:1}
 #cityDots g:hover .cdot{fill:#fff}
+.home-ic{fill:#fff;filter:drop-shadow(0 0 7px rgba(255,255,255,.95))}
+.home-ring{fill:none;stroke:#fff;stroke-width:1;transform-box:fill-box;transform-origin:center;animation:cityPulse 2.8s ease-out infinite}
+.home-lbl{fill:#fff;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-anchor:middle;text-transform:uppercase}
+.home-tag{fill:var(--dim);font-family:var(--mono);font-size:6.5px;letter-spacing:.2em;text-anchor:middle;text-transform:uppercase}
 .travel-stat{position:absolute;left:0;right:0;bottom:clamp(10px,2vw,22px);display:flex;justify-content:center;gap:clamp(20px,4vw,54px);
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);pointer-events:none;flex-wrap:wrap}
-.travel-stat b{color:#bfffe8;font-size:16px}
+.travel-stat b{color:#fff;font-size:16px}
 @media(max-width:600px){.travel-stat{position:static;margin-top:16px}}
 .ledger{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
 @media(max-width:760px){.ledger{grid-template-columns:1fr}}
@@ -945,23 +949,30 @@ function buildTravel(){
   for(let lat=-60;lat<=80;lat+=30){const y=(90-lat)/180*H;const l=document.createElementNS(NS,'line');l.setAttribute('x1',0);l.setAttribute('y1',y);l.setAttribute('x2',W);l.setAttribute('y2',y);grat.appendChild(l);}
   // dots
   const g=document.getElementById('cityDots');
+  const HOME=new Set(['Taipei','Hong Kong']);
+  const C=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
   CITIES.forEach(([name,lon,lat],i)=>{
-    const [x,y]=proj(lon,lat);
+    const [x,y]=proj(lon,lat); const X=x.toFixed(1), Y=y.toFixed(1);
     const grp=document.createElementNS(NS,'g');
-    const pulse=document.createElementNS(NS,'circle');
-    pulse.setAttribute('class','cpulse');pulse.setAttribute('cx',x);pulse.setAttribute('cy',y);pulse.setAttribute('r',1.2);
-    pulse.style.animationDelay=(i%12*0.28).toFixed(2)+'s';
-    const dot=document.createElementNS(NS,'circle');
-    dot.setAttribute('class','cdot');dot.setAttribute('cx',x);dot.setAttribute('cy',y);dot.setAttribute('r',1.7);
-    const lbl=document.createElementNS(NS,'text');
-    lbl.setAttribute('class','clabel');lbl.setAttribute('x',x);lbl.setAttribute('y',y-4);lbl.textContent=name;
     const t=document.createElementNS(NS,'title');t.textContent=name;grp.appendChild(t);
-    grp.appendChild(pulse);grp.appendChild(dot);grp.appendChild(lbl);g.appendChild(grp);
+    if(HOME.has(name)){
+      const ring=C('circle',{class:'home-ring',cx:X,cy:Y,r:2});
+      const house=C('path',{class:'home-ic',d:`M${(x-5).toFixed(1)},${Y} L${X},${(y-5).toFixed(1)} L${(x+5).toFixed(1)},${Y} L${(x+3.4).toFixed(1)},${Y} L${(x+3.4).toFixed(1)},${(y+4.6).toFixed(1)} L${(x-3.4).toFixed(1)},${(y+4.6).toFixed(1)} L${(x-3.4).toFixed(1)},${Y} Z`});
+      const tag=C('text',{class:'home-tag',x:X,y:(y-9).toFixed(1)});tag.textContent='Home';
+      const lbl=C('text',{class:'home-lbl',x:X,y:(y+15).toFixed(1)});lbl.textContent=name;
+      grp.appendChild(ring);grp.appendChild(house);grp.appendChild(tag);grp.appendChild(lbl);
+    } else {
+      const pulse=C('circle',{class:'cpulse',cx:X,cy:Y,r:1.2});pulse.style.animationDelay=(i%12*0.28).toFixed(2)+'s';
+      const dot=C('circle',{class:'cdot',cx:X,cy:Y,r:1.7});
+      const lbl=C('text',{class:'clabel',x:X,y:(y-4).toFixed(1)});lbl.textContent=name;
+      grp.appendChild(pulse);grp.appendChild(dot);grp.appendChild(lbl);
+    }
+    g.appendChild(grp);
   });
   const cEl=document.getElementById('cityCount'), coEl=document.getElementById('ctryCount');
-  if(cEl){let n=0;const t=CITIES.length,step=Math.max(1,Math.round(t/40));
-    (function tick(){n+=step;if(n>=t){cEl.textContent=t;}else{cEl.textContent=n;requestAnimationFrame(tick);}})();}
-  if(coEl)coEl.textContent='30';
+  const countUp=(el,t)=>{if(!el)return;let n=0;const step=Math.max(1,Math.round(t/40));
+    (function tick(){n+=step;if(n>=t){el.textContent=t;}else{el.textContent=n;requestAnimationFrame(tick);}})();};
+  countUp(cEl,CITIES.length); countUp(coEl,46);
 }
 
 /* ---------- init ---------- */
