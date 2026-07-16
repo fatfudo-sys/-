@@ -89,6 +89,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .mval{font-family:var(--serif);font-weight:300;font-size:clamp(44px,9vw,64px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
 .mval small{font-size:.34em;color:var(--muted);margin-left:5px;letter-spacing:0}
 .metric.hero .mval{font-size:clamp(76px,18vw,128px);color:var(--bright)}
+.mtarget{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+.mtarget b{color:var(--accent);font-weight:400}
 .run-ctrl{display:flex;gap:10px;margin-top:auto;padding-top:34px;width:min(400px,100%)}
 .run-ctrl button{flex:1;border-radius:100px;padding:15px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;transition:.3s var(--f)}
 .run-ctrl .pri{background:var(--text);color:var(--bg)}
@@ -154,7 +156,9 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   <div class="pourlabel" id="pourlabel">1st pour · Step 1 of 5</div>
   <div class="m3">
     <div class="metric"><div class="mlabel">加水時間 · Pour time</div><div class="mval" id="clock">00:00</div></div>
-    <div class="metric hero"><div class="mlabel">目標克重 · Target</div><div class="mval" id="target">60<small>g</small></div></div>
+    <div class="metric hero"><div class="mlabel">即時重量 · Live scale</div>
+      <div class="mval" id="scale">0<small>g</small></div>
+      <div class="mtarget">目標克重 · Target <b id="target">60</b> g</div></div>
     <div class="metric"><div class="mlabel">等待時間 · Wait</div><div class="mval" id="wait">45<small>s</small></div></div>
   </div>
   <div class="progressbar"><i id="prog"></i></div>
@@ -251,7 +255,7 @@ function drawV60(){
   let r,alpha;
   if(pouring){const p=localT/pourSec; r=maxR*(0.14+0.86*p); alpha=1;
     trail.push([cx+Math.cos(angle)*r, cy+Math.sin(angle)*r]); if(trail.length>44)trail.shift();}
-  else{ r=maxR*0.1; alpha=done?0:.3; if(trail.length)trail.shift(); }
+  else{ r=0; alpha=0; if(trail.length)trail.shift(); }  /* waiting / done: no pour point */
   for(let i=0;i<trail.length;i++){const a=i/trail.length; ctx.fillStyle='rgba(255,255,255,'+(a*0.45).toFixed(3)+')';
     ctx.beginPath();ctx.arc(trail[i][0],trail[i][1],1.2+a*2.4,0,TWO_PI);ctx.fill();}
   if(alpha>0){const dx=cx+Math.cos(angle)*r, dy=cy+Math.sin(angle)*r;
@@ -274,7 +278,12 @@ function draw(){
   $('#run').classList.toggle('done',done);
   const s=steps[idx];
   $('#pourlabel').textContent=done?('Done · '+n+' pours'):(ORD[idx]+' pour · Step '+(idx+1)+' of '+n);
-  $('#target').innerHTML=(done?steps[n-1].cum:s.cum)+'<small>g</small>';
+  const stepCum=s.cum, prevCum=idx>0?steps[idx-1].cum:0;
+  const pourSec=Math.min(INTERVAL*0.6,Math.max(6,s.pour/5)), lt=t-idx*INTERVAL;
+  let cur = lt<pourSec ? prevCum+(stepCum-prevCum)*(lt/pourSec) : stepCum;
+  if(done) cur=steps[n-1].cum;
+  $('#scale').innerHTML=Math.round(cur)+'<small>g</small>';
+  $('#target').textContent=done?steps[n-1].cum:stepCum;
   const atLast=idx>=n-1;
   const toNext=Math.max(0,Math.ceil(INTERVAL-(t%INTERVAL)));
   const remain=Math.max(0,Math.ceil(total-t));
