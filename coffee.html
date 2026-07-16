@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V60 Coffee Timer — 4:6 Method</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3ede2; --card:#faf6ee; --card2:#ebe4d6; --ink:#2a1d16; --brown:#9a4a26; --brown2:#83371b;
+  --gold:#b07a2e; --muted:#8f8271; --line:#e2daca; --line2:#d8cfbd;
+  --serif:'Fraunces',Georgia,serif; --sans:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,Menlo,monospace; --f:cubic-bezier(.6,0,.05,1);
+}
+*{margin:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased;overflow:hidden}
+.wrap{height:100%;overflow-y:auto}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.view{display:none;min-height:100%}
+.view.on{display:block}
+.pad{max-width:1120px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(18px,4vw,44px) 60px}
+.mono{font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase}
+
+/* ---- setup ---- */
+.h-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4vw,42px);letter-spacing:-.01em;margin-bottom:26px}
+.h-title em{font-style:italic;color:var(--brown)}
+.unit{display:grid;grid-template-columns:1fr 1fr;background:var(--card2);border-radius:12px;padding:5px;margin-bottom:22px}
+.unit button{padding:13px;border-radius:9px;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;transition:.3s var(--f)}
+.unit button.on{background:var(--brown);color:#fff;box-shadow:0 2px 8px rgba(131,55,27,.28)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:clamp(16px,2.2vw,22px) clamp(18px,2.5vw,26px);border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:none}
+.prow.auto{background:var(--card2)}
+.prow .k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.prow .val{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,32px);margin-top:4px;letter-spacing:-.01em}
+.prow .val small{font-size:.5em;color:var(--muted);margin-left:3px;font-family:var(--sans)}
+.prow .val.brown{color:var(--brown)}
+.prow .sub{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);margin-top:2px}
+.prow .autotag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:4px;background:var(--card2);border-radius:12px;padding:5px;flex:none}
+.stepper button{width:40px;height:40px;border-radius:9px;font-size:20px;font-weight:400;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:.2s}
+.stepper button:hover{background:#fff;color:var(--brown)}
+.stepper .num{min-width:52px;text-align:center;font-family:var(--serif);font-size:22px}
+.seg-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
+.seg-label b{color:var(--ink);font-weight:400}
+.seg{display:flex;gap:9px;flex-wrap:wrap}
+.seg button{padding:11px 20px;border-radius:100px;border:1px solid var(--line2);font-size:14px;color:var(--ink);background:var(--card);transition:.25s var(--f)}
+.seg button:hover{border-color:var(--brown)}
+.seg button.on{background:var(--brown);color:#fff;border-color:var(--brown)}
+.grind{background:var(--card2);border-radius:14px;padding:18px 22px;margin-top:24px}
+.grind .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.grind .v{font-family:var(--serif);font-size:22px;margin-top:4px}
+.startbtn{display:block;width:100%;margin-top:28px;background:var(--brown);color:#fff;border-radius:100px;padding:18px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;transition:.3s var(--f)}
+.startbtn:hover{background:var(--brown2)}
+.tclose{position:fixed;top:16px;right:16px;z-index:5;width:42px;height:42px;border-radius:100px;border:1px solid var(--line2);
+  background:var(--card);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:.3s var(--f)}
+.tclose:hover{background:var(--brown);color:#fff;border-color:var(--brown);transform:rotate(90deg)}
+
+/* ---- run ---- */
+#run .pad{max-width:560px;text-align:center;padding-top:clamp(28px,6vh,64px);min-height:100%;display:flex;flex-direction:column;align-items:center}
+.logo{width:112px;height:112px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin-bottom:26px}
+.logo svg{width:46px;height:46px}
+.bigtime{font-family:var(--serif);font-weight:300;font-size:clamp(56px,13vw,92px);line-height:.9;letter-spacing:-.02em}
+.pourlabel{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--brown);margin-top:12px}
+.hr{height:1px;background:var(--line2);width:min(360px,80%);margin:30px 0}
+.target{font-family:var(--serif);font-weight:400;font-size:clamp(48px,11vw,76px);color:var(--gold);line-height:.9;letter-spacing:-.02em}
+.target-k{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.instr{font-family:var(--serif);font-size:clamp(21px,3.4vw,27px);line-height:1.3;margin-top:26px;max-width:22ch}
+.instr b{color:var(--brown);font-weight:400;font-style:normal}
+.instr em{font-style:italic}
+.wait{color:var(--muted);font-size:14px;margin-top:16px}
+.next{margin-top:24px;color:var(--muted)}
+.next .nk{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:5px}
+.next .nt{font-size:14px;line-height:1.5;max-width:34ch;margin:0 auto}
+.summary{display:flex;gap:0;background:var(--card2);border-radius:14px;margin-top:30px;overflow:hidden;width:min(400px,100%)}
+.summary div{flex:1;padding:16px 8px;text-align:center;border-right:1px solid var(--line)}
+.summary div:last-child{border-right:none}
+.summary .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.summary .sv{font-family:var(--serif);font-size:20px;margin-top:5px}
+.summary .sv small{font-size:.6em;color:var(--muted)}
+.run-ctrl{display:flex;gap:10px;margin-top:auto;padding-top:34px;width:min(400px,100%)}
+.run-ctrl button{flex:1;border-radius:100px;padding:15px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;transition:.3s var(--f)}
+.run-ctrl .pri{background:var(--brown);color:#fff}
+.run-ctrl .pri:hover{background:var(--brown2)}
+.run-ctrl .gh{border:1px solid var(--line2);color:var(--ink)}
+.run-ctrl .gh:hover{border-color:var(--brown);color:var(--brown)}
+.done .bigtime{color:var(--brown)}
+.progressbar{width:min(360px,80%);height:3px;background:var(--line2);border-radius:3px;margin-top:22px;overflow:hidden}
+.progressbar i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s linear}
+</style>
+</head>
+<body>
+<button class="tclose" id="tclose" title="Close" aria-label="Close">✕</button>
+<div class="wrap">
+
+<!-- SETUP -->
+<div class="view on" id="setup"><div class="pad">
+  <div class="h-title">Adjust to <em>your taste</em></div>
+  <div class="unit">
+    <button class="on" data-unit="g">Grams</button>
+    <button data-unit="cup">Cups</button>
+  </div>
+  <div class="panel">
+    <div class="prow">
+      <div><div class="k" id="coffeeK">Coffee</div><div class="val"><span id="coffeeV">20</span><small id="coffeeU">g</small></div></div>
+      <div class="stepper"><button data-step="coffee" data-d="-1">−</button><span class="num" id="coffeeNum">20</span><button data-step="coffee" data-d="1">+</button></div>
+    </div>
+    <div class="prow">
+      <div><div class="k">Ratio</div><div class="val">1:<span id="ratioV">15</span></div></div>
+      <div class="stepper"><button data-step="ratio" data-d="-1">−</button><span class="num" id="ratioNum">15</span><button data-step="ratio" data-d="1">+</button></div>
+    </div>
+    <div class="prow auto">
+      <div><div class="k">Water</div><div class="val brown"><span id="waterV">300</span><small>ml</small></div></div>
+      <div class="autotag">Auto</div>
+    </div>
+    <div class="prow">
+      <div><div class="k">Temperature</div><div class="val"><span id="tempV">93</span><small>°C</small></div><div class="sub" id="tempF">199°F</div></div>
+      <div class="stepper"><button data-step="temp" data-d="-1">−</button><span class="num" id="tempNum">93</span><button data-step="temp" data-d="1">+</button></div>
+    </div>
+  </div>
+
+  <div class="seg-label">First 40% — <b>Acidity &amp; Sweetness</b></div>
+  <div class="seg" id="tasteSeg">
+    <button class="on" data-taste="balanced">Balanced</button>
+    <button data-taste="sweeter">Sweeter</button>
+    <button data-taste="acidity">More Acidity</button>
+  </div>
+
+  <div class="seg-label">Last 60% — <b>Strength</b></div>
+  <div class="seg" id="strSeg">
+    <button class="on" data-str="medium">Medium</button>
+    <button data-str="lighter">Lighter</button>
+    <button data-str="stronger">Stronger</button>
+  </div>
+
+  <div class="grind"><div class="k">Grind size</div><div class="v" id="grindV">Medium-coarse</div></div>
+  <button class="startbtn" id="startBtn">Start brewing →</button>
+</div></div>
+
+<!-- RUN -->
+<div class="view" id="run"><div class="pad">
+  <div class="logo"><svg viewBox="0 0 48 48" fill="none" stroke="#f3ede2" stroke-width="1.6" stroke-linejoin="round"><path d="M13 15h22l-11 20z"/><path d="M24 20v11"/></svg></div>
+  <div class="bigtime" id="clock">00:00</div>
+  <div class="pourlabel" id="pourlabel">1st pour · Step 1 of 5</div>
+  <div class="progressbar"><i id="prog"></i></div>
+  <div class="hr"></div>
+  <div class="target" id="target">60<small style="font-size:.5em;color:var(--muted)">ml</small></div>
+  <div class="target-k">Scale target</div>
+  <div class="instr" id="instr"></div>
+  <div class="wait" id="wait"></div>
+  <div class="next"><span class="nk">Next →</span><div class="nt" id="nextTxt">—</div></div>
+  <div class="summary">
+    <div><div class="sk">Coffee</div><div class="sv"><span id="sCoffee">20</span><small>g</small></div></div>
+    <div><div class="sk">Water</div><div class="sv"><span id="sWater">300</span><small>ml</small></div></div>
+    <div><div class="sk">Temp</div><div class="sv"><span id="sTemp">93</span><small>°C</small></div></div>
+  </div>
+  <div class="run-ctrl">
+    <button class="gh" id="backBtn">← Adjust</button>
+    <button class="pri" id="playBtn">Pause</button>
+    <button class="gh" id="resetBtn">Reset</button>
+  </div>
+</div></div>
+
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const state={coffee:20,ratio:15,temp:93,taste:'balanced',strength:'medium',unit:'g',cups:2};
+const INTERVAL=45, DRAW=45;   // seconds between pours / draw-down
+
+function water(){ return state.unit==='cup' ? state.cups*250 : Math.round(state.coffee*state.ratio); }
+function coffeeG(){ return state.unit==='cup' ? Math.round(water()/state.ratio) : state.coffee; }
+
+function buildSteps(){
+  const W=water(), p40=W*0.4, p60=W*0.6;
+  const splits={balanced:[.5,.5], sweeter:[5/12,7/12], acidity:[7/12,5/12]}[state.taste];
+  const nStr={lighter:2, medium:3, stronger:4}[state.strength];
+  const raw=[p40*splits[0], p40*splits[1]];
+  for(let i=0;i<nStr;i++) raw.push(p60/nStr);
+  const steps=[]; let sum=0;
+  raw.forEach((p,i)=>{ sum+=p; const cum=(i===raw.length-1)?W:Math.round(sum);
+    const first=i<2;
+    let instr;
+    if(i===0) instr='<b>'+Math.round(p)+'ml</b> — Pour gently in slow circles to <em>saturate every ground</em>.';
+    else if(i===1) instr='<b>+'+Math.round(p)+'ml</b> — Second pour to <em>set the acidity &amp; sweetness</em>.';
+    else if(i===raw.length-1) instr='<b>+'+Math.round(p)+'ml</b> — Final pour, steady through the centre, then <em>let it draw down</em>.';
+    else instr='<b>+'+Math.round(p)+'ml</b> — Steady, even pour to <em>build the strength</em>.';
+    steps.push({pour:Math.round(p), cum, first, instr,
+      short:(first?'Acidity & sweetness phase':'Strength phase')});
+  });
+  return steps;
+}
+const ORD=['1st','2nd','3rd','4th','5th','6th','7th'];
+
+/* setup interactions */
+function clampR(k,v){const L={coffee:[8,60],ratio:[12,20],temp:[80,100],cups:[1,8]}[k];return Math.max(L[0],Math.min(L[1],v));}
+function refresh(){
+  const g=state.unit==='g';
+  $('#coffeeK').textContent=g?'Coffee':'Cups';
+  $('#coffeeU').style.display=g?'':'none';
+  const cv=g?state.coffee:state.cups;
+  $('#coffeeV').textContent=cv; $('#coffeeNum').textContent=cv;
+  $('#ratioV').textContent=state.ratio; $('#ratioNum').textContent=state.ratio;
+  $('#waterV').textContent=water();
+  $('#tempV').textContent=state.temp; $('#tempNum').textContent=state.temp;
+  $('#tempF').textContent=Math.round(state.temp*9/5+32)+'°F';
+  document.querySelectorAll('.unit button').forEach(b=>b.classList.toggle('on',b.dataset.unit===state.unit));
+}
+document.querySelectorAll('.stepper button').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.step, d=+b.dataset.d;
+  if(k==='coffee'){ if(state.unit==='g') state.coffee=clampR('coffee',state.coffee+d); else state.cups=clampR('cups',state.cups+d); }
+  else if(k==='ratio') state.ratio=clampR('ratio',state.ratio+d);
+  else if(k==='temp') state.temp=clampR('temp',state.temp+d);
+  refresh();
+});
+document.querySelectorAll('.unit button').forEach(b=>b.onclick=()=>{state.unit=b.dataset.unit;refresh();});
+$('#tasteSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.taste=b.dataset.taste;
+  $('#tasteSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
+$('#strSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.strength=b.dataset.str;
+  $('#strSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#grindV').textContent={lighter:'Medium',medium:'Medium-coarse',stronger:'Coarse'}[state.strength];});
+
+/* run / timer */
+let steps=[], t=0, running=false, raf=null, last=0, actx=null, lastBeep=-1;
+function fmt(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);
+  o.frequency.value=760;o.type='sine';const n=actx.currentTime;
+  g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.25,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.4);
+  o.start(n);o.stop(n+.42);}catch(e){}}
+function totalTime(){return (steps.length-1)*INTERVAL+DRAW;}
+function draw(){
+  const n=steps.length, total=totalTime();
+  const idx=Math.min(n-1, Math.floor(t/INTERVAL));
+  const done=t>=total;
+  $('#clock').textContent=done?fmt(total):fmt(t);
+  $('#run').classList.toggle('done',done);
+  const s=steps[idx];
+  $('#pourlabel').textContent=done?('Done · '+n+' pours complete'):(ORD[idx]+' pour · Step '+(idx+1)+' of '+n);
+  $('#target').innerHTML=(done?steps[n-1].cum:s.cum)+'<small style="font-size:.5em;color:var(--muted)">ml</small>';
+  $('#instr').innerHTML=done?'Brew complete — <b>enjoy your coffee</b>.':s.instr;
+  const atLast=idx>=n-1;
+  const toNext=INTERVAL-(t%INTERVAL);
+  $('#wait').textContent=done?'':(atLast?'Let the water draw down completely.':('Next pour in '+Math.ceil(toNext)+'s'));
+  if(done||atLast){ $('#nextTxt').textContent=done?'':'Final draw-down — remove the dripper when finished.'; if(atLast&&!done)$('.next .nk').textContent='Finish →'; }
+  else{ $('.next .nk').textContent='Next →'; $('#nextTxt').textContent=steps[idx+1].cum+'ml — '+steps[idx+1].short+'.'; }
+  $('#prog').style.width=Math.min(100,t/total*100)+'%';
+  // beep at each pour boundary
+  if(!done && idx!==lastBeep){ lastBeep=idx; if(t>0.3) beep(); }
+}
+function loop(now){ if(!running)return; if(!last)last=now; t+=(now-last)/1000; last=now;
+  if(t>=totalTime()){ t=totalTime(); running=false; draw(); $('#playBtn').textContent='Done'; beep(); return; }
+  draw(); raf=requestAnimationFrame(loop);
+}
+function startTimer(){ if(running)return; running=true; last=0; $('#playBtn').textContent='Pause'; raf=requestAnimationFrame(loop); }
+function pauseTimer(){ running=false; cancelAnimationFrame(raf); $('#playBtn').textContent='Resume'; }
+$('#playBtn').onclick=()=>{ if($('#playBtn').textContent==='Done')return; running?pauseTimer():startTimer(); };
+$('#resetBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); t=0; lastBeep=-1; $('#playBtn').textContent='Pause'; draw(); startTimer(); };
+$('#backBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); $('#run').classList.remove('on'); $('#setup').classList.add('on'); };
+$('#startBtn').onclick=()=>{
+  steps=buildSteps(); t=0; lastBeep=-1;
+  $('#sCoffee').textContent=coffeeG(); $('#sWater').textContent=water(); $('#sTemp').textContent=state.temp;
+  $('#setup').classList.remove('on'); $('#run').classList.add('on');
+  draw(); startTimer();
+};
+$('#tclose').onclick=()=>{ if(window.parent!==window){/* embedded: let parent close via Esc */} };
+
+refresh();
+</script>
+</body>
+</html>
