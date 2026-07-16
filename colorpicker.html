@@ -171,6 +171,29 @@
     font-family: sans-serif; letter-spacing: .3px;
   }
   footer { padding: 10px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 11.5px; }
+
+  .picker-in { margin-bottom: 16px; }
+  .fmts { display: flex; gap: 6px; margin-bottom: 8px; }
+  .fmts .fmt {
+    flex: 1; padding: 7px 4px; font-size: 11px; letter-spacing: .4px;
+    border-radius: 7px; background: var(--panel-2); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; transition: border-color .15s, background .15s, color .15s;
+  }
+  .fmts .fmt:hover { border-color: var(--accent); }
+  .fmts .fmt.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .inrow { display: flex; gap: 8px; }
+  .inrow input {
+    flex: 1; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px; padding: 10px 12px; outline: none; transition: border-color .15s;
+  }
+  .inrow input:focus { border-color: var(--accent); }
+  .inrow input.err { border-color: #e5484d; animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .inrow #apply {
+    background: var(--accent); border: 1px solid var(--accent); color: #fff;
+    border-radius: 8px; padding: 0 15px; font-size: 15px; cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -196,6 +219,19 @@
   </div>
 
   <aside class="panel">
+    <div class="picker-in">
+      <div class="fmts">
+        <button class="fmt on" data-fmt="hex">HEX</button>
+        <button class="fmt" data-fmt="rgb">RGB</button>
+        <button class="fmt" data-fmt="cmyk">CMYK</button>
+        <button class="fmt" data-fmt="pantone">Pantone</button>
+      </div>
+      <div class="inrow">
+        <input id="manual" type="text" placeholder="#FF5113 or FF5113" autocomplete="off">
+        <button id="apply" title="Show colour">→</button>
+      </div>
+      <datalist id="pantoneList"></datalist>
+    </div>
     <div class="swatch" id="swatch" style="background:#2a2f3a">Pick a point…</div>
     <div class="zoom">
       <canvas id="loupe" width="96" height="96"></canvas>
@@ -239,6 +275,14 @@ function rgbToCmyk(r, g, b) {
   const m = (1 - g1 - k) / (1 - k);
   const y = (1 - b1 - k) / (1 - k);
   return [c, m, y, k].map(v => Math.round(v * 100));
+}
+function cmykToRgb(c, m, y, k) {
+  c /= 100; m /= 100; y /= 100; k /= 100;
+  return [
+    Math.round(255 * (1 - c) * (1 - k)),
+    Math.round(255 * (1 - m) * (1 - k)),
+    Math.round(255 * (1 - y) * (1 - k)),
+  ];
 }
 function rgbToXyz(r, g, b) {
   let R = r / 255, G = g / 255, B = b / 255;
@@ -505,6 +549,10 @@ function pick(x, y, dispX, dispY) {
   lctx.strokeStyle = 'rgba(0,0,0,.6)';
   lctx.strokeRect(size / 2 - z / 2 - 1, size / 2 - z / 2 - 1, z + 2, z + 2);
 
+  renderColor(r, g, b, `x: ${x}, y: ${y}`);
+}
+
+function renderColor(r, g, b, coordText) {
   const hex = toHex(r, g, b);
   const cmyk = rgbToCmyk(r, g, b);
   const lab = rgbToLab(r, g, b);
@@ -514,7 +562,7 @@ function pick(x, y, dispX, dispY) {
   swatch.style.background = hex;
   swatch.style.color = lum > 140 ? '#111' : '#fff';
   swatch.textContent = hex;
-  coordsEl.textContent = `x: ${x}, y: ${y}`;
+  coordsEl.textContent = coordText || 'manual entry';
 
   setRow('rgb', `rgb(${r}, ${g}, ${b})`, `rgb(${r}, ${g}, ${b})`);
   setRow('hex', hex, hex);
@@ -547,6 +595,69 @@ document.querySelectorAll('.row .v').forEach(el => {
     setTimeout(() => tip.remove(), 900);
   });
 });
+
+/* ---------- Manual entry: HEX / RGB / CMYK / Pantone ---------- */
+(function () {
+  const pl = document.getElementById('pantoneList');
+  Object.keys(PANTONE).forEach(n => { const o = document.createElement('option'); o.value = n; pl.appendChild(o); });
+  const input = document.getElementById('manual');
+  const PH = { hex: '#FF5113 or FF5113', rgb: '255, 81, 19', cmyk: '0, 68, 92, 0  (C M Y K %)', pantone: 'e.g. Orange 021 C' };
+  let fmt = 'hex';
+
+  document.querySelectorAll('.fmt').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.fmt').forEach(x => x.classList.toggle('on', x === btn));
+    fmt = btn.dataset.fmt;
+    input.placeholder = PH[fmt];
+    if (fmt === 'pantone') input.setAttribute('list', 'pantoneList'); else input.removeAttribute('list');
+    input.value = ''; input.focus();
+  }));
+
+  function parse() {
+    const val = input.value.trim();
+    if (!val) return null;
+    if (fmt === 'hex') {
+      const m = /^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.exec(val);
+      if (!m) return null;
+      let h = m[1]; if (h.length === 3) h = h.split('').map(c => c + c).join('');
+      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+    }
+    if (fmt === 'rgb') {
+      const n = (val.match(/\d+(\.\d+)?/g) || []).map(Number);
+      if (n.length < 3 || n.slice(0, 3).some(v => v < 0 || v > 255)) return null;
+      return [n[0] | 0, n[1] | 0, n[2] | 0];
+    }
+    if (fmt === 'cmyk') {
+      const n = (val.match(/\d+(\.\d+)?/g) || []).map(Number);
+      if (n.length < 4 || n.slice(0, 4).some(v => v < 0 || v > 100)) return null;
+      return cmykToRgb(n[0], n[1], n[2], n[3]);
+    }
+    if (fmt === 'pantone') {
+      const key = val.replace(/^pantone\s+/i, '').trim().toLowerCase();
+      const keys = Object.keys(PANTONE);
+      const f = keys.find(k => k.toLowerCase() === key)
+        || keys.find(k => k.toLowerCase() === key + ' c')
+        || keys.find(k => k.toLowerCase().replace(/\s+/g, '') === key.replace(/\s+/g, ''));
+      if (!f) return null;
+      const h = PANTONE[f].slice(1);
+      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+    }
+    return null;
+  }
+
+  function apply(showErr) {
+    const rgb = parse();
+    if (!rgb) { if (showErr) { input.classList.add('err'); setTimeout(() => input.classList.remove('err'), 500); } return; }
+    if (marker) marker.style.display = 'none';
+    renderColor(rgb[0], rgb[1], rgb[2], 'manual entry');
+    lctx.clearRect(0, 0, 96, 96);
+    lctx.fillStyle = toHex(rgb[0], rgb[1], rgb[2]);
+    lctx.fillRect(0, 0, 96, 96);
+  }
+
+  input.addEventListener('input', () => apply(false));
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') apply(true); });
+  document.getElementById('apply').addEventListener('click', () => apply(true));
+})();
 </script>
 </body>
 </html>
