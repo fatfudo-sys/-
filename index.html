@@ -38,7 +38,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:none}
 #spot{position:fixed;inset:0;pointer-events:none;z-index:2147483646;mix-blend-mode:screen;
   background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.10),rgba(255,255,255,.03) 40%,transparent 62%);
   transition:opacity .5s var(--f-cubic)}
-body.gaming #spot,body.gaming #trail,body.tooling #spot,body.tooling #trail{opacity:0}
+body.gaming #spot,body.gaming #trail,body.tooling #spot,body.tooling #trail,body.presenting #spot,body.presenting #trail{opacity:0}
 #trail{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2147483647;mix-blend-mode:screen;transition:opacity .5s var(--f-cubic)}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -281,6 +281,37 @@ footer .base .mono{color:var(--faint)}
 .playfab:hover span{color:var(--ink)}
 @media(pointer:coarse){.playfab{cursor:pointer}}
 
+/* ===== presentation mode ===== */
+#present{position:fixed;inset:0;z-index:70;background:#000;display:none;overflow:hidden;cursor:none}
+#present.on{display:block}
+#present .pvig{position:absolute;inset:0;pointer-events:none;z-index:5;
+  background:radial-gradient(135% 105% at 50% 44%,transparent 52%,rgba(0,0,0,.72))}
+.ptile{position:absolute;overflow:hidden;background:#0e0f0f;border:1px solid rgba(255,255,255,.07);
+  opacity:0;will-change:transform,opacity;animation:drift var(--dur,9s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+.ptile img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.06) brightness(.95)}
+.pcap{position:absolute;left:0;right:0;bottom:0;padding:15px 16px 12px;z-index:2;
+  background:linear-gradient(transparent,rgba(0,0,0,.78));font-family:var(--serif);font-weight:300;
+  font-size:16px;color:#fff;letter-spacing:-.01em;line-height:1.15}
+.pcap span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:rgba(255,255,255,.6);display:block;margin-top:5px}
+.pt-c{left:29vw;top:17vh;width:42vw;height:66vh;z-index:2}
+.pt-c .pcap{font-size:23px;padding:22px}
+.pt-tl{left:2.5vw;top:6vh;width:22vw;height:30vh;z-index:1}
+.pt-tr{right:2.5vw;top:8vh;width:20vw;height:28vh;z-index:1}
+.pt-bl{left:3.5vw;bottom:6vh;width:20vw;height:28vh;z-index:1}
+.pt-br{right:2.5vw;bottom:6vh;width:22vw;height:30vh;z-index:1}
+@keyframes drift{
+  0%{opacity:0;transform:translate(-34px,-34px) scale(1.03)}
+  14%{opacity:1} 86%{opacity:1}
+  100%{opacity:0;transform:translate(34px,34px) scale(1.13)}
+}
+#present .phead{position:absolute;top:0;left:0;right:0;z-index:6;display:flex;justify-content:space-between;
+  gap:14px;padding:24px clamp(20px,5vw,50px);pointer-events:none}
+#present .phead .l{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+#present .phead .l b{color:#fff}
+#present .phead .r{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+@media(max-width:720px){.pt-c{left:8vw;width:84vw;top:24vh;height:46vh}.pt-tl,.pt-tr,.pt-bl,.pt-br{display:none}}
+@media(prefers-reduced-motion:reduce){.ptile{animation-duration:14s}}
+
 /* ===== game ===== */
 .game{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:var(--pad)}
 .game.open{display:flex}
@@ -352,6 +383,7 @@ footer .base .mono{color:var(--faint)}
     <div class="c hideS"><b id="shown">92</b> / <span id="total">92</span> works</div>
     <button class="iconbtn" id="colorbtn" title="Color Picker" aria-label="Color Picker"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.4 6 10.2A6 6 0 0 1 6 13.2C6 9.4 12 3 12 3Z"/></svg></button>
     <button class="iconbtn" id="clockbtn" title="Clock &amp; Timer" aria-label="Clock and Timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.4V12l3.3 2"/></svg></button>
+    <button class="iconbtn" id="presentbtn" title="Presentation — auto slideshow" aria-label="Presentation mode"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="13" rx="1.4"/><path d="M10.2 8.4 15 11 10.2 13.6Z"/><path d="M8.5 20.5h7"/></svg></button>
     <button class="iconbtn play" id="playbtn" title="Play — Design Center Survivor" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M7 4.5 19 12 7 19.5Z"/></svg></button>
     <a href="#read" class="jump">Read ↓</a>
   </div>
@@ -528,6 +560,19 @@ footer .base .mono{color:var(--faint)}
     <button class="g-close" data-gclose aria-label="Close">✕</button>
     <iframe id="g-frame" title="設計中心生存記 · Design Center Survivor"></iframe>
   </div>
+</div>
+
+<div id="present" data-pclose>
+  <div class="pvig"></div>
+  <div class="phead">
+    <div class="l">Johnny <b>Chan</b> · Works in motion</div>
+    <div class="r">Auto-play · Esc / click to exit</div>
+  </div>
+  <div class="ptile pt-c" style="--dur:10s;--dl:-1s"><img alt=""><div class="pcap"></div></div>
+  <div class="ptile pt-tl" style="--dur:8s;--dl:-3s"><img alt=""><div class="pcap"></div></div>
+  <div class="ptile pt-tr" style="--dur:8.6s;--dl:-5s"><img alt=""><div class="pcap"></div></div>
+  <div class="ptile pt-bl" style="--dur:9s;--dl:-2s"><img alt=""><div class="pcap"></div></div>
+  <div class="ptile pt-br" style="--dur:7.6s;--dl:-6s"><img alt=""><div class="pcap"></div></div>
 </div>
 
 <div class="game" id="tool">
@@ -804,6 +849,25 @@ function closeTool(){
   document.body.style.overflow='';
 }
 
+/* ---------- PRESENTATION MODE ---------- */
+let presPool=[], presIdx=0;
+function shufflePres(){const a=WORKS.filter(w=>w.image);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function nextPresImg(){if(presIdx>=presPool.length){presPool=shufflePres();presIdx=0;}return presPool[presIdx++];}
+function setTile(t){
+  const w=nextPresImg(), img=t.querySelector('img'), cap=t.querySelector('.pcap'); if(!w)return;
+  img.onerror=()=>{img.onerror=null;const w2=nextPresImg();if(!w2)return;cap.innerHTML=`${titleCase(w2.name)} <span>${(w2.brand||'').toUpperCase()} · ${w2.year||''}</span>`;img.src=w2.image;};
+  cap.innerHTML=`${titleCase(w.name)} <span>${(w.brand||'').toUpperCase()} · ${w.year||''}</span>`;
+  img.src=w.image;
+}
+function openPresent(){
+  presPool=shufflePres(); presIdx=0;
+  document.querySelectorAll('#present .ptile').forEach(t=>{ setTile(t);
+    if(!t._bound){ t.addEventListener('animationiteration',()=>setTile(t)); t._bound=1; } });
+  document.getElementById('present').classList.add('on');
+  document.body.classList.add('presenting'); document.body.style.overflow='hidden';
+}
+function closePresent(){document.getElementById('present').classList.remove('on');document.body.classList.remove('presenting');document.body.style.overflow='';}
+
 
 /* ---------- init ---------- */
 function init(){
@@ -818,11 +882,14 @@ function init(){
   document.getElementById('playfab').onclick=openGame;
   document.getElementById('colorbtn').onclick=()=>openTool('colorpicker.html');
   document.getElementById('clockbtn').onclick=()=>openTool('clock.html');
+  document.getElementById('presentbtn').onclick=openPresent;
   document.querySelectorAll('#game [data-gclose]').forEach(e=>e.onclick=closeGame);
   document.querySelectorAll('#tool [data-tclose]').forEach(e=>e.onclick=closeTool);
+  document.getElementById('present').addEventListener('click',closePresent);
   addEventListener('keydown',e=>{if(e.key!=='Escape')return;
     if(document.getElementById('game').classList.contains('open'))closeGame();
-    if(document.getElementById('tool').classList.contains('open'))closeTool();});
+    if(document.getElementById('tool').classList.contains('open'))closeTool();
+    if(document.getElementById('present').classList.contains('on'))closePresent();});
 }
 if(document.readyState!=='loading')init(); else document.addEventListener('DOMContentLoaded',init);
 </script>
