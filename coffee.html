@@ -81,6 +81,12 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .summary .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .summary .sv{font-family:var(--serif);font-weight:300;font-size:20px;margin-top:5px;color:var(--text)}
 .summary .sv small{font-size:.6em;color:var(--muted)}
+.m3{display:flex;flex-direction:column;gap:clamp(20px,4vh,40px);align-items:center;margin:clamp(28px,7vh,64px) 0}
+.metric{text-align:center}
+.mlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.mval{font-family:var(--serif);font-weight:300;font-size:clamp(44px,9vw,64px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
+.mval small{font-size:.34em;color:var(--muted);margin-left:5px;letter-spacing:0}
+.metric.hero .mval{font-size:clamp(76px,18vw,128px);color:var(--bright)}
 .run-ctrl{display:flex;gap:10px;margin-top:auto;padding-top:34px;width:min(400px,100%)}
 .run-ctrl button{flex:1;border-radius:100px;padding:15px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;transition:.3s var(--f)}
 .run-ctrl .pri{background:var(--text);color:var(--bg)}
@@ -142,21 +148,13 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
 <!-- RUN -->
 <div class="view" id="run"><div class="pad">
-  <div class="logo"><svg viewBox="0 0 48 48" fill="none" stroke="#ededec" stroke-width="1.6" stroke-linejoin="round"><path d="M13 15h22l-11 20z"/><path d="M24 20v11"/></svg></div>
-  <div class="bigtime" id="clock">00:00</div>
   <div class="pourlabel" id="pourlabel">1st pour · Step 1 of 5</div>
-  <div class="progressbar"><i id="prog"></i></div>
-  <div class="hr"></div>
-  <div class="target" id="target">60<small style="font-size:.5em;color:var(--muted)">ml</small></div>
-  <div class="target-k">Scale target</div>
-  <div class="instr" id="instr"></div>
-  <div class="wait" id="wait"></div>
-  <div class="next"><span class="nk">Next →</span><div class="nt" id="nextTxt">—</div></div>
-  <div class="summary">
-    <div><div class="sk">Coffee</div><div class="sv"><span id="sCoffee">20</span><small>g</small></div></div>
-    <div><div class="sk">Water</div><div class="sv"><span id="sWater">300</span><small>ml</small></div></div>
-    <div><div class="sk">Temp</div><div class="sv"><span id="sTemp">93</span><small>°C</small></div></div>
+  <div class="m3">
+    <div class="metric"><div class="mlabel">加水時間 · Pour time</div><div class="mval" id="clock">00:00</div></div>
+    <div class="metric hero"><div class="mlabel">目標克重 · Target</div><div class="mval" id="target">60<small>g</small></div></div>
+    <div class="metric"><div class="mlabel">等待時間 · Wait</div><div class="mval" id="wait">45<small>s</small></div></div>
   </div>
+  <div class="progressbar"><i id="prog"></i></div>
   <div class="run-ctrl">
     <button class="gh" id="backBtn">← Adjust</button>
     <button class="pri" id="playBtn">Pause</button>
@@ -238,16 +236,13 @@ function draw(){
   $('#clock').textContent=done?fmt(total):fmt(t);
   $('#run').classList.toggle('done',done);
   const s=steps[idx];
-  $('#pourlabel').textContent=done?('Done · '+n+' pours complete'):(ORD[idx]+' pour · Step '+(idx+1)+' of '+n);
-  $('#target').innerHTML=(done?steps[n-1].cum:s.cum)+'<small style="font-size:.5em;color:var(--muted)">ml</small>';
-  $('#instr').innerHTML=done?'Brew complete — <b>enjoy your coffee</b>.':s.instr;
+  $('#pourlabel').textContent=done?('Done · '+n+' pours'):(ORD[idx]+' pour · Step '+(idx+1)+' of '+n);
+  $('#target').innerHTML=(done?steps[n-1].cum:s.cum)+'<small>g</small>';
   const atLast=idx>=n-1;
-  const toNext=INTERVAL-(t%INTERVAL);
-  $('#wait').textContent=done?'':(atLast?'Let the water draw down completely.':('Next pour in '+Math.ceil(toNext)+'s'));
-  if(done||atLast){ $('#nextTxt').textContent=done?'':'Final draw-down — remove the dripper when finished.'; if(atLast&&!done)$('.next .nk').textContent='Finish →'; }
-  else{ $('.next .nk').textContent='Next →'; $('#nextTxt').textContent=steps[idx+1].cum+'ml — '+steps[idx+1].short+'.'; }
+  const toNext=Math.max(0,Math.ceil(INTERVAL-(t%INTERVAL)));
+  const remain=Math.max(0,Math.ceil(total-t));
+  $('#wait').innerHTML=(done?0:(atLast?remain:toNext))+'<small>s</small>';
   $('#prog').style.width=Math.min(100,t/total*100)+'%';
-  // beep at each pour boundary
   if(!done && idx!==lastBeep){ lastBeep=idx; if(t>0.3) beep(); }
 }
 function loop(now){ if(!running)return; if(!last)last=now; t+=(now-last)/1000; last=now;
@@ -261,7 +256,6 @@ $('#resetBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); t=0; last
 $('#backBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); $('#run').classList.remove('on'); $('#setup').classList.add('on'); };
 $('#startBtn').onclick=()=>{
   steps=buildSteps(); t=0; lastBeep=-1;
-  $('#sCoffee').textContent=coffeeG(); $('#sWater').textContent=water(); $('#sTemp').textContent=state.temp;
   $('#setup').classList.remove('on'); $('#run').classList.add('on');
   draw(); startTimer();
 };
