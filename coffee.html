@@ -9,14 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f3ede2; --card:#faf6ee; --card2:#ebe4d6; --ink:#2a1d16; --brown:#9a4a26; --brown2:#83371b;
-  --gold:#b07a2e; --muted:#8f8271; --line:#e2daca; --line2:#d8cfbd;
+  --bg:#0a0b0b; --card:#141514; --card2:#1b1c1c; --text:#ededec;
+  --muted:rgba(237,237,236,.6); --faint:rgba(237,237,236,.34);
+  --accent:#c7ccc8; --bright:#fff; --line:rgba(237,237,236,.12); --line2:rgba(237,237,236,.2);
   --serif:'Fraunces',Georgia,serif; --sans:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
   --mono:'Space Mono',ui-monospace,Menlo,monospace; --f:cubic-bezier(.6,0,.05,1);
 }
 *{margin:0;box-sizing:border-box}
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased;overflow:hidden}
 .wrap{height:100%;overflow-y:auto}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .view{display:none;min-height:100%}
@@ -24,73 +25,71 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .pad{max-width:1120px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(18px,4vw,44px) 60px}
 .mono{font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase}
 
-/* ---- setup ---- */
-.h-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4vw,42px);letter-spacing:-.01em;margin-bottom:26px}
-.h-title em{font-style:italic;color:var(--brown)}
-.unit{display:grid;grid-template-columns:1fr 1fr;background:var(--card2);border-radius:12px;padding:5px;margin-bottom:22px}
-.unit button{padding:13px;border-radius:9px;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;transition:.3s var(--f)}
-.unit button.on{background:var(--brown);color:#fff;box-shadow:0 2px 8px rgba(131,55,27,.28)}
+.h-title{font-family:var(--serif);font-weight:300;font-size:clamp(28px,4vw,44px);letter-spacing:-.01em;margin-bottom:26px}
+.h-title em{font-style:italic;color:var(--accent)}
+.unit{display:grid;grid-template-columns:1fr 1fr;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px;margin-bottom:22px}
+.unit button{padding:13px;border-radius:9px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:.3s var(--f)}
+.unit button.on{background:var(--text);color:var(--bg)}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .prow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:clamp(16px,2.2vw,22px) clamp(18px,2.5vw,26px);border-bottom:1px solid var(--line)}
 .prow:last-child{border-bottom:none}
 .prow.auto{background:var(--card2)}
 .prow .k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-.prow .val{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,32px);margin-top:4px;letter-spacing:-.01em}
+.prow .val{font-family:var(--serif);font-weight:300;font-size:clamp(24px,3vw,32px);margin-top:4px;letter-spacing:-.01em;color:var(--text)}
 .prow .val small{font-size:.5em;color:var(--muted);margin-left:3px;font-family:var(--sans)}
-.prow .val.brown{color:var(--brown)}
+.prow .val.brown{color:var(--bright)}
 .prow .sub{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);margin-top:2px}
-.prow .autotag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted)}
-.stepper{display:flex;align-items:center;gap:4px;background:var(--card2);border-radius:12px;padding:5px;flex:none}
-.stepper button{width:40px;height:40px;border-radius:9px;font-size:20px;font-weight:400;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:.2s}
-.stepper button:hover{background:#fff;color:var(--brown)}
-.stepper .num{min-width:52px;text-align:center;font-family:var(--serif);font-size:22px}
+.prow .autotag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint)}
+.stepper{display:flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px;flex:none}
+.stepper button{width:40px;height:40px;border-radius:9px;font-size:20px;font-weight:400;color:var(--text);display:flex;align-items:center;justify-content:center;transition:.2s}
+.stepper button:hover{background:var(--text);color:var(--bg)}
+.stepper .num{min-width:52px;text-align:center;font-family:var(--serif);font-weight:300;font-size:22px;color:var(--text)}
 .seg-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
-.seg-label b{color:var(--ink);font-weight:400}
+.seg-label b{color:var(--text);font-weight:400}
 .seg{display:flex;gap:9px;flex-wrap:wrap}
-.seg button{padding:11px 20px;border-radius:100px;border:1px solid var(--line2);font-size:14px;color:var(--ink);background:var(--card);transition:.25s var(--f)}
-.seg button:hover{border-color:var(--brown)}
-.seg button.on{background:var(--brown);color:#fff;border-color:var(--brown)}
-.grind{background:var(--card2);border-radius:14px;padding:18px 22px;margin-top:24px}
+.seg button{padding:11px 20px;border-radius:100px;border:1px solid var(--line2);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);background:transparent;transition:.25s var(--f)}
+.seg button:hover{border-color:var(--text)}
+.seg button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.grind{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px}
 .grind .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-.grind .v{font-family:var(--serif);font-size:22px;margin-top:4px}
-.startbtn{display:block;width:100%;margin-top:28px;background:var(--brown);color:#fff;border-radius:100px;padding:18px;
+.grind .v{font-family:var(--serif);font-weight:300;font-size:22px;margin-top:4px;color:var(--text)}
+.startbtn{display:block;width:100%;margin-top:28px;background:var(--text);color:var(--bg);border-radius:100px;padding:18px;
   font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;transition:.3s var(--f)}
-.startbtn:hover{background:var(--brown2)}
-.tclose{position:fixed;top:16px;right:16px;z-index:5;width:42px;height:42px;border-radius:100px;border:1px solid var(--line2);
-  background:var(--card);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:.3s var(--f)}
-.tclose:hover{background:var(--brown);color:#fff;border-color:var(--brown);transform:rotate(90deg)}
+.startbtn:hover{background:var(--bright)}
+.tclose{position:fixed;top:16px;right:16px;z-index:5;width:42px;height:42px;border-radius:100px;border:1px solid var(--line);
+  background:rgba(10,11,11,.6);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:.3s var(--f)}
+.tclose:hover{background:var(--bright);color:var(--bg);border-color:var(--bright);transform:rotate(90deg)}
 
-/* ---- run ---- */
 #run .pad{max-width:560px;text-align:center;padding-top:clamp(28px,6vh,64px);min-height:100%;display:flex;flex-direction:column;align-items:center}
-.logo{width:112px;height:112px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin-bottom:26px}
+.logo{width:112px;height:112px;border-radius:50%;background:var(--card);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;margin-bottom:26px}
 .logo svg{width:46px;height:46px}
-.bigtime{font-family:var(--serif);font-weight:300;font-size:clamp(56px,13vw,92px);line-height:.9;letter-spacing:-.02em}
-.pourlabel{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--brown);margin-top:12px}
+.bigtime{font-family:var(--serif);font-weight:300;font-size:clamp(56px,13vw,92px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
+.pourlabel{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:12px}
 .hr{height:1px;background:var(--line2);width:min(360px,80%);margin:30px 0}
-.target{font-family:var(--serif);font-weight:400;font-size:clamp(48px,11vw,76px);color:var(--gold);line-height:.9;letter-spacing:-.02em}
+.target{font-family:var(--serif);font-weight:300;font-size:clamp(48px,11vw,76px);color:var(--bright);line-height:.9;letter-spacing:-.02em}
 .target-k{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px}
-.instr{font-family:var(--serif);font-size:clamp(21px,3.4vw,27px);line-height:1.3;margin-top:26px;max-width:22ch}
-.instr b{color:var(--brown);font-weight:400;font-style:normal}
-.instr em{font-style:italic}
+.instr{font-family:var(--serif);font-weight:300;font-size:clamp(21px,3.4vw,27px);line-height:1.3;margin-top:26px;max-width:22ch;color:var(--text)}
+.instr b{color:var(--bright);font-weight:400;font-style:normal}
+.instr em{font-style:italic;color:var(--accent)}
 .wait{color:var(--muted);font-size:14px;margin-top:16px}
 .next{margin-top:24px;color:var(--muted)}
-.next .nk{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:5px}
+.next .nk{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px}
 .next .nt{font-size:14px;line-height:1.5;max-width:34ch;margin:0 auto}
-.summary{display:flex;gap:0;background:var(--card2);border-radius:14px;margin-top:30px;overflow:hidden;width:min(400px,100%)}
+.summary{display:flex;gap:0;background:var(--card2);border:1px solid var(--line);border-radius:14px;margin-top:30px;overflow:hidden;width:min(400px,100%)}
 .summary div{flex:1;padding:16px 8px;text-align:center;border-right:1px solid var(--line)}
 .summary div:last-child{border-right:none}
 .summary .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.summary .sv{font-family:var(--serif);font-size:20px;margin-top:5px}
+.summary .sv{font-family:var(--serif);font-weight:300;font-size:20px;margin-top:5px;color:var(--text)}
 .summary .sv small{font-size:.6em;color:var(--muted)}
 .run-ctrl{display:flex;gap:10px;margin-top:auto;padding-top:34px;width:min(400px,100%)}
 .run-ctrl button{flex:1;border-radius:100px;padding:15px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;transition:.3s var(--f)}
-.run-ctrl .pri{background:var(--brown);color:#fff}
-.run-ctrl .pri:hover{background:var(--brown2)}
-.run-ctrl .gh{border:1px solid var(--line2);color:var(--ink)}
-.run-ctrl .gh:hover{border-color:var(--brown);color:var(--brown)}
-.done .bigtime{color:var(--brown)}
+.run-ctrl .pri{background:var(--text);color:var(--bg)}
+.run-ctrl .pri:hover{background:var(--bright)}
+.run-ctrl .gh{border:1px solid var(--line2);color:var(--text)}
+.run-ctrl .gh:hover{border-color:var(--text)}
+.done .bigtime{color:var(--accent)}
 .progressbar{width:min(360px,80%);height:3px;background:var(--line2);border-radius:3px;margin-top:22px;overflow:hidden}
-.progressbar i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s linear}
+.progressbar i{display:block;height:100%;background:var(--bright);width:0;transition:width .3s linear}
 </style>
 </head>
 <body>
@@ -143,7 +142,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
 <!-- RUN -->
 <div class="view" id="run"><div class="pad">
-  <div class="logo"><svg viewBox="0 0 48 48" fill="none" stroke="#f3ede2" stroke-width="1.6" stroke-linejoin="round"><path d="M13 15h22l-11 20z"/><path d="M24 20v11"/></svg></div>
+  <div class="logo"><svg viewBox="0 0 48 48" fill="none" stroke="#ededec" stroke-width="1.6" stroke-linejoin="round"><path d="M13 15h22l-11 20z"/><path d="M24 20v11"/></svg></div>
   <div class="bigtime" id="clock">00:00</div>
   <div class="pourlabel" id="pourlabel">1st pour · Step 1 of 5</div>
   <div class="progressbar"><i id="prog"></i></div>
