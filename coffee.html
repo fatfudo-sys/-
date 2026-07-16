@@ -81,7 +81,9 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .summary .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .summary .sv{font-family:var(--serif);font-weight:300;font-size:20px;margin-top:5px;color:var(--text)}
 .summary .sv small{font-size:.6em;color:var(--muted)}
-.m3{display:flex;flex-direction:column;gap:clamp(20px,4vh,40px);align-items:center;margin:clamp(28px,7vh,64px) 0}
+.v60{width:clamp(180px,50vw,260px);aspect-ratio:1;margin:0 auto 4px;position:relative}
+.v60 canvas{width:100%;height:100%;display:block}
+.m3{display:flex;flex-direction:column;gap:clamp(16px,3.2vh,34px);align-items:center;margin:clamp(20px,4vh,40px) 0}
 .metric{text-align:center}
 .mlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .mval{font-family:var(--serif);font-weight:300;font-size:clamp(44px,9vw,64px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
@@ -148,6 +150,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
 <!-- RUN -->
 <div class="view" id="run"><div class="pad">
+  <div class="v60"><canvas id="v60c"></canvas></div>
   <div class="pourlabel" id="pourlabel">1st pour · Step 1 of 5</div>
   <div class="m3">
     <div class="metric"><div class="mlabel">加水時間 · Pour time</div><div class="mval" id="clock">00:00</div></div>
@@ -222,6 +225,40 @@ $('#strSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.strength
 
 /* run / timer */
 let steps=[], t=0, running=false, raf=null, last=0, actx=null, lastBeep=-1;
+const v60c=$('#v60c'), v60ctx=v60c.getContext('2d'); const TWO_PI=Math.PI*2, DPR=Math.min(2,window.devicePixelRatio||1); let trail=[];
+function drawV60(){
+  const s=v60c.clientWidth; if(!s)return;
+  if(v60c.width!==Math.round(s*DPR)){v60c.width=v60c.height=Math.round(s*DPR);v60ctx.setTransform(DPR,0,0,DPR,0,0);}
+  const ctx=v60ctx, cx=s/2, cy=s/2, R=s/2-3;
+  ctx.clearRect(0,0,s,s);
+  // cone ribs (V60 spiral ridges)
+  const RIBS=24, tw=0.55;
+  ctx.strokeStyle='rgba(237,237,236,.06)'; ctx.lineWidth=1;
+  for(let i=0;i<RIBS;i++){const a=i/RIBS*TWO_PI; ctx.beginPath();
+    for(let k=0;k<=12;k++){const rr=R*k/12, aa=a+tw*(k/12), x=cx+Math.cos(aa)*rr, y=cy+Math.sin(aa)*rr; k?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke();}
+  // guide rings
+  [0.72,0.46,0.22].forEach(f=>{ctx.strokeStyle='rgba(237,237,236,.08)';ctx.beginPath();ctx.arc(cx,cy,R*f,0,TWO_PI);ctx.stroke();});
+  // rim + overall progress arc
+  ctx.lineWidth=1.4; ctx.strokeStyle='rgba(237,237,236,.16)'; ctx.beginPath();ctx.arc(cx,cy,R,0,TWO_PI);ctx.stroke();
+  const total=totalTime(), prog=Math.min(1,t/total);
+  ctx.lineWidth=2.4; ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.beginPath();ctx.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+prog*TWO_PI);ctx.stroke();
+  // pour point
+  const n=steps.length, idx=Math.min(n-1,Math.floor(t/INTERVAL)), done=t>=total;
+  const localT=t-idx*INTERVAL;
+  const pourSec=steps[idx]?Math.min(INTERVAL*0.6,Math.max(6,steps[idx].pour/5)):8;
+  const pouring=!done && localT<pourSec;
+  const maxR=R*0.8, angle=t*TWO_PI*0.85;
+  let r,alpha;
+  if(pouring){const p=localT/pourSec; r=maxR*(0.14+0.86*p); alpha=1;
+    trail.push([cx+Math.cos(angle)*r, cy+Math.sin(angle)*r]); if(trail.length>44)trail.shift();}
+  else{ r=maxR*0.1; alpha=done?0:.3; if(trail.length)trail.shift(); }
+  for(let i=0;i<trail.length;i++){const a=i/trail.length; ctx.fillStyle='rgba(255,255,255,'+(a*0.45).toFixed(3)+')';
+    ctx.beginPath();ctx.arc(trail[i][0],trail[i][1],1.2+a*2.4,0,TWO_PI);ctx.fill();}
+  if(alpha>0){const dx=cx+Math.cos(angle)*r, dy=cy+Math.sin(angle)*r;
+    const g=ctx.createRadialGradient(dx,dy,0,dx,dy,13);g.addColorStop(0,'rgba(255,255,255,'+alpha+')');g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(dx,dy,13,0,TWO_PI);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,'+alpha+')';ctx.beginPath();ctx.arc(dx,dy,2.6,0,TWO_PI);ctx.fill();}
+}
 function fmt(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
 function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
   const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);
@@ -244,6 +281,7 @@ function draw(){
   $('#wait').innerHTML=(done?0:(atLast?remain:toNext))+'<small>s</small>';
   $('#prog').style.width=Math.min(100,t/total*100)+'%';
   if(!done && idx!==lastBeep){ lastBeep=idx; if(t>0.3) beep(); }
+  drawV60();
 }
 function loop(now){ if(!running)return; if(!last)last=now; t+=(now-last)/1000; last=now;
   if(t>=totalTime()){ t=totalTime(); running=false; draw(); $('#playBtn').textContent='Done'; beep(); return; }
@@ -252,7 +290,7 @@ function loop(now){ if(!running)return; if(!last)last=now; t+=(now-last)/1000; l
 function startTimer(){ if(running)return; running=true; last=0; $('#playBtn').textContent='Pause'; raf=requestAnimationFrame(loop); }
 function pauseTimer(){ running=false; cancelAnimationFrame(raf); $('#playBtn').textContent='Resume'; }
 $('#playBtn').onclick=()=>{ if($('#playBtn').textContent==='Done')return; running?pauseTimer():startTimer(); };
-$('#resetBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); t=0; lastBeep=-1; $('#playBtn').textContent='Pause'; draw(); startTimer(); };
+$('#resetBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); t=0; lastBeep=-1; trail=[]; $('#playBtn').textContent='Pause'; draw(); startTimer(); };
 $('#backBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); $('#run').classList.remove('on'); $('#setup').classList.add('on'); };
 $('#startBtn').onclick=()=>{
   steps=buildSteps(); t=0; lastBeep=-1;
