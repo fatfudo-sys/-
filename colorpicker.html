@@ -662,5 +662,38 @@ document.querySelectorAll('.row .v').forEach(el => {
   document.getElementById('apply').addEventListener('click', () => apply(true));
 })();
 </script>
+<script>
+  // 建立動態載入 Pantone 色票的函式
+  async function loadPantoneList() {
+    const dataList = document.getElementById('pantoneList');
+    
+    try {
+      // 讀取 GitHub 上開源的 Pantone JSON 資料集
+      const response = await fetch('https://raw.githubusercontent.com/Korchy/blender-color-matching/master/pantone.json');
+      const pantoneArray = await response.json();
+      
+      // JSON 格式解析與生成 <option>
+      // 來源資料格式為：[[[R,G,B], ["PANTONE 100", "c-m-y-k", "", "#FCEA76"]], ...]
+      pantoneArray.forEach(item => {
+        const pantoneName = item[1][0]; // 例如 "PANTONE 100"
+        const hexCode = item[1][3];     // 例如 "#FCEA76"
+        
+        // 建立 datalist 選項
+        const option = document.createElement('option');
+        option.value = hexCode; 
+        option.textContent = pantoneName; // 讓選單同時顯示色碼與對應的 Pantone 名稱
+        
+        dataList.appendChild(option);
+      });
+      
+      console.log(`成功載入 ${pantoneArray.length} 筆 Pantone 色票！`);
+    } catch (error) {
+      console.error("載入 Pantone 清單失敗：", error);
+    }
+  }
+
+  // 確保網頁載入完成後執行
+  document.addEventListener('DOMContentLoaded', loadPantoneList);
+</script>
 </body>
 </html>
