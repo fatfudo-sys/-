@@ -60,7 +60,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   background:rgba(10,11,11,.6);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:.3s var(--f)}
 .tclose:hover{background:var(--bright);color:var(--bg);border-color:var(--bright);transform:rotate(90deg)}
 
-#run .pad{max-width:560px;text-align:center;padding-top:clamp(28px,6vh,64px);min-height:100%;display:flex;flex-direction:column;align-items:center}
+#run .pad{max-width:560px;text-align:center;height:100dvh;padding:clamp(12px,2.5vh,30px) clamp(18px,4vw,44px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1vh,14px)}
 .logo{width:112px;height:112px;border-radius:50%;background:var(--card);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;margin-bottom:26px}
 .logo svg{width:46px;height:46px}
 .bigtime{font-family:var(--serif);font-weight:300;font-size:clamp(56px,13vw,92px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
@@ -81,24 +81,24 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .summary .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .summary .sv{font-family:var(--serif);font-weight:300;font-size:20px;margin-top:5px;color:var(--text)}
 .summary .sv small{font-size:.6em;color:var(--muted)}
-.v60{width:clamp(180px,50vw,260px);aspect-ratio:1;margin:0 auto 4px;position:relative}
+.v60{width:min(46vw,24vh);max-width:250px;aspect-ratio:1;margin:0 auto;position:relative}
 .v60 canvas{width:100%;height:100%;display:block}
-.m3{display:flex;flex-direction:column;gap:clamp(16px,3.2vh,34px);align-items:center;margin:clamp(20px,4vh,40px) 0}
+.m3{display:flex;flex-direction:column;gap:clamp(6px,1.6vh,22px);align-items:center;margin:clamp(6px,1.4vh,20px) 0}
 .metric{text-align:center}
-.mlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.mval{font-family:var(--serif);font-weight:300;font-size:clamp(44px,9vw,64px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
+.mlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:clamp(3px,.8vh,8px)}
+.mval{font-family:var(--serif);font-weight:300;font-size:clamp(30px,6vh,56px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
 .mval small{font-size:.34em;color:var(--muted);margin-left:5px;letter-spacing:0}
-.metric.hero .mval{font-size:clamp(76px,18vw,128px);color:var(--bright)}
-.mtarget{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+.metric.hero .mval{font-size:clamp(52px,12vh,108px);color:var(--bright)}
+.mtarget{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:clamp(4px,1vh,10px)}
 .mtarget b{color:var(--accent);font-weight:400}
-.run-ctrl{display:flex;gap:10px;margin-top:auto;padding-top:34px;width:min(400px,100%)}
+.run-ctrl{display:flex;gap:10px;margin-top:clamp(10px,2vh,24px);width:min(400px,100%)}
 .run-ctrl button{flex:1;border-radius:100px;padding:15px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;transition:.3s var(--f)}
 .run-ctrl .pri{background:var(--text);color:var(--bg)}
 .run-ctrl .pri:hover{background:var(--bright)}
 .run-ctrl .gh{border:1px solid var(--line2);color:var(--text)}
 .run-ctrl .gh:hover{border-color:var(--text)}
 .done .bigtime{color:var(--accent)}
-.progressbar{width:min(360px,80%);height:3px;background:var(--line2);border-radius:3px;margin-top:22px;overflow:hidden}
+.progressbar{width:min(360px,80%);height:3px;background:var(--line2);border-radius:3px;margin-top:clamp(6px,1.4vh,18px);overflow:hidden}
 .progressbar i{display:block;height:100%;background:var(--bright);width:0;transition:width .3s linear}
 </style>
 </head>
