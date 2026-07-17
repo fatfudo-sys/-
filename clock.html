@@ -167,7 +167,7 @@ const CITIES=[
 const grid=$('#worldGrid');
 CITIES.forEach(([name,tz],i)=>{
   const el=document.createElement('div');
-  el.className='wc'+(tz===bigTz?' home':'');
+  el.className='wc'+((tz===bigTz||name==="Johnny's Time")?' home':'');
   el.innerHTML=`<div class="city"><span>${name}</span><span class="off" data-off></span></div>
     <div class="tt" data-tt>--:--<span class="ss">:--</span></div>
     <div class="dd" data-dd>—</div>`;
