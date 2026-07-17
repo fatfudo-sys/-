@@ -180,17 +180,19 @@ section{padding:clamp(80px,12vh,150px) var(--pad);position:relative}
 .marquee span::before{content:"✦";font-style:normal;color:var(--accent);font-size:.5em;vertical-align:middle;margin-right:.9em}
 @keyframes marq{to{transform:translateX(-50%)}}
 
-.disc{display:flex;flex-direction:column;border-top:1px solid var(--line)}
-.disc .row{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,3vw,50px);align-items:baseline;
-  padding:clamp(22px,3vw,38px) 0;border-bottom:1px solid var(--line);cursor:none;transition:padding .5s var(--f-cubic)}
-.disc .row .rn{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em}
-.disc .row .rt{font-family:var(--serif);font-weight:300;font-size:clamp(26px,4.4vw,58px);line-height:1;letter-spacing:-.01em;transition:transform .6s var(--f-cubic),color .6s}
-.disc .row .rt small{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-left:1em;font-weight:300}
-.disc .row .rc{font-family:var(--mono);font-size:12px;color:var(--dim);white-space:nowrap}
-.disc .row:hover{padding-left:clamp(8px,1.5vw,22px)}
-.disc .row:hover .rt{color:var(--bright)}
-.disc .row .tags{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.disc .row .tags b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:100px;padding:4px 11px;font-weight:400}
+.tl{border-top:1px solid var(--line)}
+.tl-row{display:grid;grid-template-columns:150px 1fr;gap:clamp(20px,4vw,70px);
+  padding:clamp(24px,3.4vw,40px) 0;border-bottom:1px solid var(--line);transition:padding .5s var(--f-cubic)}
+.tl-row:hover{padding-left:clamp(6px,1.4vw,18px)}
+.tl-year{font-family:var(--serif);font-weight:300;font-size:clamp(34px,5vw,64px);line-height:.9;letter-spacing:-.02em;
+  color:var(--accent);transition:color .5s var(--f-cubic)}
+.tl-row:hover .tl-year{color:var(--bright)}
+.tl-events{list-style:none;display:flex;flex-direction:column;gap:12px;padding-top:6px}
+.tl-events li{position:relative;padding-left:22px;font-family:var(--serif);font-weight:300;
+  font-size:clamp(16px,1.5vw,20px);line-height:1.4;color:var(--paper);letter-spacing:-.005em}
+.tl-events li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 8px rgba(255,255,255,.4)}
+@media(max-width:640px){.tl-row{grid-template-columns:1fr;gap:12px}}
 
 .cv{display:grid;grid-template-columns:1.55fr 1fr;gap:clamp(30px,6vw,84px)}
 @media(max-width:860px){.cv{grid-template-columns:1fr;gap:44px}}
@@ -479,9 +481,9 @@ footer .base .mono{color:var(--faint)}
   <div class="marquee rev"><div class="track" id="marq"></div></div>
 </section>
 
-<section id="disciplines">
-  <div class="sec-head rev"><span class="idx">04 — Disciplines</span><h2>Four <em>territories</em></h2></div>
-  <div class="disc rev" id="disc"></div>
+<section id="timeline">
+  <div class="sec-head rev"><span class="idx">04 — Johnny Timeline</span><h2>2000 &rarr; <em>Now</em></h2></div>
+  <div class="tl rev"><div class="tl-row"><div class="tl-year">2000</div><ul class="tl-events"><li>中學畢業，任職 petshop.com.hk 網頁設計師 (Web designer)</li><li>入學 IVE 沙田 — 產品設計 (Product Design)</li></ul></div><div class="tl-row"><div class="tl-year">2002</div><ul class="tl-events"><li>瑞士錶品牌 BULOVA 設計師</li></ul></div><div class="tl-row"><div class="tl-year">2003</div><ul class="tl-events"><li>傢俱設計</li><li>IVE 產品設計畢業</li><li>入職 LONGFORD，專注生活用品設計</li><li>珠寶品牌 QEELIN 設計開發</li></ul></div><div class="tl-row"><div class="tl-year">2004</div><ul class="tl-events"><li>張曼玉於康城影展穿戴 WULU 系列，QEELIN 正式發表</li><li>入讀 香港理工大學 (Product Design)</li><li>入讀 Birmingham City University (BA Product Design)</li></ul></div><div class="tl-row"><div class="tl-year">2005</div><ul class="tl-events"><li>Birmingham City University 畢業</li><li>上海 — 為 李寧 設計店面</li><li>入職設計顧問公司</li></ul></div><div class="tl-row"><div class="tl-year">2010</div><ul class="tl-events"><li>入職 ARCTIC — Senior Designer</li><li>開發世界第一個水冷 VGA 散熱</li></ul></div><div class="tl-row"><div class="tl-year">2012</div><ul class="tl-events"><li>入職 ASUS — Senior Designer，負責 OP 產品 (Motherboard / Desktop)</li><li>開發第一款 ROG gaming monitor</li></ul></div><div class="tl-row"><div class="tl-year">2013</div><ul class="tl-events"><li>主導主機板系列設計 (ROG Maximus / TUF / Strix)</li><li>ASUS 桌機主設計師 (ASUS M / K series)</li></ul></div><div class="tl-row"><div class="tl-year">2014</div><ul class="tl-events"><li>ROG 電競周邊主設計師</li><li>打造 ROG 電競外設產品線 (Gladius, Sica, Spatha, Claymore)</li><li>Google router project</li><li>ROG notebook G8 design</li><li>推動並定義 ASUS Aura Sync 企劃</li></ul></div><div class="tl-row"><div class="tl-year">2015</div><ul class="tl-events"><li>晉升 Specialist</li></ul></div><div class="tl-row"><div class="tl-year">2016</div><ul class="tl-events"><li>晉升 Manager</li></ul></div><div class="tl-row"><div class="tl-year">2017</div><ul class="tl-events"><li>晉升 Senior Manager</li><li>轉到 Gaming BU</li><li>ROG Zephyrus S — 世界最薄 14.5mm gaming notebook</li><li>任 ROG GWG 主設計師，領導外設</li></ul></div><div class="tl-row"><div class="tl-year">2018</div><ul class="tl-events"><li>「電競暨辦公裝備事業部」(Gaming &amp; Workspace Gear BU) 成立，帶領外設產品線設計</li><li>推動 ROG Gaming Room 補完計劃</li></ul></div><div class="tl-row"><div class="tl-year">2019</div><ul class="tl-events"><li>晉升 Associate Director</li><li>提出與 IKEA 合作並取得成功，成為 IKEA 與華碩企業內部共創藍本</li></ul></div><div class="tl-row"><div class="tl-year">2021</div><ul class="tl-events"><li>提出 DIY 鍵盤 concept — AZOTH 鍵盤取得空前成功</li></ul></div><div class="tl-row"><div class="tl-year">2022</div><ul class="tl-events"><li>晉升 Director</li></ul></div><div class="tl-row"><div class="tl-year">2025</div><ul class="tl-events"><li>晉升 Senior Director</li></ul></div><div class="tl-row"><div class="tl-year">2026</div><ul class="tl-events"><li>主導 ROG 20th 紀念版企劃</li><li>獲 Red Dot Best of the Best</li></ul></div></div>
 </section>
 
 <section id="career">
@@ -984,7 +986,7 @@ function buildTravel(){
 /* ---------- init ---------- */
 function init(){
   detectMode(); addEventListener('resize',()=>{detectMode();},{passive:true});
-  buildFilters(); buildWall(); buildAwards(); buildDisc(); buildLedger(); buildTravel();
+  buildFilters(); buildWall(); buildAwards(); buildLedger(); buildTravel();
   document.getElementById('total').textContent=WORKS.length;
   panLoop();
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.12});
