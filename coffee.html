@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V60 Coffee Timer — 4:6 JOHNNY EDTION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0b0b; --card:#141514; --card2:#1b1c1c; --text:#ededec;
+  --muted:rgba(237,237,236,.6); --faint:rgba(237,237,236,.34);
+  --accent:#c7ccc8; --bright:#fff; --line:rgba(237,237,236,.12); --line2:rgba(237,237,236,.2);
+  --serif:'Fraunces',Georgia,serif; --sans:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,Menlo,monospace; --f:cubic-bezier(.6,0,.05,1);
+}
+*{margin:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased;overflow:hidden}
+.wrap{height:100%;overflow-y:auto}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.view{display:none;min-height:100%}
+.view.on{display:block}
+.pad{max-width:1120px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(18px,4vw,44px) 60px}
+.mono{font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase}
+
+.h-title{font-family:var(--serif);font-weight:300;font-size:clamp(28px,4vw,44px);letter-spacing:-.01em;margin-bottom:26px}
+.h-title em{font-style:italic;color:var(--accent)}
+.unit{display:grid;grid-template-columns:1fr 1fr;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px;margin-bottom:22px}
+.unit button{padding:13px;border-radius:9px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:.3s var(--f)}
+.unit button.on{background:var(--text);color:var(--bg)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:clamp(16px,2.2vw,22px) clamp(18px,2.5vw,26px);border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:none}
+.prow.auto{background:var(--card2)}
+.prow .k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.prow .val{font-family:var(--serif);font-weight:300;font-size:clamp(24px,3vw,32px);margin-top:4px;letter-spacing:-.01em;color:var(--text)}
+.prow .val small{font-size:.5em;color:var(--muted);margin-left:3px;font-family:var(--sans)}
+.prow .val.brown{color:var(--bright)}
+.prow .sub{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);margin-top:2px}
+.prow .autotag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint)}
+.stepper{display:flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px;flex:none}
+.stepper button{width:40px;height:40px;border-radius:9px;font-size:20px;font-weight:400;color:var(--text);display:flex;align-items:center;justify-content:center;transition:.2s}
+.stepper button:hover{background:var(--text);color:var(--bg)}
+.stepper .num{min-width:52px;text-align:center;font-family:var(--serif);font-weight:300;font-size:22px;color:var(--text)}
+.seg-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
+.seg-label b{color:var(--text);font-weight:400}
+.seg{display:flex;gap:9px;flex-wrap:wrap}
+.seg button{padding:11px 20px;border-radius:100px;border:1px solid var(--line2);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);background:transparent;transition:.25s var(--f)}
+.seg button:hover{border-color:var(--text)}
+.seg button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.grind{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px}
+.grind .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.grind .v{font-family:var(--serif);font-weight:300;font-size:22px;margin-top:4px;color:var(--text)}
+.startbtn{display:block;width:100%;margin-top:28px;background:var(--text);color:var(--bg);border-radius:100px;padding:18px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;transition:.3s var(--f)}
+.startbtn:hover{background:var(--bright)}
+.tclose{position:fixed;top:16px;right:16px;z-index:5;width:42px;height:42px;border-radius:100px;border:1px solid var(--line);
+  background:rgba(10,11,11,.6);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:.3s var(--f)}
+.tclose:hover{background:var(--bright);color:var(--bg);border-color:var(--bright);transform:rotate(90deg)}
+
+#run .pad{max-width:560px;text-align:center;height:100dvh;padding:clamp(12px,2.5vh,30px) clamp(18px,4vw,44px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1vh,14px)}
+.logo{width:112px;height:112px;border-radius:50%;background:var(--card);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;margin-bottom:26px}
+.logo svg{width:46px;height:46px}
+.bigtime{font-family:var(--serif);font-weight:300;font-size:clamp(56px,13vw,92px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
+.pourlabel{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+.hr{height:1px;background:var(--line2);width:min(360px,80%);margin:30px 0}
+.target{font-family:var(--serif);font-weight:300;font-size:clamp(48px,11vw,76px);color:var(--bright);line-height:.9;letter-spacing:-.02em}
+.target-k{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.instr{font-family:var(--serif);font-weight:300;font-size:clamp(21px,3.4vw,27px);line-height:1.3;margin-top:26px;max-width:22ch;color:var(--text)}
+.instr b{color:var(--bright);font-weight:400;font-style:normal}
+.instr em{font-style:italic;color:var(--accent)}
+.wait{color:var(--muted);font-size:14px;margin-top:16px}
+.next{margin-top:24px;color:var(--muted)}
+.next .nk{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px}
+.next .nt{font-size:14px;line-height:1.5;max-width:34ch;margin:0 auto}
+.summary{display:flex;gap:0;background:var(--card2);border:1px solid var(--line);border-radius:14px;margin-top:30px;overflow:hidden;width:min(400px,100%)}
+.summary div{flex:1;padding:16px 8px;text-align:center;border-right:1px solid var(--line)}
+.summary div:last-child{border-right:none}
+.summary .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.summary .sv{font-family:var(--serif);font-weight:300;font-size:20px;margin-top:5px;color:var(--text)}
+.summary .sv small{font-size:.6em;color:var(--muted)}
+.v60{width:min(46vw,24vh);max-width:250px;aspect-ratio:1;margin:0 auto;position:relative}
+.v60 canvas{width:100%;height:100%;display:block}
+.m3{display:flex;flex-direction:column;gap:clamp(6px,1.6vh,22px);align-items:center;margin:clamp(6px,1.4vh,20px) 0}
+.metric{text-align:center}
+.mlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:clamp(3px,.8vh,8px)}
+.mval{font-family:var(--serif);font-weight:300;font-size:clamp(30px,6vh,56px);line-height:.9;letter-spacing:-.02em;color:var(--text)}
+.mval small{font-size:.34em;color:var(--muted);margin-left:5px;letter-spacing:0}
+.metric.hero .mval{font-size:clamp(52px,12vh,108px);color:var(--bright)}
+.mtarget{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:clamp(4px,1vh,10px)}
+.mtarget b{color:var(--accent);font-weight:400}
+.run-ctrl{display:flex;gap:10px;margin-top:clamp(10px,2vh,24px);width:min(400px,100%)}
+.run-ctrl button{flex:1;border-radius:100px;padding:15px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;transition:.3s var(--f)}
+.run-ctrl .pri{background:var(--text);color:var(--bg)}
+.run-ctrl .pri:hover{background:var(--bright)}
+.run-ctrl .gh{border:1px solid var(--line2);color:var(--text)}
+.run-ctrl .gh:hover{border-color:var(--text)}
+.done .bigtime{color:var(--accent)}
+.progressbar{width:min(360px,80%);height:3px;background:var(--line2);border-radius:3px;margin-top:clamp(6px,1.4vh,18px);overflow:hidden}
+.progressbar i{display:block;height:100%;background:var(--bright);width:0;transition:width .3s linear}
+</style>
+</head>
+<body>
+<button class="tclose" id="tclose" title="Close" aria-label="Close">✕</button>
+<div class="wrap">
+
+<!-- SETUP -->
+<div class="view on" id="setup"><div class="pad">
+  <div class="h-title">Adjust V60 in Johnny style </div>
+  <div class="unit">
+    <button class="on" data-unit="g">Grams</button>
+    <button data-unit="cup">Cups</button>
+  </div>
+  <div class="panel">
+    <div class="prow">
+      <div><div class="k" id="coffeeK">Coffee</div><div class="val"><span id="coffeeV">20</span><small id="coffeeU">g</small></div></div>
+      <div class="stepper"><button data-step="coffee" data-d="-1">−</button><span class="num" id="coffeeNum">20</span><button data-step="coffee" data-d="1">+</button></div>
+    </div>
+    <div class="prow">
+      <div><div class="k">Ratio</div><div class="val">1:<span id="ratioV">15</span></div></div>
+      <div class="stepper"><button data-step="ratio" data-d="-1">−</button><span class="num" id="ratioNum">15</span><button data-step="ratio" data-d="1">+</button></div>
+    </div>
+    <div class="prow auto">
+      <div><div class="k">Water</div><div class="val brown"><span id="waterV">300</span><small>ml</small></div></div>
+      <div class="autotag">Auto</div>
+    </div>
+    <div class="prow">
+      <div><div class="k">Temperature</div><div class="val"><span id="tempV">93</span><small>°C</small></div><div class="sub" id="tempF">199°F</div></div>
+      <div class="stepper"><button data-step="temp" data-d="-1">−</button><span class="num" id="tempNum">93</span><button data-step="temp" data-d="1">+</button></div>
+    </div>
+  </div>
+
+  <div class="seg-label">First 40% — <b>Acidity &amp; Sweetness</b></div>
+  <div class="seg" id="tasteSeg">
+    <button class="on" data-taste="balanced">Balanced</button>
+    <button data-taste="sweeter">Sweeter</button>
+    <button data-taste="acidity">More Acidity</button>
+  </div>
+
+  <div class="seg-label">Last 60% — <b>Strength</b></div>
+  <div class="seg" id="strSeg">
+    <button class="on" data-str="medium">Medium</button>
+    <button data-str="lighter">Lighter</button>
+    <button data-str="stronger">Stronger</button>
+  </div>
+
+  <div class="grind"><div class="k">Grind size</div><div class="v" id="grindV">Medium-coarse</div></div>
+  <button class="startbtn" id="startBtn">Start brewing →</button>
+</div></div>
+
+<!-- RUN -->
+<div class="view" id="run"><div class="pad">
+  <div class="v60"><canvas id="v60c"></canvas></div>
+  <div class="pourlabel" id="pourlabel">1st pour · Step 1 of 5</div>
+  <div class="m3">
+    <div class="metric"><div class="mlabel">加水時間 · Pour time</div><div class="mval" id="clock">00:00</div></div>
+    <div class="metric hero"><div class="mlabel">即時重量 · Live scale</div>
+      <div class="mval" id="scale">0<small>g</small></div>
+      <div class="mtarget">目標克重 · Target <b id="target">60</b> g</div></div>
+    <div class="metric"><div class="mlabel">等待時間 · Wait</div><div class="mval" id="wait">45<small>s</small></div></div>
+  </div>
+  <div class="progressbar"><i id="prog"></i></div>
+  <div class="run-ctrl">
+    <button class="gh" id="backBtn">← Adjust</button>
+    <button class="pri" id="playBtn">Pause</button>
+    <button class="gh" id="resetBtn">Reset</button>
+  </div>
+</div></div>
+
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const state={coffee:20,ratio:15,temp:93,taste:'balanced',strength:'medium',unit:'g',cups:2};
+const INTERVAL=45, DRAW=45;   // seconds between pours / draw-down
+
+function water(){ return state.unit==='cup' ? state.cups*250 : Math.round(state.coffee*state.ratio); }
+function coffeeG(){ return state.unit==='cup' ? Math.round(water()/state.ratio) : state.coffee; }
+
+function buildSteps(){
+  const W=water(), p40=W*0.4, p60=W*0.6;
+  const splits={balanced:[.5,.5], sweeter:[5/12,7/12], acidity:[7/12,5/12]}[state.taste];
+  const nStr={lighter:2, medium:3, stronger:4}[state.strength];
+  const raw=[p40*splits[0], p40*splits[1]];
+  for(let i=0;i<nStr;i++) raw.push(p60/nStr);
+  const steps=[]; let sum=0;
+  raw.forEach((p,i)=>{ sum+=p; const cum=(i===raw.length-1)?W:Math.round(sum);
+    const first=i<2;
+    let instr;
+    if(i===0) instr='<b>'+Math.round(p)+'ml</b> — Pour gently in slow circles to <em>saturate every ground</em>.';
+    else if(i===1) instr='<b>+'+Math.round(p)+'ml</b> — Second pour to <em>set the acidity &amp; sweetness</em>.';
+    else if(i===raw.length-1) instr='<b>+'+Math.round(p)+'ml</b> — Final pour, steady through the centre, then <em>let it draw down</em>.';
+    else instr='<b>+'+Math.round(p)+'ml</b> — Steady, even pour to <em>build the strength</em>.';
+    steps.push({pour:Math.round(p), cum, first, instr,
+      short:(first?'Acidity & sweetness phase':'Strength phase')});
+  });
+  return steps;
+}
+const ORD=['1st','2nd','3rd','4th','5th','6th','7th'];
+
+/* setup interactions */
+function clampR(k,v){const L={coffee:[8,60],ratio:[12,20],temp:[80,100],cups:[1,8]}[k];return Math.max(L[0],Math.min(L[1],v));}
+function refresh(){
+  const g=state.unit==='g';
+  $('#coffeeK').textContent=g?'Coffee':'Cups';
+  $('#coffeeU').style.display=g?'':'none';
+  const cv=g?state.coffee:state.cups;
+  $('#coffeeV').textContent=cv; $('#coffeeNum').textContent=cv;
+  $('#ratioV').textContent=state.ratio; $('#ratioNum').textContent=state.ratio;
+  $('#waterV').textContent=water();
+  $('#tempV').textContent=state.temp; $('#tempNum').textContent=state.temp;
+  $('#tempF').textContent=Math.round(state.temp*9/5+32)+'°F';
+  document.querySelectorAll('.unit button').forEach(b=>b.classList.toggle('on',b.dataset.unit===state.unit));
+}
+document.querySelectorAll('.stepper button').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.step, d=+b.dataset.d;
+  if(k==='coffee'){ if(state.unit==='g') state.coffee=clampR('coffee',state.coffee+d); else state.cups=clampR('cups',state.cups+d); }
+  else if(k==='ratio') state.ratio=clampR('ratio',state.ratio+d);
+  else if(k==='temp') state.temp=clampR('temp',state.temp+d);
+  refresh();
+});
+document.querySelectorAll('.unit button').forEach(b=>b.onclick=()=>{state.unit=b.dataset.unit;refresh();});
+$('#tasteSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.taste=b.dataset.taste;
+  $('#tasteSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
+$('#strSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.strength=b.dataset.str;
+  $('#strSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#grindV').textContent={lighter:'Medium',medium:'Medium-coarse',stronger:'Coarse'}[state.strength];});
+
+/* run / timer */
+let steps=[], t=0, running=false, raf=null, last=0, actx=null, lastBeep=-1;
+const v60c=$('#v60c'), v60ctx=v60c.getContext('2d'); const TWO_PI=Math.PI*2, DPR=Math.min(2,window.devicePixelRatio||1); let trail=[];
+function drawV60(){
+  const s=v60c.clientWidth; if(!s)return;
+  if(v60c.width!==Math.round(s*DPR)){v60c.width=v60c.height=Math.round(s*DPR);v60ctx.setTransform(DPR,0,0,DPR,0,0);}
+  const ctx=v60ctx, cx=s/2, cy=s/2, R=s/2-3;
+  ctx.clearRect(0,0,s,s);
+  // cone ribs (V60 spiral ridges)
+  const RIBS=24, tw=0.55;
+  ctx.strokeStyle='rgba(237,237,236,.06)'; ctx.lineWidth=1;
+  for(let i=0;i<RIBS;i++){const a=i/RIBS*TWO_PI; ctx.beginPath();
+    for(let k=0;k<=12;k++){const rr=R*k/12, aa=a+tw*(k/12), x=cx+Math.cos(aa)*rr, y=cy+Math.sin(aa)*rr; k?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke();}
+  // guide rings
+  [0.72,0.46,0.22].forEach(f=>{ctx.strokeStyle='rgba(237,237,236,.08)';ctx.beginPath();ctx.arc(cx,cy,R*f,0,TWO_PI);ctx.stroke();});
+  // rim + overall progress arc
+  ctx.lineWidth=1.4; ctx.strokeStyle='rgba(237,237,236,.16)'; ctx.beginPath();ctx.arc(cx,cy,R,0,TWO_PI);ctx.stroke();
+  const total=totalTime(), prog=Math.min(1,t/total);
+  ctx.lineWidth=2.4; ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.beginPath();ctx.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+prog*TWO_PI);ctx.stroke();
+  // pour point
+  const n=steps.length, idx=Math.min(n-1,Math.floor(t/INTERVAL)), done=t>=total;
+  const localT=t-idx*INTERVAL;
+  const pourSec=steps[idx]?Math.min(INTERVAL*0.6,Math.max(6,steps[idx].pour/5)):8;
+  const pouring=!done && localT<pourSec;
+  const maxR=R*0.8, angle=t*TWO_PI*0.85;
+  let r,alpha;
+  if(pouring){const p=localT/pourSec; r=maxR*(0.14+0.86*p); alpha=1;
+    trail.push([cx+Math.cos(angle)*r, cy+Math.sin(angle)*r]); if(trail.length>44)trail.shift();}
+  else{ r=0; alpha=0; if(trail.length)trail.shift(); }  /* waiting / done: no pour point */
+  for(let i=0;i<trail.length;i++){const a=i/trail.length; ctx.fillStyle='rgba(255,255,255,'+(a*0.45).toFixed(3)+')';
+    ctx.beginPath();ctx.arc(trail[i][0],trail[i][1],1.2+a*2.4,0,TWO_PI);ctx.fill();}
+  if(alpha>0){const dx=cx+Math.cos(angle)*r, dy=cy+Math.sin(angle)*r;
+    const g=ctx.createRadialGradient(dx,dy,0,dx,dy,13);g.addColorStop(0,'rgba(255,255,255,'+alpha+')');g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(dx,dy,13,0,TWO_PI);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,'+alpha+')';ctx.beginPath();ctx.arc(dx,dy,2.6,0,TWO_PI);ctx.fill();}
+}
+function fmt(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);
+  o.frequency.value=760;o.type='sine';const n=actx.currentTime;
+  g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.25,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.4);
+  o.start(n);o.stop(n+.42);}catch(e){}}
+function totalTime(){return (steps.length-1)*INTERVAL+DRAW;}
+function draw(){
+  const n=steps.length, total=totalTime();
+  const idx=Math.min(n-1, Math.floor(t/INTERVAL));
+  const done=t>=total;
+  $('#clock').textContent=done?fmt(total):fmt(t);
+  $('#run').classList.toggle('done',done);
+  const s=steps[idx];
+  $('#pourlabel').textContent=done?('Done · '+n+' pours'):(ORD[idx]+' pour · Step '+(idx+1)+' of '+n);
+  const stepCum=s.cum, prevCum=idx>0?steps[idx-1].cum:0;
+  const pourSec=Math.min(INTERVAL*0.6,Math.max(6,s.pour/5)), lt=t-idx*INTERVAL;
+  let cur = lt<pourSec ? prevCum+(stepCum-prevCum)*(lt/pourSec) : stepCum;
+  if(done) cur=steps[n-1].cum;
+  $('#scale').innerHTML=Math.round(cur)+'<small>g</small>';
+  $('#target').textContent=done?steps[n-1].cum:stepCum;
+  const atLast=idx>=n-1;
+  const toNext=Math.max(0,Math.ceil(INTERVAL-(t%INTERVAL)));
+  const remain=Math.max(0,Math.ceil(total-t));
+  $('#wait').innerHTML=(done?0:(atLast?remain:toNext))+'<small>s</small>';
+  $('#prog').style.width=Math.min(100,t/total*100)+'%';
+  if(!done && idx!==lastBeep){ lastBeep=idx; if(t>0.3) beep(); }
+  drawV60();
+}
+function loop(now){ if(!running)return; if(!last)last=now; t+=(now-last)/1000; last=now;
+  if(t>=totalTime()){ t=totalTime(); running=false; draw(); $('#playBtn').textContent='Done'; beep(); return; }
+  draw(); raf=requestAnimationFrame(loop);
+}
+function startTimer(){ if(running)return; running=true; last=0; $('#playBtn').textContent='Pause'; raf=requestAnimationFrame(loop); }
+function pauseTimer(){ running=false; cancelAnimationFrame(raf); $('#playBtn').textContent='Resume'; }
+$('#playBtn').onclick=()=>{ if($('#playBtn').textContent==='Done')return; running?pauseTimer():startTimer(); };
+$('#resetBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); t=0; lastBeep=-1; trail=[]; $('#playBtn').textContent='Pause'; draw(); startTimer(); };
+$('#backBtn').onclick=()=>{ running=false; cancelAnimationFrame(raf); $('#run').classList.remove('on'); $('#setup').classList.add('on'); };
+$('#startBtn').onclick=()=>{
+  steps=buildSteps(); t=0; lastBeep=-1;
+  $('#setup').classList.remove('on'); $('#run').classList.add('on');
+  draw(); startTimer();
+};
+$('#tclose').onclick=()=>{ if(window.parent!==window){/* embedded: let parent close via Esc */} };
+
+refresh();
+</script>
+</body>
+</html>
