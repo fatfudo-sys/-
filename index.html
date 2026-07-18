@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>影片震動 → 搖桿 | Video Haptics</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <h1>影片震動 → 搖桿</h1>
+        <div id="gamepad-status" class="pill pill--off">未偵測到手把</div>
+      </header>
+
+      <main>
+        <section class="stage">
+          <div class="video-wrap">
+            <video id="video" playsinline controls></video>
+            <div id="drop-hint" class="drop-hint">
+              <p>拖曳影片到這裡,或</p>
+              <label class="btn">
+                選擇影片檔
+                <input id="file-input" type="file" accept="video/*" hidden />
+              </label>
+              <p class="muted">影片只在你的瀏覽器本機處理,不會上傳。</p>
+            </div>
+          </div>
+
+          <div class="meters">
+            <div class="meter">
+              <span class="meter__label">低頻(大馬達)</span>
+              <div class="meter__bar"><i id="m-strong" style="width:0%"></i></div>
+            </div>
+            <div class="meter">
+              <span class="meter__label">高頻/瞬態(小馬達)</span>
+              <div class="meter__bar meter__bar--weak"><i id="m-weak" style="width:0%"></i></div>
+            </div>
+            <div class="meter">
+              <span class="meter__label">畫面運動</span>
+              <div class="meter__bar meter__bar--motion"><i id="m-motion" style="width:0%"></i></div>
+            </div>
+            <div class="scene">
+              目前場景:<b id="scene-label">—</b>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <div class="panel__group">
+            <label class="switch">
+              <input id="enabled" type="checkbox" checked />
+              <span>啟用震動</span>
+            </label>
+          </div>
+
+          <div class="panel__group">
+            <h3>訊號來源</h3>
+            <label class="switch"><input id="src-audio" type="checkbox" checked /><span>音訊分析</span></label>
+            <label class="switch"><input id="src-motion" type="checkbox" checked /><span>畫面運動分析</span></label>
+            <label class="switch"><input id="src-scene" type="checkbox" checked /><span>AI 場景辨識(自動調校)</span></label>
+          </div>
+
+          <div class="panel__group">
+            <h3>場景模式</h3>
+            <select id="scene-mode">
+              <option value="auto">自動偵測</option>
+              <option value="walk">走路 / 腳步</option>
+              <option value="engine">車 / 引擎</option>
+              <option value="touch">觸摸 / 細節</option>
+              <option value="impact">衝擊 / 碰撞</option>
+            </select>
+          </div>
+
+          <div class="panel__group">
+            <h3>調校</h3>
+            <label class="slider">
+              整體強度 <output id="o-gain">1.0</output>
+              <input id="gain" type="range" min="0" max="2" step="0.05" value="1" />
+            </label>
+            <label class="slider">
+              門檻(過濾背景) <output id="o-floor">0.06</output>
+              <input id="floor" type="range" min="0" max="0.5" step="0.01" value="0.06" />
+            </label>
+            <label class="slider">
+              低頻權重 <output id="o-low">1.0</output>
+              <input id="low-gain" type="range" min="0" max="2" step="0.05" value="1" />
+            </label>
+            <label class="slider">
+              高頻權重 <output id="o-high">1.0</output>
+              <input id="high-gain" type="range" min="0" max="2" step="0.05" value="1" />
+            </label>
+          </div>
+
+          <div class="panel__group">
+            <button id="test-btn" class="btn btn--ghost">測試手把震動</button>
+          </div>
+
+          <p class="hint" id="hint">
+            連接手把後按一下任意鍵喚醒它,再播放影片即可。
+          </p>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
