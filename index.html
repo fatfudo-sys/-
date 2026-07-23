@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Headphone Design — A Complete Lesson</title>
+<meta name="description" content="A full-detail research course on headphone design: acoustics, drivers, target curves, measurement, ANC, ergonomics, materials, manufacturing and the design process.">
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --card:#1b2230; --line:#2b3444;
+    --text:#e6edf3; --muted:#9aa7b8; --accent:#4fc3f7; --accent2:#f7b64f;
+    --code:#0a0e14; --max:1060px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f7f9fb; --bg2:#ffffff; --card:#ffffff; --line:#dde4ec;
+      --text:#1c2733; --muted:#5b6b7d; --accent:#0277bd; --accent2:#b06f00; --code:#eef2f7; }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:84px}
+  body{background:var(--bg);color:var(--text);font:16px/1.7 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* top bar */
+  header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .topbar .logo{font-weight:800;letter-spacing:.5px;font-size:17px;color:var(--text)}
+  .topbar .logo span{color:var(--accent)}
+  .topbar nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+  .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}
+  .topbar nav a:hover{color:var(--accent);text-decoration:none}
+
+  /* layout */
+  .layout{display:flex;max-width:1400px;margin:0 auto;padding-top:58px}
+  aside.toc{position:sticky;top:58px;align-self:flex-start;width:270px;max-height:calc(100vh - 58px);
+    overflow-y:auto;padding:26px 10px 40px 20px;border-right:1px solid var(--line);flex-shrink:0}
+  aside.toc h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:0 0 10px 10px}
+  aside.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);font-size:13.5px;line-height:1.4}
+  aside.toc a:hover{color:var(--text);background:var(--card);text-decoration:none}
+  aside.toc a.active{color:var(--accent);background:var(--card);font-weight:600}
+  main{flex:1;min-width:0;padding:0 28px 80px}
+  .wrap{max-width:var(--max);margin:0 auto}
+
+  /* hero */
+  .hero{position:relative;border-radius:0 0 18px 18px;overflow:hidden;margin:0 -28px}
+  .hero img{width:100%;height:430px;object-fit:cover;display:block;filter:brightness(.45)}
+  .hero .overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 8%;}
+  .hero h1{font-size:clamp(30px,5vw,52px);line-height:1.15;color:#fff;max-width:760px}
+  .hero h1 em{color:var(--accent);font-style:normal}
+  .hero p{color:#d7e2ec;max-width:640px;margin-top:14px;font-size:17px}
+  .hero .cta{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap}
+  .hero .cta a{background:var(--accent);color:#06131c;font-weight:700;padding:11px 22px;border-radius:9px}
+  .hero .cta a.ghost{background:transparent;border:1.5px solid #ffffff88;color:#fff}
+  .hero .cta a:hover{text-decoration:none;filter:brightness(1.1)}
+
+  /* sections */
+  section{padding-top:56px}
+  .kicker{color:var(--accent2);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h2{font-size:30px;margin:6px 0 18px;line-height:1.25}
+  h3{font-size:20px;margin:30px 0 10px;color:var(--accent)}
+  p{margin:0 0 14px;color:var(--text)}
+  p.lead{font-size:18px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 24px}
+  li{margin-bottom:7px}
+  strong{color:var(--text)}
+  .muted{color:var(--muted)}
+
+  /* components */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout.warn{border-left-color:var(--accent2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:900px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+  figure{margin:22px 0}
+  figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
+  figure.diagram{background:#fff;border-radius:12px;padding:18px;border:1px solid var(--line)}
+  figure.diagram img{border:none;max-height:420px;object-fit:contain}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.5}
+  .imgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  @media(max-width:800px){.imgrid{grid-template-columns:1fr 1fr}}
+  .imgrid figure{margin:0}
+  .imgrid img{height:150px;object-fit:cover}
+
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:14.5px}
+  th{background:var(--bg2);text-align:left;padding:11px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--text)}
+  tr:last-child td{border-bottom:none}
+
+  .steps{counter-reset:step;list-style:none;margin-left:0}
+  .steps li{counter-increment:step;position:relative;padding:0 0 18px 52px}
+  .steps li::before{content:counter(step);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;
+    background:var(--accent);color:#06131c;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .steps li::after{content:"";position:absolute;left:16px;top:38px;bottom:0;width:2px;background:var(--line)}
+  .steps li:last-child::after{display:none}
+  .steps li b{display:block;font-size:16px;margin-bottom:3px}
+
+  dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:8px 20px;margin:16px 0}
+  dl.gloss dt{font-weight:700;color:var(--accent)}
+  @media(max-width:640px){dl.gloss{grid-template-columns:1fr}dl.gloss dd{margin-bottom:8px}}
+
+  code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
+
+  footer{border-top:1px solid var(--line);margin-top:70px;padding:34px 28px;color:var(--muted);font-size:13.5px;text-align:center}
+  footer a{color:var(--muted);text-decoration:underline}
+  .totop{position:fixed;right:22px;bottom:22px;background:var(--accent);color:#06131c;width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;opacity:0;pointer-events:none;transition:.25s}
+  .totop.show{opacity:1;pointer-events:auto}
+  @media(max-width:980px){aside.toc{display:none}.hero{margin:0 -18px}main{padding:0 18px 60px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <div class="logo">🎧 Headphone<span>Design</span>.lesson</div>
+    <nav>
+      <a href="#history">History</a><a href="#psychoacoustics">Psychoacoustics</a><a href="#drivers">Drivers</a>
+      <a href="#targets">Targets</a><a href="#anc">ANC</a><a href="#ergonomics">Ergonomics</a><a href="#process">Process</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="toc" id="toc">
+  <h4>Course Contents</h4>
+  <a href="#history">1 · Introduction &amp; History</a>
+  <a href="#psychoacoustics">2 · Sound &amp; Psychoacoustics</a>
+  <a href="#formfactors">3 · Categories &amp; Form Factors</a>
+  <a href="#drivers">4 · Driver Technologies</a>
+  <a href="#acoustics">5 · Earcup Acoustic Design</a>
+  <a href="#targets">6 · Target Curves</a>
+  <a href="#measurement">7 · Measurement</a>
+  <a href="#electrical">8 · Electrical Design</a>
+  <a href="#anc">9 · Wireless, DSP &amp; ANC</a>
+  <a href="#ergonomics">10 · Ergonomics &amp; ID</a>
+  <a href="#materials">11 · Materials &amp; Manufacturing</a>
+  <a href="#process">12 · The Design Process</a>
+  <a href="#safety">13 · Safety &amp; Standards</a>
+  <a href="#sustainability">14 · Sustainability</a>
+  <a href="#exercises">15 · Practical Exercises</a>
+  <a href="#glossary">16 · Glossary</a>
+  <a href="#references">17 · References</a>
+</aside>
+
+<main>
+<div class="hero">
+  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&q=80" alt="Black wireless over-ear headphones on a yellow background">
+  <div class="overlay">
+    <span class="kicker">A complete research lesson</span>
+    <h1>How <em>Headphones</em> Are Really Designed</h1>
+    <p>The physics, the engineering, the ergonomics, the manufacturing — and the design process that ties it all together. From zero to critically evaluating (or beginning to design) a headphone.</p>
+    <div class="cta">
+      <a href="#history">Start the lesson</a>
+      <a class="ghost" href="#exercises">Jump to exercises</a>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+
+<!-- ============ 1 ============ -->
+<section id="history">
+  <span class="kicker">Chapter 1</span>
+  <h2>Introduction &amp; Brief History</h2>
+  <p class="lead">A headphone is an electroacoustic transducer system worn on or in the ear that converts an electrical audio signal into sound pressure at the eardrum.</p>
+  <p>Unlike a loudspeaker, which excites a room, a headphone excites a tiny, highly individual acoustic space — the volume between the driver and your eardrum. Almost every design decision in this lesson flows from that single difference.</p>
+  <figure>
+    <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=1400&q=80" alt="Retro-styled on-ear headphones with metal earcups and leather headband">
+    <figcaption>Classic on-ear construction: metal cups, leather band — a design language stretching back a century. <span class="muted">Photo: Unsplash</span></figcaption>
+  </figure>
+  <h3>Milestones</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Year</th><th>Milestone</th></tr>
+    <tr><td>1891–1910</td><td>Telephone-operator headsets; Nathaniel Baldwin builds the first modern audio headphones in his kitchen (1910), sold to the U.S. Navy.</td></tr>
+    <tr><td>1937</td><td>Beyerdynamic DT 48 — the first dynamic headphone sold to consumers.</td></tr>
+    <tr><td>1958</td><td>John Koss's SP/3 — first stereo headphone marketed for music; creates the consumer category.</td></tr>
+    <tr><td>1959</td><td>Stax SR-1 — the first electrostatic "earspeaker."</td></tr>
+    <tr><td>1968</td><td>Sennheiser HD 414 — the first <strong>open-back</strong> headphone; light, airy sound that redefined expectations.</td></tr>
+    <tr><td>1979</td><td>Sony Walkman makes portable listening mainstream and pushes miniaturization.</td></tr>
+    <tr><td>1980s–90s</td><td>In-ear monitors developed for stage musicians (Jerry Harvey, Ultimate Ears); balanced armatures migrate from hearing aids.</td></tr>
+    <tr><td>2000</td><td>Bose QuietComfort commercializes active noise cancellation for travelers.</td></tr>
+    <tr><td>2008–14</td><td>Beats by Dre turns headphones into fashion; planar-magnetic renaissance (HiFiMAN, Audeze).</td></tr>
+    <tr><td>2016</td><td>Apple AirPods normalize true-wireless earbuds; the industry pivots to DSP-defined products.</td></tr>
+    <tr><td>2018–now</td><td>Harman target research reshapes tuning; adaptive ANC, transparency, spatial audio, LE Audio/LC3, lossless-wireless attempts.</td></tr>
+  </table></div>
+  <div class="callout"><strong>The core lesson of history:</strong> headphone design has repeatedly been reshaped by <em>use-case shifts</em> (telephony → hi-fi → portable → mobile/wireless) more than by pure acoustics. A great headphone design always starts with "who is wearing this, where, and why."</div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="psychoacoustics">
+  <span class="kicker">Chapter 2</span>
+  <h2>Sound Fundamentals &amp; Psychoacoustics</h2>
+  <h3>2.1 Physical basics</h3>
+  <ul>
+    <li><strong>Sound</strong> is a pressure wave. Frequency (Hz) maps to pitch, amplitude to loudness; human hearing spans roughly <strong>20 Hz – 20 kHz</strong> (upper limit falls with age).</li>
+    <li><strong>Sound Pressure Level (SPL)</strong> is measured in dB relative to 20 µPa. Every +10 dB is perceived as roughly "twice as loud"; +3 dB doubles acoustic power.</li>
+    <li><strong>Wavelength matters:</strong> at 20 kHz, λ ≈ 17 mm — the same order as ear-canal and earcup dimensions. High-frequency response in headphones is dominated by resonances and standing waves in the ear coupling, and varies wildly between individuals and even between re-seats.</li>
+  </ul>
+
+  <h3>2.2 The outer ear is part of the speaker</h3>
+  <div class="grid2">
+    <div>
+      <p>In free air, the pinna, concha, and ear canal impose direction-dependent filtering — the <strong>Head-Related Transfer Function (HRTF)</strong>. The ear canal itself is a ~25 mm closed pipe with a quarter-wave resonance near <strong>2.5–3 kHz</strong>, giving humans peak sensitivity there.</p>
+      <p>A headphone bypasses part of this system: <strong>over-ears</strong> preserve most pinna interaction, while <strong>IEMs</strong> bypass the pinna entirely and must <em>build the missing 3&nbsp;kHz ear-gain into their tuning</em>.</p>
+      <div class="callout">The single most important psychoacoustic concept in headphone design: <strong>the target response at the eardrum must recreate what a good sound source in a room would have produced after the body's own filtering.</strong></div>
+    </div>
+    <figure class="diagram">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Anatomy_of_the_Human_Ear.svg" alt="Labeled anatomical diagram of the human ear">
+      <figcaption>Anatomy of the human ear — pinna, canal, eardrum. The canal's quarter-wave resonance defines the critical 3 kHz "ear-gain" region. <span class="muted">Diagram: Wikimedia Commons (CC BY 2.5)</span></figcaption>
+    </figure>
+  </div>
+
+  <h3>2.3 Perceptual phenomena the designer must know</h3>
+  <figure class="diagram">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Lindos1.svg" alt="Equal-loudness contours graph showing required SPL versus frequency at different loudness levels">
+    <figcaption>Equal-loudness contours (ISO 226): the ear needs relatively more bass and treble SPL at low volumes — the basis of "loudness" compensation. <span class="muted">Diagram: Lindosland, Wikimedia Commons (public domain)</span></figcaption>
+  </figure>
+  <div class="tablewrap"><table>
+    <tr><th>Phenomenon</th><th>Design consequence</th></tr>
+    <tr><td><strong>Equal-loudness contours</strong> (ISO 226)</td><td>Bass/treble need relatively more SPL at quiet volumes; explains "loudness" EQ and why quiet listening sounds thin.</td></tr>
+    <tr><td><strong>Ear-gain region</strong> (2–4 kHz)</td><td>Undershooting sounds distant/veiled; overshooting sounds shouty/harsh.</td></tr>
+    <tr><td><strong>Masking</strong></td><td>Elevated bass masks lower-midrange detail; a 6 dB bass shelf can sound "muddy" even with flat mids.</td></tr>
+    <tr><td><strong>In-head localization</strong></td><td>Stereo images inside the skull without crossfeed; motivates crossfeed DSP and spatial audio.</td></tr>
+    <tr><td><strong>Occlusion effect</strong></td><td>Blocking the canal boosts bone-conducted own-voice/footsteps — major IEM/ANC-bud complaint; mitigated by venting or DSP.</td></tr>
+    <tr><td><strong>Missing fundamental</strong></td><td>Small drivers can imply deep bass via harmonics; psychoacoustic bass DSP exploits this.</td></tr>
+    <tr><td><strong>Just-noticeable differences</strong></td><td>Trained listeners detect ~0.5–1 dB broadband shifts; sets tolerances (L/R match ±1.5 dB is a common spec).</td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="formfactors">
+  <span class="kicker">Chapter 3</span>
+  <h2>Headphone Categories &amp; Form Factors</h2>
+  <div class="imgrid">
+    <figure><img src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=700&q=80" alt="Closed-back wireless over-ear headphones"><figcaption>Circumaural (over-ear), closed-back</figcaption></figure>
+    <figure><img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?w=700&q=80" alt="Wired on-ear headset"><figcaption>Supra-aural (on-ear)</figcaption></figure>
+    <figure><img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=700&q=80" alt="Classic white non-sealing earbuds"><figcaption>Earbud (non-sealing)</figcaption></figure>
+    <figure><img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=700&q=80" alt="Several true wireless earbuds and charging cases"><figcaption>True wireless (TWS) in-ears</figcaption></figure>
+  </div>
+  <h3>3.1 By wearing style</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Type</th><th>Coupling</th><th>Driver size</th><th>Strengths</th><th>Weaknesses</th></tr>
+    <tr><td><strong>Circumaural</strong> (over-ear)</td><td>Pad surrounds pinna</td><td>40–110 mm</td><td>Comfort, bass extension, soundstage, room for tech</td><td>Bulk, heat, weight</td></tr>
+    <tr><td><strong>Supra-aural</strong> (on-ear)</td><td>Pad presses on pinna</td><td>30–40 mm</td><td>Compact, lighter</td><td>Pinna pressure pain, leak-sensitive bass</td></tr>
+    <tr><td><strong>Earbud</strong></td><td>Rests in concha</td><td>12–15 mm</td><td>Airy, no occlusion</td><td>No isolation, weak bass, fit lottery</td></tr>
+    <tr><td><strong>IEM</strong></td><td>Seals canal with eartip</td><td>6–12 mm DD and/or BAs</td><td>Isolation, portability, consistent sealed bass</td><td>Occlusion, hygiene, tip-dependent sound</td></tr>
+    <tr><td><strong>TWS</strong></td><td>Sealed/vented in-ear, no cables</td><td>6–12 mm</td><td>Convenience, DSP-defined features</td><td>Battery, latency, tiny acoustic volumes</td></tr>
+    <tr><td><strong>Bone/open-ear</strong></td><td>Bypasses canal</td><td>Piezo/dynamic exciters</td><td>Situational awareness, sports</td><td>Poor fidelity, leakage</td></tr>
+  </table></div>
+
+  <h3>3.2 Open-back vs. closed-back — the fundamental acoustic fork</h3>
+  <div class="grid2">
+    <div class="card"><strong>Open-back.</strong> The rear of the driver radiates freely through a grille. The rear wave never reflects back through the diaphragm, so response is smoother and subjectively more "spacious." Cost: zero isolation, total leakage, and bass roll-off — the front volume can't hold static pressure (no pressure-chamber boost).</div>
+    <div class="card"><strong>Closed-back.</strong> A sealed cup enables passive isolation and stronger low bass, but the rear wave reflects inside the cup, producing standing-wave colorations (typically 200 Hz–1 kHz) that must be tamed with damping materials and cup geometry.</div>
+  </div>
+  <p><strong>Semi-open / vented:</strong> almost every real product sits on the continuum. Controlled leaks are <em>tuning tools</em>, not defects: a bass port relieves pressure and shapes sub-bass; a pad-to-head leak of a few mm² can cut 100 Hz output by several dB — the reason glasses wearers hear less bass on over-ears.</p>
+
+  <h3>3.3 By use case (drives the whole spec)</h3>
+  <ul>
+    <li><strong>Studio/reference:</strong> neutral target, durability, replaceable parts, low unit-to-unit variance, often high impedance.</li>
+    <li><strong>Audiophile:</strong> resolution and timbre priorities; exotic drivers accepted; weight/price tolerance high.</li>
+    <li><strong>Consumer wireless/ANC:</strong> DSP-defined sound, battery, mics, ANC depth, app ecosystem; acoustics designed <em>with</em> DSP correction assumed.</li>
+    <li><strong>Stage/broadcast:</strong> isolation, fit security, cable robustness, sweat resistance.</li>
+    <li><strong>Gaming/comms:</strong> mic quality, long-session comfort, low latency, positional cues.</li>
+    <li><strong>Hearables/health:</strong> heart-rate sensors, hearing-assist DSP; regulatory overlap with medical devices.</li>
+  </ul>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="drivers">
+  <span class="kicker">Chapter 4</span>
+  <h2>Transducer (Driver) Technologies</h2>
+  <p class="lead">Each technology differs in <strong>how force is applied to the diaphragm</strong> — which dictates its distortion, bandwidth, and cost profile.</p>
+
+  <h3>4.1 Dynamic (moving-coil) — ~95% of the market</h3>
+  <div class="grid2">
+    <figure class="diagram">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Loudspeaker_side_en.svg" alt="Cross-section diagram of a moving-coil transducer showing magnet, voice coil and diaphragm">
+      <figcaption>The moving-coil principle (shown as a loudspeaker cross-section): a voice coil in a magnetic gap drives the diaphragm — F = B·l·i. Headphone dynamics are the same motor, miniaturized. <span class="muted">Diagram: Wikimedia Commons (CC BY-SA)</span></figcaption>
+    </figure>
+    <div>
+      <p><strong>Principle:</strong> a voice coil attached to the diaphragm apex sits in the annular gap of a permanent magnet; current produces Lorentz force, driving the diaphragm like a piston.</p>
+      <p><strong>Strengths:</strong> cheap to make well; excellent bass (large excursion); high sensitivity — phone-friendly; robust; one driver covers 20 Hz–20 kHz.</p>
+      <p><strong>Weaknesses:</strong> point-drive flexes the diaphragm at high frequencies (<strong>break-up modes</strong> → treble peaks); coil mass limits transients; motor nonlinearity creates bass harmonic distortion.</p>
+      <p><strong>Design levers:</strong> diaphragm material/dome geometry, surround compliance (sets f₀ ≈ 60–120 Hz), rear-vent damping, magnet strength, CCAW coils.</p>
+    </div>
+  </div>
+
+  <h3>4.2 Planar magnetic</h3>
+  <p>A large, thin film carries a flat serpentine conductor across its whole surface; bar-magnet arrays apply force <strong>uniformly over the entire area</strong> — surface-drive rather than point-drive, so the diaphragm moves like an ideal piston.</p>
+  <ul>
+    <li><strong>Strengths:</strong> very low distortion (especially bass — no coil-in-gap nonlinearity); uniform transients; huge radiating area; flat resistive impedance.</li>
+    <li><strong>Weaknesses:</strong> heavy magnet arrays (flagships historically 400–700 g); low sensitivity (needs a capable amp); costly tensioning/assembly; magnets partially obstruct the sound path.</li>
+    <li><strong>Examples:</strong> Audeze LCD, HiFiMAN Susvara/Arya, Dan Clark Audio (AMTS resonator inserts), Meze Elite.</li>
+  </ul>
+
+  <h3>4.3 Electrostatic</h3>
+  <p>An ultralight ~1–2 µm diaphragm charged to high DC bias (e.g., <strong>580 V "Pro bias"</strong> for Stax) sits between two perforated <strong>stators</strong> carrying the amplified audio signal. Moving mass approaches that of the air itself.</p>
+  <ul>
+    <li><strong>Strengths:</strong> the lowest moving mass of any technology → extraordinary detail, vanishing mid/treble distortion.</li>
+    <li><strong>Weaknesses:</strong> needs a dedicated high-voltage energizer; limited max SPL and bass slam; dust/humidity sensitivity; cost.</li>
+    <li><strong>Examples:</strong> Stax SR-009S/X9000, Sennheiser HE-1, Audeze CRBN, Shure KSE1200 (electrostatic IEM).</li>
+  </ul>
+
+  <h3>4.4 Balanced armature (BA) — the IEM workhorse</h3>
+  <p>A tiny reed balanced between magnets pivots with coil current; a drive rod couples it to a mini-diaphragm; sound exits through a spout. Hearing-aid heritage (Knowles, Sonion dominate supply). Tiny and efficient with superb mid/treble resolution — but narrow bandwidth per unit, so flagships stack multi-driver arrays with <strong>passive crossovers</strong>, tuned tube lengths, and color-coded acoustic dampers. Limited excursion means bass usually comes from vented BAs or a hybrid dynamic woofer.</p>
+
+  <h3>4.5 Hybrids, tribrids &amp; the rest</h3>
+  <div class="grid3">
+    <div class="card"><strong>Hybrid/tribrid IEMs</strong><br>Dynamic woofer + BA mids/highs, often + electret "EST" super-tweeters or piezo ceramics. Challenge: coherence across dissimilar transducers.</div>
+    <div class="card"><strong>AMT</strong><br>Pleated diaphragm squeezes air out ~4–5× faster than it moves (HEDDphone). Treble speed; weight and bass are the cost.</div>
+    <div class="card"><strong>MEMS (xMEMS et al.)</strong><br>Silicon-micromachined piezo drivers — solid-state, ultra-consistent, phase-fast; the genuinely new branch to watch for TWS/IEM tweeters.</div>
+    <div class="card"><strong>Electret</strong><br>Electrostatic with permanent charge, no bias supply; cheap earbuds and EST tweeters.</div>
+    <div class="card"><strong>Piezo / bone conduction</strong><br>Crystal flexure tweeters; skull-vibrating sport devices — awareness over fidelity.</div>
+    <div class="card"><strong>Ribbon / plasma</strong><br>Exotic footnotes with occasional boutique products.</div>
+  </div>
+
+  <h3>4.6 Driver selection cheat-sheet</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Priority</th><th>Best-fit technology</th></tr>
+    <tr><td>Cost + bass + easy drive</td><td>Dynamic</td></tr>
+    <tr><td>Lowest bass distortion, planar-smooth mids</td><td>Planar magnetic</td></tr>
+    <tr><td>Ultimate resolution, cost no object</td><td>Electrostatic</td></tr>
+    <tr><td>Miniaturization, multi-way IEM</td><td>BA / hybrid</td></tr>
+    <tr><td>Consistency at silicon scale, TWS future</td><td>MEMS</td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="acoustics">
+  <span class="kicker">Chapter 5</span>
+  <h2>Acoustic Design of the Earcup System</h2>
+  <p class="lead">The driver is perhaps a third of the acoustic story. The system — front volume, rear volume, vents, damping, pads, and the listener's anatomy — determines the final response.</p>
+
+  <h3>5.1 The lumped-element mental model</h3>
+  <p>At low frequencies (wavelength ≫ dimensions), the headphone behaves like an electrical circuit analog:</p>
+  <div class="grid3">
+    <div class="card"><strong>Compliances → capacitors</strong><br>Front-volume air spring, rear-volume air spring, suspension, earpad foam.</div>
+    <div class="card"><strong>Masses → inductors</strong><br>Diaphragm + coil moving mass, air plugs in ports and vents.</div>
+    <div class="card"><strong>Resistances → resistors</strong><br>Damping meshes/foams, leaks, port losses.</div>
+  </div>
+  <p>Designers build SPICE-like network models (or use COMSOL, AKABAK, SonicSurf) before cutting tooling. Key behaviors:</p>
+  <ul>
+    <li><strong>Sealed front volume ("pressure chamber"):</strong> below the first acoustic resonance, eardrum pressure follows diaphragm <em>displacement</em> — why sealed headphones/IEMs deliver flat response to 20 Hz and below, something no small speaker in a room can do.</li>
+    <li><strong>Leaks kill bass predictably:</strong> a leak forms a high-pass with the front-volume compliance. Products are either <em>leak-tolerant</em> (pre-vented + ANC compensation, e.g., AirPods Pro) or <em>seal-dependent</em> (max bass, fit-critical).</li>
+    <li><strong>Rear vents set damping and bass Q:</strong> resistive mesh flattens the fundamental resonance; port area/length tunes a Helmholtz resonance to reinforce or shape bass.</li>
+  </ul>
+
+  <h3>5.2 The high-frequency (modal) region</h3>
+  <p>Above ~1–2 kHz, lumped models break down: the front volume develops standing waves and pad shape becomes a waveguide. Techniques:</p>
+  <ul>
+    <li><strong>Angled drivers/baffles</strong> aim at the canal like a near-field speaker — smooths 2–6 kHz, improves imaging (Sennheiser HD 600 lineage, Audeze).</li>
+    <li><strong>Waveguides &amp; lenses</strong> control the first modes (Focal "M" domes; Dan Clark AMTS tuned resonators absorbing targeted treble modes).</li>
+    <li><strong>Damping schemes:</strong> felt, wool, foam, micro-perforated sheets placed at pressure maxima; materials specified by flow resistance (MKS rayls).</li>
+    <li><strong>Pad acoustics:</strong> depth sets front-volume size; opening shapes pinna interaction; leather (sealed/reflective) vs. velour (leaky/lossy) trades bass for treble smoothness. <strong>Changing pads is changing the headphone</strong> — and pad wear is a major cause of unit drift over years.</li>
+  </ul>
+
+  <h3>5.3 IEM-specific acoustics</h3>
+  <ul>
+    <li>The eartip-to-eardrum column has a <strong>half-wave resonance (~7–9 kHz)</strong> set by insertion depth — deep insertion pushes it out of the sensitive range (the Etymotic philosophy).</li>
+    <li>Nozzle bore diameter and internal tube networks act as acoustic filters; dampers tame BA spout peaks.</li>
+    <li><strong>Front vents</strong> relieve occlusion and static pressure ("driver flex"); <strong>rear vents</strong> tune dynamic-driver bass.</li>
+    <li>Tip material (silicone vs. foam) changes seal and treble absorption — a tuning variable handed to the user.</li>
+  </ul>
+
+  <h3>5.4 Passive isolation</h3>
+  <p>Isolation is a mass-spring problem: cup mass + pad compliance against the head. Closed over-ears manage ~10–25 dB above 1 kHz but little below 200 Hz (that's ANC's job); deep-sealing foam-tip IEMs manage 25–40 dB broadband — the best passive isolation available.</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="targets">
+  <span class="kicker">Chapter 6</span>
+  <h2>Frequency Response &amp; Target Curves</h2>
+  <h3>6.1 Why "flat" is wrong at the eardrum</h3>
+  <p>A loudspeaker calibrated flat in an anechoic room arrives at the eardrum with the body's own gain: torso reflections, pinna gain, and canal resonance produce a large hump near 3 kHz. A headphone measured <strong>flat at the eardrum</strong> would sound dull and wrong — it must <em>reproduce</em> those features. Hence <strong>targets</strong>:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Target</th><th>Basis</th><th>Character / status</th></tr>
+    <tr><td><strong>Free-field</strong> (old DIN/IEC)</td><td>Frontal anechoic source at eardrum</td><td>Too bright/lean for most listeners.</td></tr>
+    <tr><td><strong>Diffuse-field</strong> (Theile, 1986)</td><td>Energy from all directions, averaged</td><td>Classic studio reference (Etymotic, older AKG/Beyer tunings).</td></tr>
+    <tr><td><strong>Harman</strong> (Olive/Welti, 2013–19)</td><td>Preference-tuned + validated with large controlled tests</td><td>≈ DF + bass shelf (~+6 dB &lt;100 Hz over-ear; more in-ear), relaxed treble. Separate OE 2018 / IE 2019 curves. Preference studies: ~64% "Harman-like" majority; 2024–25 follow-ups on newer fixtures found ~72% still preferring Harman-style tunings.</td></tr>
+    <tr><td><strong>5128-era targets</strong> (JM-1, DF+tilt)</td><td>B&amp;K 5128 anatomically-correct fixture</td><td>Fixture DF response + preference <em>tilt</em> (~−0.8 to −1.6 dB/oct) and adjustable bass shelf, rather than one fixed curve.</td></tr>
+    <tr><td><strong>Spatial-audio caveat</strong></td><td>AES research, 2025</td><td>Binaural content already encodes HRTF filtering — a different (roughly DF-flat) target may be more correct for spatial playback.</td></tr>
+  </table></div>
+
+  <h3>6.2 How designers use targets</h3>
+  <ol>
+    <li>Choose fixture + target for the product class (e.g., "Harman-2018 within ±2 dB, 20 Hz–10 kHz").</li>
+    <li>Tune acoustically as close as possible (pads, damping, vents — EQ-by-construction).</li>
+    <li>For DSP products, finish with fixed or adaptive digital EQ; for passive products, acoustics is all you get.</li>
+    <li>Validate with <strong>blind listening panels</strong> — a target is a statistical preference center, not gospel; deviations are the "house sound" (Sennheiser's warm-neutral, Beyerdynamic's treble lift, Sony consumer bass).</li>
+  </ol>
+
+  <h3>6.3 Reading a measurement</h3>
+  <ul>
+    <li>Deviations &lt;±1 dB over broad bands: subtle. ±3 dB in the ear-gain region: an obvious character change.</li>
+    <li>Narrow spikes above 8 kHz on a coupler are often fixture artifacts — trust ranges, not single points, up top.</li>
+    <li>Bass measured on a flat plate vs. a head with pinna and leak simulation differs hugely — always know the fixture.</li>
+  </ul>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="measurement">
+  <span class="kicker">Chapter 7</span>
+  <h2>Measurement &amp; Objective Evaluation</h2>
+  <figure>
+    <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=1400&q=80" alt="Wireless over-ear headphones lying on a white desk next to a keyboard">
+    <figcaption>Every serious product is characterized on standardized fixtures before a listener ever hears it. <span class="muted">Photo: Unsplash</span></figcaption>
+  </figure>
+  <h3>7.1 Test fixtures</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Fixture</th><th>What it is</th><th>Use</th></tr>
+    <tr><td><strong>IEC 60318-4 ("711") coupler</strong></td><td>Occluded-ear simulator, canal impedance valid to ~10 kHz</td><td>IEM standard for decades; artifacts above ~8 kHz</td></tr>
+    <tr><td><strong>GRAS 43AG / KEMAR</strong></td><td>Ear/cheek simulator or full head-and-torso with pinna</td><td>Over/on-ear measurement, ANC testing</td></tr>
+    <tr><td><strong>B&amp;K 5128 HATS</strong></td><td>Anatomically realistic canal + eardrum impedance to 20 kHz</td><td>Emerging research-grade standard</td></tr>
+    <tr><td><strong>Flat-plate rigs</strong></td><td>Simple baffle couplers</td><td>Quick comparative QC, hobbyist databases</td></tr>
+  </table></div>
+  <p>Plus anechoic chambers for leakage, ISO 4869 / ANSI S12.42 setups for isolation and ANC attenuation, and head-tracker rigs for spatial-audio latency.</p>
+
+  <h3>7.2 The core measurement set</h3>
+  <ul>
+    <li><strong>Frequency response</strong> vs. target; L/R matching.</li>
+    <li><strong>THD vs. frequency and level:</strong> dynamics rise in bass at high SPL; good planars stay &lt;0.1–0.5% at 94–100 dB. Low-order harmonics are surprisingly tolerable; intermodulation and rub/buzz are not.</li>
+    <li><strong>Impedance &amp; phase vs. frequency:</strong> reveals resonances and crossovers, predicts source interaction.</li>
+    <li><strong>Sensitivity</strong> (dB SPL at 1 mW or 1 V).</li>
+    <li><strong>Isolation and leakage</strong> (office-etiquette spec for consumer products).</li>
+    <li><strong>Time domain:</strong> impulse response, CSD "waterfall" for ringing, group delay/latency (&gt;~20 ms breaks lip-sync uncompensated; gaming targets &lt;40 ms end-to-end).</li>
+    <li><strong>Rub &amp; buzz QC:</strong> 100% end-of-line swept-sine artifact detection (Klippel / Listen SoundCheck), seconds per unit.</li>
+    <li><strong>Wireless metrics:</strong> codec latency, OTA antenna performance, mic polar/noise, sidetone, ANC stability margins across fits.</li>
+  </ul>
+
+  <h3>7.3 Preference prediction</h3>
+  <p>Harman's research produced regression models predicting listener preference from FR-deviation statistics (slope, smoothness, bass/treble deviation) — the basis of "predicted preference scores" in review databases. They are screening tools; exotic designs fall outside model validity.</p>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="electrical">
+  <span class="kicker">Chapter 8</span>
+  <h2>Electrical Design: Impedance, Sensitivity, Amplification</h2>
+  <h3>8.1 Impedance</h3>
+  <ul>
+    <li>Ranges from ~8 Ω (some IEMs) to 600 Ω (classic Beyerdynamic studio models).</li>
+    <li><strong>Why high impedance exists:</strong> thinner coil wire → lighter coil → better treble behavior; plus broadcast-desk history and voltage-noise immunity.</li>
+    <li><strong>Source interaction:</strong> output impedance forms a divider with the headphone's frequency-dependent impedance. Rule of thumb: <strong>source ≤ ⅛ of headphone impedance</strong>. Multi-BA IEMs with 8→60 Ω swings audibly change tone on high-impedance sources.</li>
+  </ul>
+  <h3>8.2 Sensitivity &amp; power budget</h3>
+  <div class="callout">To hit 110 dB peaks on a 100 dB/mW headphone requires 10 mW; on an 83 dB/mW planar it takes ~500 mW — hence "needs an amp." Phone dongles deliver ~1 Vrms / 30–60 mW; desktop amps deliver 1–10 W into low loads. Convert specs carefully: 100 dB/mW @ 32 Ω ≈ 115 dB/V.</div>
+  <h3>8.3 Cables, connectors, balanced drive</h3>
+  <ul>
+    <li>Measurable cable effects are essentially resistance (level/damping) and extreme-case capacitance for IEMs; most audible "cable differences" trace to fit, seal, and level changes.</li>
+    <li>Connectors: 3.5 mm / 6.35 mm TRS, 4.4 mm Pentaconn balanced, 2-pin 0.78 mm and MMCX for IEMs, USB-C digital.</li>
+    <li><strong>Balanced drive</strong> doubles voltage swing and removes shared-ground crosstalk — matters for hard loads and long runs, not inherently "better sound."</li>
+    <li>Cable microphonics is a real ergonomic spec — solved with over-ear routing and soft jackets.</li>
+  </ul>
+  <h3>8.4 DACs and sources</h3>
+  <p>Modern converter performance (SNR &gt;110 dB, THD &lt;0.001%) exceeds transducer limits; audible source differences today usually come from output impedance, power limits, DSP/EQ, and lossy-codec chains — not converter quality.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="anc">
+  <span class="kicker">Chapter 9</span>
+  <h2>Wireless, DSP &amp; Active Noise Cancellation</h2>
+  <p class="lead">Modern consumer headphones are <strong>DSP-defined products</strong>: acoustics provide raw capability; software delivers the shipped sound.</p>
+  <h3>9.1 Bluetooth audio</h3>
+  <ul>
+    <li><strong>Codecs:</strong> SBC (baseline), AAC (Apple ecosystem), aptX family (Adaptive/Lossless), LDAC (to 990 kbps), LHDC, and LE Audio's <strong>LC3</strong> (better quality per bit, lower latency, Auracast broadcast). All classic-BT codecs are lossy in practice.</li>
+    <li><strong>Latency:</strong> SBC/AAC ~150–250 ms; game modes/LC3 reach ~40–80 ms; true lip-sync-transparent wireless needs proprietary 2.4 GHz dongles (&lt;20 ms).</li>
+    <li><strong>System design:</strong> SoC selection (Qualcomm, Airoha, BES), antennas inside an RF-hostile head-adjacent enclosure, ear-to-ear links, multipoint, battery (TWS 5–8 h + case; over-ears 30–60+ h with ANC).</li>
+  </ul>
+
+  <h3>9.2 Active Noise Cancellation</h3>
+  <div class="grid2">
+    <figure class="diagram">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Active_Noise_Reduction.svg" alt="Diagram of active noise reduction: noise wave plus inverted anti-noise wave sums to silence">
+      <figcaption>The principle: generate anti-phase sound so ambient noise destructively interferes at the eardrum. <span class="muted">Diagram: Wikimedia Commons</span></figcaption>
+    </figure>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=900&q=80" alt="Premium wireless ANC over-ear headphones in pink lighting">
+      <figcaption>Premium ANC over-ears: hybrid mic topology + serious DSP is today's standard. <span class="muted">Photo: Unsplash</span></figcaption>
+    </figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Topology</th><th>Mics</th><th>Bandwidth</th><th>Character</th></tr>
+    <tr><td><strong>Feedforward</strong></td><td>External — hears noise <em>before</em> it enters</td><td>Mostly &lt;1 kHz</td><td>Cancels what it predicts; wrong prediction = added noise; wind-sensitive.</td></tr>
+    <tr><td><strong>Feedback</strong></td><td>Internal, near driver — hears what the ear hears</td><td>Broader low-mid coverage; corrects fit variation</td><td>Stability risk (howl) — a classic control-loop problem.</td></tr>
+    <tr><td><strong>Hybrid</strong></td><td>Both</td><td>Best depth (30–45 dB @ 100–300 Hz in leaders) + robustness</td><td>Two good mic sets + serious DSP; today's premium standard.</td></tr>
+  </table></div>
+  <ul>
+    <li>The <strong>secondary path</strong> (driver→ear transfer) changes with every fit; adaptive filters (FxLMS family) and per-ear calibration keep the loop optimal.</li>
+    <li>ANC only works well below ~1–2 kHz — above that, wavelengths are too short for one-point cancellation; <strong>passive isolation must handle the highs</strong>. Total attenuation = passive + active.</li>
+    <li>Side-effects to engineer around: "eardrum suck" pressure sensation, wind noise on feedforward mics, mic/ADC self-noise floor, occlusion compensation.</li>
+    <li><strong>Transparency/hear-through</strong> is ANC's inverse — reproducing outside sound naturally, with own-voice handling. Arguably harder than cancelling.</li>
+  </ul>
+
+  <h3>9.3 The DSP feature stack</h3>
+  <ul>
+    <li>Corrective/creative EQ, psychoacoustic bass, dynamic equal-loudness compensation.</li>
+    <li><strong>Adaptive fit compensation:</strong> the feedback mic measures in-ear response and auto-EQs bass to seal quality (Apple, Bose, Sony all ship variants).</li>
+    <li><strong>Spatial audio:</strong> binaural rendering with IMU head tracking; personalized HRTF from ear photos/scans.</li>
+    <li><strong>Hearing personalization/assist:</strong> audiogram-based gain — now regulated OTC hearing-aid territory in the U.S.</li>
+    <li><strong>Voice:</strong> beamforming arrays, bone-conduction voice sensors, AI noise suppression for calls.</li>
+  </ul>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="ergonomics">
+  <span class="kicker">Chapter 10</span>
+  <h2>Ergonomics &amp; Industrial Design</h2>
+  <p class="lead">A headphone is a wearable clamped to the most measured and most variable part of the body. Comfort research is now anthropometrics-driven, using 3D head-scan databases across populations.</p>
+  <h3>10.1 Key anthropometric variables</h3>
+  <p>Head breadth and height, bitragion arc, ear position, pinna dimensions (~55–70 mm typical adult height range), ear-canal size/angle (drives S/M/L tip sizing), and population differences that make single-geometry designs fit unevenly across global markets.</p>
+
+  <h3>10.2 Clamping force &amp; pressure distribution</h3>
+  <div class="grid2">
+    <div>
+      <ul>
+        <li>Practical over-ear comfort window: roughly <strong>3–6 N total clamp</strong> (on a 145–155 mm jig). Above ~5–6 N most users fatigue within an hour; below ~2 N stability and bass seal suffer. On-ears tolerate less — pressure lands on cartilage.</li>
+        <li><strong>Pressure = force ÷ contact area:</strong> comfort correlates with peak pressure distribution, not raw clamp. Bigger, deeper, softer pads spread load; the pinna must never touch the grille.</li>
+        <li><strong>Weight:</strong> under ~250 g "disappears"; 300–400 g needs excellent headband load-spreading; &gt;450 g (some planars) limits session length regardless. Neck torque from cup depth matters, not just grams.</li>
+        <li><strong>Thermal comfort:</strong> leather pads seal heat and moisture; fabric breathes but leaks bass — a genuine acoustic-vs-comfort trade.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=900&q=80" alt="Cream-colored on-ear headphones showing pad and headband design">
+      <figcaption>Pad geometry, headband load-spreading, and CMF choices decide whether a headphone survives hour three. <span class="muted">Photo: Unsplash</span></figcaption>
+    </figure>
+  </div>
+
+  <h3>10.3 Mechanism design</h3>
+  <p>Headband sliders (detented, smooth, self-adjusting), yoke rotation/swivel for cheek-plane conformity, folding hinges (a classic fatigue-failure site), strain reliefs, pad attachment (snap rings, magnets, adhesive — determines user-replaceability). Every joint is a creak risk next to a microphone-grade transducer: mechanical-noise specs are real.</p>
+
+  <h3>10.4 Industrial design &amp; CMF</h3>
+  <div class="grid2">
+    <figure>
+      <img src="https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=900&q=80" alt="Pastel pink headphones on a split pink and mint background">
+      <figcaption>Color-Material-Finish drives perceived value — ID is brand strategy. <span class="muted">Photo: Unsplash</span></figcaption>
+    </figure>
+    <div>
+      <p>Forged carbon, anodized aluminum, magnesium (light + damped), sustainable fabrics. Iconic design languages — AirPods' white stem, Beats' "b", the HD 800's silver lattice — show industrial design is brand strategy.</p>
+      <p>Controls: buttons vs. capacitive touch vs. rotating crowns. On TWS, the control surface <em>is</em> the transducer enclosure, so touch taps must be mechanically decoupled or DSP-muted.</p>
+    </div>
+  </div>
+
+  <h3>10.5 IEM/TWS fit specifics</h3>
+  <p>Concha-lock geometry, forward-down nozzle angles, stem vs. stemless mass distribution, IPX ratings for sport, and eartip science (silicone durometer, foam recovery, flange counts). Custom IEMs go further: ear impressions or 3D scans printed into acrylic/silicone shells — the fit ceiling, at the cost of resale and re-fits as ears change.</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="materials">
+  <span class="kicker">Chapter 11</span>
+  <h2>Materials &amp; Manufacturing</h2>
+  <h3>11.1 Diaphragm materials — the heart</h3>
+  <p>Figure of merit: <strong>specific modulus (stiffness ÷ density)</strong> plus internal damping. Roughly by exotic-ness: PET/Mylar → PEN/PEEK multilayers → LCP → bio-cellulose → metal foils (Al, Ti, Mg) → beryllium (highest useful specific modulus; toxic to machine, costly) → coatings (DLC, CNT, graphene-doped — marketing frequently outruns physics; a "graphene driver" is usually a polymer film with a coating).</p>
+  <h3>11.2 Magnets &amp; motors</h3>
+  <p>Sintered NdFeB (N48–N55) dominates; grades trade flux vs. temperature stability. Planars consume large magnet volumes (their cost + weight driver). Ferrite persists in budget lines. Assembly demands magnetized-part automation and gap cleanliness — a steel filing in a 0.5 mm gap is a warranty return.</p>
+  <h3>11.3 Enclosures &amp; structure</h3>
+  <p>Injection-molded ABS/PC (glass-filled for stiffness), CNC or stamped aluminum, die-cast magnesium (superb stiffness/damping/weight for yokes and baffles), stainless headband springs, 3D-printed acrylic/nylon for custom-IEM shells. Acoustic meshes (steel, nylon, MPP) are specified by rayl value like electronic components.</p>
+  <h3>11.4 The production line</h3>
+  <ol class="steps">
+    <li><b>Driver plant</b>Diaphragm thermoforming, coil winding and bonding, magnet charging, automated assembly. <strong>Every driver is measured and graded, then matched into L/R pairs</strong> (±0.5–1 dB for premium lines).</li>
+    <li><b>Final assembly</b>Cup assembly with damping placement (surprisingly manual and skill-dependent), pads, headband join, cabling or board drop-in for wireless.</li>
+    <li><b>End-of-line QC</b>100% acoustic test in mini-chambers: FR mask, rub &amp; buzz, polarity, mic checks. Sampling audits and batch torture tests.</li>
+    <li><b>Reliability qualification</b>Drop, tumble, cable flex (&gt;10k cycles), headband flex (&gt;50k), sweat/salt-fog, UV, −20/+60 °C soak, pad-wear simulation, button life; for TWS: case-hinge life, battery cycles, IP water-tank verification.</li>
+  </ol>
+  <div class="callout warn"><strong>Cost anatomy</strong> (typical consumer wireless over-ear, illustrative): transducers are a minor line item — a few dollars. The money is in SoC/battery/mics, mechanics/CMF, certification, and the software team.</div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="process">
+  <span class="kicker">Chapter 12</span>
+  <h2>The End-to-End Design Process</h2>
+  <figure>
+    <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1400&q=80" alt="Recording studio control room with mixing console and instruments">
+    <figcaption>Tuning alternates between the measurement rig and critical listening — measure, listen, hypothesize, modify, repeat. <span class="muted">Photo: Unsplash</span></figcaption>
+  </figure>
+  <p class="lead">A realistic 12–24 month program for a serious headphone:</p>
+  <ol class="steps">
+    <li><b>Definition</b>User, use case, price tier, target curve, isolation/ANC goals, weight/battery/latency budgets — the product requirements document every later trade-off refers to.</li>
+    <li><b>Architecture</b>Form factor, open/closed, driver technology and size, passive vs. DSP-corrected, platform SoC. Simulation begins: lumped-element acoustics + magnetics FEA (COMSOL/JMAG) + early BEM.</li>
+    <li><b>Mule prototypes</b>Existing cups + new drivers, 3D-printed baffles, hand-cut damping — dozens of iterations chasing the target. Experienced acousticians speak in "add 2 rayls behind the driver" moves.</li>
+    <li><b>Alpha / EVT</b>First tooled parts, real electronics; DSP tuning against golden acoustic units; ANC loop-shaping across a fit-variation corpus (many heads, glasses, hair).</li>
+    <li><b>Beta / DVT</b>Design freeze; blind panels vs. competitors; reliability quals; certifications (FCC/CE/BT SIG, EN 50332 / EN 62368 hearing-safety limits).</li>
+    <li><b>PVT &amp; ramp</b>Line yields, test-station correlation to lab fixtures, driver-matching statistics — the quiet battle of keeping unit #100,000 sounding like the golden sample.</li>
+    <li><b>Post-launch</b>Firmware feature cycle (modern headphones improve after purchase), pad/tip spares, telemetry-driven tuning updates.</li>
+  </ol>
+  <div class="callout"><strong>The team:</strong> electroacoustic engineers, DSP/embedded engineers, mechanical engineers, industrial designers, perceptual-audio scientists, reliability and test engineers, firmware/app software. Great headphones are credited to tuners but shipped by systems teams.</div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="safety">
+  <span class="kicker">Chapter 13</span>
+  <h2>Hearing Safety, Standards &amp; Regulation</h2>
+  <ul>
+    <li><strong>Noise-induced hearing loss</strong> is cumulative and permanent. WHO/NIOSH guidance: ~85 dB(A) for 8 h max, halving time per +3 dB — 100 dB(A) is minutes, not hours. Isolation (passive or ANC) is a <em>safety feature</em>: it lets users listen quieter.</li>
+    <li><strong>EN 50332</strong> limits portable output in the EU (~85 dB(A) warnings, 100 dB(A) caps with acknowledgment); phones implement dosage warnings.</li>
+    <li><strong>Key standards:</strong> IEC 60268-7 (headphone measurement), IEC 60318 (ear simulators), ITU-T P.57, ANSI/ASA S3.7, EN 62368-1 (product/battery safety), ISO 4869 (attenuation), BT SIG qualification, regional RF (FCC/CE/MIC/SRRC), and FDA OTC hearing-aid rules (2022) which pulled hearables into regulated territory.</li>
+    <li><strong>Batteries:</strong> li-po cells near the head demand rigorous charge management, cell qualification, and UN 38.3 transport certification.</li>
+  </ul>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="sustainability">
+  <span class="kicker">Chapter 14</span>
+  <h2>Sustainability &amp; Repairability</h2>
+  <p><strong>Failure reality:</strong> batteries and pads die long before drivers. Glued-in TWS batteries made earbuds a disposable category; regulatory pressure (EU battery regulation) and design responses (Fairphone Fairbuds' replaceable cells; user-replaceable pads/cables in studio lines like HD 25/HD 600) point the way.</p>
+  <ul>
+    <li>Design levers: modularity (pads/cables/batteries), standard connectors over proprietary, firmware-support lifespan commitments, recycled plastics/aluminum, repair documentation and parts supply.</li>
+    <li>Longevity is also acoustic: replaceable pads restore original tuning; sealed pad designs guarantee drift.</li>
+  </ul>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="exercises">
+  <span class="kicker">Chapter 15</span>
+  <h2>Practical Exercises</h2>
+  <ol class="steps">
+    <li><b>Ear-gain safari</b>Play pink noise through speakers, then any headphone; use a parametric EQ to find how much 3 kHz boost/cut makes the headphone match the speakers' timbre. You've just measured your personal ear-gain error.</li>
+    <li><b>Leak lab</b>Lift a pad edge 2 mm while playing a 40 Hz tone, then 1 kHz. Quantify the bass-only loss — the leak high-pass in action. Repeat wearing glasses.</li>
+    <li><b>Pad swap experiment</b>Compare worn vs. new pads (or leather vs. velour) and log the tonal change region by region.</li>
+    <li><b>Target-curve tour</b>Use AutoEQ presets to A/B one IEM against Harman IE 2019, diffuse-field, and flat-at-eardrum; note which regions cause "shouty," "muddy," "dull."</li>
+    <li><b>Impedance interaction</b>Drive a multi-BA IEM from a low-impedance dongle, then through a ~30 Ω series resistor; describe the tonal shift via the impedance-vs-frequency idea.</li>
+    <li><b>Occlusion demo</b>Earplugs deep vs. shallow: hum and chew; note the low-frequency boom shift — then find the vent on any ANC earbud and reason about its job.</li>
+    <li><b>Build one</b>DIY kits (T50RP modding, 3D-printed IEM shells with 10 mm dynamics + mesh dampers) deliver the tune-measure loop firsthand for under $100.</li>
+    <li><b>Blind panel</b>Run a level-matched (±0.5 dB — critical!) blind A/B with three friends; discover how loudness and expectation dominate sighted impressions.</li>
+  </ol>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="glossary">
+  <span class="kicker">Chapter 16</span>
+  <h2>Glossary</h2>
+  <dl class="gloss">
+    <dt>BA</dt><dd>Balanced armature — miniature pivoting-reed transducer used in IEMs and hearing aids.</dd>
+    <dt>Break-up</dt><dd>Region where a diaphragm stops moving as a piston and flexes in modes.</dd>
+    <dt>Clamping force</dt><dd>Total inward headband force, in newtons.</dd>
+    <dt>Coupler / HATS</dt><dd>Standardized artificial ear / head-and-torso simulator for measurement.</dd>
+    <dt>CSD</dt><dd>Cumulative spectral decay ("waterfall") — spectral decay over time; reveals ringing.</dd>
+    <dt>Diffuse field</dt><dd>Sound field with equal energy from all directions; basis of the DF target.</dd>
+    <dt>Ear gain</dt><dd>The ~2–4 kHz boost the outer ear adds to frontal sound; must exist in headphone tuning.</dd>
+    <dt>FxLMS</dt><dd>Adaptive filtering algorithm family behind adaptive ANC.</dd>
+    <dt>Harman target</dt><dd>Preference-derived eardrum response curve (OE 2018 / IE 2019 versions).</dd>
+    <dt>HRTF</dt><dd>Head-related transfer function — direction-dependent ear/torso filtering.</dd>
+    <dt>Occlusion effect</dt><dd>Boomy amplification of one's own body sounds when the canal is blocked.</dd>
+    <dt>Pinna</dt><dd>The visible outer ear.</dd>
+    <dt>Pressure chamber effect</dt><dd>Sealed-volume bass-extension mechanism unique to headphones.</dd>
+    <dt>Rayl</dt><dd>Unit of specific acoustic flow resistance; how damping meshes are specified.</dd>
+    <dt>Sensitivity</dt><dd>SPL produced per milliwatt or per volt.</dd>
+    <dt>THD</dt><dd>Total harmonic distortion.</dd>
+    <dt>TWS</dt><dd>True wireless stereo earbuds.</dd>
+  </dl>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="references">
+  <span class="kicker">Chapter 17</span>
+  <h2>References &amp; Further Reading</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Target curves &amp; perception</h3>
+      <ul style="margin-bottom:0">
+        <li>Olive, Welti, McMullin — Harman headphone preference papers (AES, 2013–2019)</li>
+        <li><a href="https://headphones.com/pages/measurements-and-frequency-response">Headphones.com — Measurements &amp; FR primer</a></li>
+        <li><a href="https://www.soundguys.com/soundguys-house-curve-54290/">SoundGuys — How we make our target curves</a></li>
+        <li><a href="https://www.headphonesty.com/2025/05/new-sound-curve-harmans-gold-standard-data/">Headphonesty — 2025 target-curve debate</a></li>
+        <li><a href="https://www.researchgate.net/publication/394385386_Towards_a_Headphone_Target_Curve_for_Spatial_Audio">Towards a Headphone Target Curve for Spatial Audio</a></li>
+        <li><a href="https://pro.harman.com/insights/akg/defining-the-standard-the-science-behind-akg-reference-response-studio-headphones/">HARMAN Pro — AKG reference response science</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Driver technology</h3>
+      <ul style="margin-bottom:0">
+        <li><a href="https://headphones.com/blogs/features/headphone-driver-types-explained">Headphones.com — How drivers work</a></li>
+        <li><a href="https://www.soundguys.com/driver-types-19347/">SoundGuys — Driver types</a></li>
+        <li><a href="https://www.moon-audio.com/blogs/expert-advice/headphone-driver-technology">Moon Audio — Driver technology</a></li>
+        <li><a href="https://en.pifferia.com/blogs/pifferiatalk/complete-iem-technology-guide-deep-analysis-of-six-driver-technologies">Pifferia — IEM driver deep-dive</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">ANC, DSP &amp; ergonomics</h3>
+      <ul style="margin-bottom:0">
+        <li><a href="https://www.cardinalpeak.com/blog/what-is-anc-technology-how-does-it-work">Cardinal Peak — ANC explained</a></li>
+        <li><a href="https://www.soundguys.com/noise-canceling-anc-explained-28344/">SoundGuys — ANC types</a></li>
+        <li><a href="https://www.headphonesty.com/2020/10/how-noise-cancelling-headphone-work/">Headphonesty — How NC headphones work</a></li>
+        <li><a href="https://link.springer.com/chapter/10.1007/978-3-031-61060-8_2">Springer — Force comfort from 3D anthropometric data</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Books &amp; foundations</h3>
+      <ul style="margin-bottom:0">
+        <li>Borwick (ed.), <em>Loudspeaker and Headphone Handbook</em> (3rd ed.)</li>
+        <li>Toole, <em>Sound Reproduction</em> (3rd ed.)</li>
+        <li>Beranek &amp; Mellow, <em>Acoustics: Sound Fields and Transducers</em></li>
+        <li>Fastl &amp; Zwicker, <em>Psychoacoustics: Facts and Models</em></li>
+        <li>AES E-Library; Squig.link / AutoEQ databases; REW; Klippel &amp; Listen Inc. app notes</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  Compiled July 2026 · Numbers given as typical engineering ranges — verify against current standards for formal work.<br>
+  Photos hot-linked from <a href="https://unsplash.com">Unsplash</a> (Unsplash License) · Diagrams from <a href="https://commons.wikimedia.org">Wikimedia Commons</a> (respective free licenses).<br>
+  Companion document: <code>HEADPHONE_DESIGN_LESSON.md</code> in this repository.
+</footer>
+</main>
+</div><!-- /layout -->
+
+<a class="totop" id="totop" href="#" aria-label="Back to top">↑</a>
+
+<script>
+  // scrollspy
+  const links=[...document.querySelectorAll('#toc a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  const spy=()=>{
+    const y=window.scrollY+120;
+    let cur=0;
+    secs.forEach((s,i)=>{if(s&&s.offsetTop<=y)cur=i});
+    links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+    document.getElementById('totop').classList.toggle('show',window.scrollY>600);
+  };
+  window.addEventListener('scroll',spy,{passive:true});spy();
+</script>
+</body>
+</html>
