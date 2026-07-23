@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三講 換能器技術與電聲系統設計 — 耳機設計專論</title>
+<style>
+  :root{--bg:#0d1117;--bg2:#161b22;--card:#1b2230;--line:#2b3444;--text:#e6edf3;--muted:#9aa7b8;--accent:#4fc3f7;--accent2:#f7b64f;--code:#0a0e14;--max:980px}
+  @media (prefers-color-scheme: light){:root{--bg:#f7f9fb;--bg2:#fff;--card:#fff;--line:#dde4ec;--text:#1c2733;--muted:#5b6b7d;--accent:#0277bd;--accent2:#b06f00;--code:#eef2f7}}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{background:var(--bg);color:var(--text);font:16px/1.9 "Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .topbar .logo{font-weight:800;font-size:16px;color:var(--text)}.topbar .logo span{color:var(--accent)}
+  .topbar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+  .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}.topbar nav a:hover{color:var(--accent);text-decoration:none}
+  main{max-width:var(--max);margin:0 auto;padding:88px 24px 70px}
+  .kicker{color:var(--accent2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h1{font-size:31px;margin:6px 0 16px;line-height:1.4}
+  h2{font-size:24px;margin:44px 0 14px;line-height:1.4;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:19px;margin:28px 0 10px}
+  p{margin:0 0 14px}p.lead{font-size:17.5px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 26px}li{margin-bottom:8px}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:18px 0}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout.warn{border-left-color:var(--accent2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  figure{margin:22px 0}figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
+  figure.diagram{background:#fff;border-radius:12px;padding:16px;border:1px solid var(--line)}
+  figure.diagram img{border:none;max-height:380px;object-fit:contain}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:580px;font-size:14.5px}
+  th{background:var(--bg2);text-align:left;padding:10px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .lo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .lo b{color:var(--accent2)}
+  .hw{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .hw b{color:var(--accent2)}
+  .disc{border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:18px 0}
+  .disc b{color:var(--accent)}
+  .keys{background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:26px 0}
+  .keys b{color:var(--accent2)}
+  .eq{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:15px;overflow-x:auto}
+  .pn{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--line);padding-top:22px;flex-wrap:wrap}
+  .pn a{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-weight:600}
+  code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:3px 12px;font-size:12.5px;margin:3px 4px 0 0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+  <div class="logo">🎧 耳機設計<span>專論</span></div>
+  <nav><a href="index.html">課程首頁</a><a href="lecture1.html">第一講</a><a href="lecture2.html">第二講</a><a href="lecture3.html" style="color:var(--accent)">第三講</a><a href="lecture4.html">第四講</a><a href="lecture5.html">第五講</a><a href="lecture6.html">第六講</a></nav>
+</div></header>
+<main>
+
+<span class="kicker">Lecture 3 · 120 min · 完整講義</span>
+<h1>第三講 換能器技術與電聲系統設計</h1>
+<p class="lead">「力如何施加在振膜上」決定了一切:失真、頻寬、成本。本講先講五大換能器,再講單體以外的三分之二 —— 腔體、測量、電氣匹配與 ANC/DSP 系統。</p>
+<div><span class="chip">動圈</span><span class="chip">平板磁性</span><span class="chip">靜電</span><span class="chip">動鐵 BA</span><span class="chip">腔體聲學</span><span class="chip">ANC</span></div>
+
+<div class="lo"><b>學習目標:</b>修畢本講後,你應能 (1) 依「驅動方式 → 失真/頻寬/成本輪廓」的因果鏈比較五大換能器;(2) 以集中參數模型解釋前腔、後腔、洩漏與阻尼的調音角色;(3) 完成靈敏度/功率匹配計算;(4) 說明混合式 ANC 的控制迴路與物理極限。</div>
+
+<h2>§1 五大換能器架構(0:00–0:35)</h2>
+
+<h3>1.1 動圈(Moving-coil / Dynamic)—— 市場的 95%</h3>
+<div class="grid2">
+  <figure class="diagram">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Loudspeaker_side_en.svg" alt="動圈換能器剖面圖">
+    <figcaption>動圈原理(揚聲器剖面示意):磁隙中的音圈受勞侖茲力驅動振膜。耳機動圈即此馬達的微縮版,直徑 6–110 mm。<span class="muted">圖:Wikimedia Commons(CC BY-SA)</span></figcaption>
+  </figure>
+  <div>
+    <p><strong>原理:</strong>音圈黏著於振膜頂點、懸於環形磁隙中,通電後受勞侖茲力:</p>
+    <div class="eq">F = B · l · i<br><span class="muted">B:磁隙磁通密度(T) l:線圈總長(m) i:電流(A)</span></div>
+    <p><strong>解剖:</strong>振膜(球頂 + 懸邊)、音圈(銅或銅包鋁 CCAW)、磁體(釹鐵硼為主)、導磁板構成磁隙、支架與調諧孔。</p>
+    <p><strong>懸邊剛性 + 移動質量決定基頻共振 f₀</strong>(耳罩式典型 60–120 Hz);f₀ 以下輸出滾降,f₀ 以上進入質量控制區。</p>
+  </div>
+</div>
+<div class="tablewrap"><table>
+  <tr><th>優勢</th><th>弱點</th><th>對應設計手段</th></tr>
+  <tr><td>大衝程 → 低頻能力強;高靈敏度(手機直推);成本低;單一單體覆蓋 20 Hz–20 kHz;耐用</td><td>「點驅動」使振膜高頻進入<strong>分割振動</strong>(break-up)→ 高頻峰與粗糙感;音圈質量限制暫態;磁路非線性(B·l 隨衝程變化)→ 低頻諧波失真</td><td>提高振膜比模數(鍍鈹、DLC、LCP)把 break-up 推出可聞區;CCAW 減輕音圈;加大磁通、優化磁隙對稱性;後腔阻尼控制 Q 值</td></tr>
+</table></div>
+
+<h3>1.2 平板磁性(Planar magnetic)</h3>
+<p><strong>原理:</strong>把「音圈」攤平印在整張薄膜上(蛇形導體走線),兩側(或單側)排列條狀磁陣 —— 驅動力均勻分布於<strong>整個振膜表面</strong>(面驅動),振膜近似理想活塞運動,從機制上消滅了分割振動與磁隙非線性兩大動圈弱點。</p>
+<ul>
+  <li><strong>優勢:</strong>全頻段低失真(尤其低頻,94–100 dB SPL 下 THD 常 &lt;0.1–0.5%);暫態均勻;大輻射面積使低頻毫不費力;阻抗近純電阻且平坦(對擴大機音色友善)。</li>
+  <li><strong>弱點:</strong>磁陣重(旗艦歷史上 400–700 g,單側磁陣漸改善);靈敏度低(常需 数百 mW,見 §4 計算);張膜與組裝成本高;磁條部分遮蔽聲路,需聲學整形(Audeze Fazor 導波片、HiFiMAN 隱形磁體)。</li>
+  <li><strong>代表:</strong>Audeze LCD 系列、HiFiMAN Susvara/Arya、Dan Clark Audio(附 AMTS 調諧共振器)、Meze Elite。</li>
+</ul>
+
+<h3>1.3 靜電(Electrostatic)</h3>
+<p><strong>原理:</strong>1–2 µm 的聚酯膜鍍上高阻抗塗層、充至高壓直流偏壓(Stax Pro 規格 <strong>580 V</strong>),懸於兩片開孔<strong>定子</strong>之間;音訊訊號經升壓後加於定子,靜電場對帶電膜施力 —— 同樣是面驅動,且<strong>移動質量接近空氣本身</strong>。</p>
+<ul>
+  <li><strong>優勢:</strong>所有技術中最低的移動質量 → 極致細節、中高頻失真近乎消失、頂部延伸無縫。</li>
+  <li><strong>弱點:</strong>需專用高壓耳擴(energizer);最大聲壓與低頻衝程受定子間距限制;怕塵怕濕;成本高。</li>
+  <li><strong>代表:</strong>Stax SR-009S/X9000、Sennheiser HE-1、Audeze CRBN、Shure KSE1200(靜電 IEM)。</li>
+</ul>
+
+<h3>1.4 動鐵 BA(Balanced Armature)—— IEM 的主力</h3>
+<p><strong>原理:</strong>微型簧片(銜鐵)平衡懸於磁隙中,線圈電流使其失衡偏轉,經驅動桿推動微振膜,聲音由出聲嘴(spout)導出。源自助聽器產業,Knowles 與 Sonion 雙寡佔供應。</p>
+<ul>
+  <li><strong>優勢:</strong>極小(一殼可塞多顆)、高效率、中高頻解析佳、密閉結構利於隔音。</li>
+  <li><strong>弱點:</strong>單顆頻寬窄 → 多單體 + <strong>被動分音</strong>(電容電阻網路)+ 導管長度調諧 + <strong>聲學阻尼</strong>(Knowles 色碼阻尼,以 rayl 值規格);衝程小 → 低頻靠洩壓式 BA 或混合動圈低音;阻抗隨頻率劇烈擺動 → 對訊源輸出阻抗敏感(§4)。</li>
+</ul>
+
+<h3>1.5 混合式與新分支</h3>
+<div class="tablewrap"><table>
+  <tr><th>架構</th><th>組成</th><th>要點</th></tr>
+  <tr><td><strong>混合 / 三混 IEM</strong></td><td>動圈低音 + BA 中高 +(電子靜電 EST 或壓電超高音)</td><td>設計難點是「一致性」:相位、靈敏度、音色跨異質單體的銜接,靠分音與導管幾何解決</td></tr>
+  <tr><td><strong>AMT 氣動</strong></td><td>摺疊振膜如手風琴擠壓空氣</td><td>空氣速度為膜速 4–5 倍 → 高頻極快;重量與低頻是代價(HEDDphone)</td></tr>
+  <tr><td><strong>MEMS</strong></td><td>矽基微機電壓電驅動</td><td>固態、晶圓級一致性、相位精準;TWS/IEM 高音與全頻新分支(xMEMS),需偏壓驅動 IC —— 本課指定的「值得下注的新技術」</td></tr>
+  <tr><td><strong>骨傳導 / 電璽 / 壓電</strong></td><td>顱骨振動 / 永久駐極體 / 晶體彎曲</td><td>運動開放聆聽、低成本耳塞、超高音補充 —— 各有生態位</td></tr>
+</table></div>
+
+<h2>§2 腔體聲學:單體只是三分之一的故事(0:35–1:05)</h2>
+
+<h3>2.1 集中參數模型(設計者的心智模型)</h3>
+<p>低頻時(波長 ≫ 尺寸),整個耳機等效為一個電路 —— 這不是比喻,而是可以直接丟進 SPICE 求解的嚴格類比:</p>
+<div class="tablewrap"><table>
+  <tr><th>聲學元件</th><th>電路類比</th><th>實例</th></tr>
+  <tr><td>密閉空氣體積(順性)</td><td>電容 C</td><td>前腔、後腔、耳墊泡棉;體積越大電容越大</td></tr>
+  <tr><td>孔道中的空氣柱(質量)</td><td>電感 L</td><td>洩壓孔、調音孔、IEM 導管;孔越長越細電感越大</td></tr>
+  <tr><td>阻尼 / 洩漏(阻性損耗)</td><td>電阻 R</td><td>調音網布(以 rayl 規格)、耳墊與頭部之縫隙</td></tr>
+  <tr><td>振膜</td><td>RLC 串聯支路</td><td>質量 L、懸邊順性 C、機械損耗 R → f₀ 共振</td></tr>
+</table></div>
+<p>大廠流程:先建集中參數模型(或 COMSOL / AKABAK 模擬)掃參數,確定腔體、孔徑、阻尼值的設計窗,再開模 —— 模具動輒數十萬美元,「先模擬後開模」是產業紀律。</p>
+
+<h3>2.2 三個決定性的低頻機制</h3>
+<ol>
+  <li><strong>壓力腔效應(耳機低頻的秘密):</strong>密閉前腔中、第一共振以下,耳膜聲壓正比於振膜<em>位移</em>而非加速度 —— 頻率下降輸出不衰減。這就是 10 mm 單體平直重播 20 Hz 的原理,也是喇叭永遠學不來的耳機特權。</li>
+  <li><strong>洩漏 = 高通濾波器:</strong>洩漏孔(電感+電阻)與前腔電容構成高通;縫隙越大截止頻率越高。耳墊與頭部之間幾 mm² 的縫隙即可削去 100 Hz 處數 dB —— 戴眼鏡低頻變少的定量解釋。設計必須選邊:<strong>耐洩漏</strong>(預先大開孔 + DSP/ANC 補償低頻,AirPods Pro 路線)或<strong>依賴密封</strong>(低頻最大化,配戴敏感,發燒 IEM 路線)。</li>
+  <li><strong>後腔 / 後孔 = 阻尼與 Q 值:</strong>後腔電容與後孔電感構成的網路決定 f₀ 附近的 Q;覆以阻尼網(電阻)可壓平共振峰。開放式等於「後腔電容無限大 + 零反射」→ 響應平滑但失去壓力腔 → 低頻靠大振膜面積補。</li>
+</ol>
+
+<h3>2.3 高頻(模態)區與 IEM 特論</h3>
+<ul>
+  <li>約 1–2 kHz 以上集中參數失效:前腔出現駐波、耳廓幾何介入、耳墊形狀成為波導。手段:<strong>斜置單體</strong>(模擬近場喇叭入射角,HD 600 系、Audeze)、<strong>波導與整流環</strong>(Focal M 型盆 + 護網幾何、DCA AMTS 吸收特定高頻模態)、<strong>阻尼貼放</strong>(羊毛氈、微孔板貼於模態壓力極大點)。</li>
+  <li><strong>耳墊即調音件:</strong>墊深改變前腔體積(低頻與 3 kHz 增益)、開口形狀改變耳廓交互、表面材質(皮革=密封反射,絨布=洩漏吸收)在低頻量與高頻平滑度間交換。<strong>換墊 = 換耳機;墊圈老化 = 調音漂移。</strong></li>
+  <li><strong>IEM:</strong>耳塞至耳膜的空氣柱半波共振約 7–9 kHz,隨插入深度移動(深插推高出可聞敏感區 —— Etymotic 哲學);導管內徑 + 分岔網路 = 被動濾波;<strong>前洩壓孔</strong>解堵耳與「驅動膜吸附」(driver flex),<strong>後調音孔</strong>塑造動圈低頻。矽膠 / 記憶泡棉耳塞改變密封與高頻吸收 —— 交給使用者的最後一個調音變數。</li>
+</ul>
+
+<h2>§3 測量體系(1:15–1:35 前半)</h2>
+<div class="tablewrap"><table>
+  <tr><th>治具</th><th>本質</th><th>適用與限制</th></tr>
+  <tr><td>IEC 60318-4「711」耦合器</td><td>模擬堵塞耳道聲阻抗的標準腔</td><td>IEM 數十年標準;<strong>約 8 kHz 以上出現治具假影</strong>,高頻只看趨勢</td></tr>
+  <tr><td>GRAS 43AG / KEMAR</td><td>耳頰模擬器 / 含耳廓之頭軀模擬人</td><td>耳罩式與 ANC 測試主力;耳廓材質軟硬影響密封與低頻</td></tr>
+  <tr><td>B&amp;K 5128 HATS</td><td>解剖學正確之耳道與耳膜阻抗,有效至 20 kHz</td><td>研究級新標準;舊目標曲線不能直接搬用 → 催生第三代目標(第二講)</td></tr>
+</table></div>
+<p><strong>核心測量集:</strong>頻響與左右配對、THD 對頻率與聲壓(動圈低頻大聲壓時上升;優秀平板 &lt;0.1–0.5%)、阻抗與相位曲線(動圈 f₀ 處阻抗峰;多路 BA 的分音痕跡)、靈敏度、隔音(被動+主動)、外洩(辦公室禮儀規格)、脈衝響應 / CSD 瀑布圖(共振殘響)、群延遲與系統延遲(&gt;20 ms 影音不同步;遊戲需 &lt;40 ms 端到端)。<strong>產線 100% 執行掃頻異音檢測</strong>(rub &amp; buzz,Klippel / Listen SoundCheck,每台數秒)。</p>
+
+<h2>§4 電氣匹配:阻抗、靈敏度與功率(1:35 前完成)</h2>
+<h3>4.1 阻抗與八分之一法則</h3>
+<p>訊源輸出阻抗 Z<sub>out</sub> 與耳機阻抗 Z<sub>hp</sub>(f) 構成分壓;若 Z<sub>hp</sub> 隨頻率擺動而 Z<sub>out</sub> 不可忽略,分壓比就隨頻率變 → <strong>頻響被改寫</strong>。</p>
+<div class="eq">法則:Z_out ≤ Z_hp(min) / 8<br><span class="muted">例:某多路 BA IEM 阻抗 8–60 Ω 擺動 → 訊源輸出阻抗需 ≤ 1 Ω,否則音色隨訊源改變</span></div>
+<p>高阻抗耳機(250–600 Ω,Beyerdynamic 傳統)存在的理由:更細的音圈線 → 更輕的音圈 → 更好的高頻;歷史上廣播台多副並聯的制度慣性;對訊源雜訊電壓不敏感。</p>
+<h3>4.2 靈敏度與功率預算(工作例)</h3>
+<div class="eq">P = 10^((SPL_target − Sens_dB/mW) / 10) mW<br>
+例 1:靈敏度 100 dB/mW,目標峰值 110 dB → 10^(10/10) = <b>10 mW</b>(手機即可)<br>
+例 2:平板 83 dB/mW,同目標 → 10^(27/10) ≈ <b>500 mW</b>(需桌上型耳擴)<br>
+換算:dB/V = dB/mW + 10·log₁₀(1000/Z);100 dB/mW @ 32 Ω ≈ 115 dB/V</div>
+<p><strong>線材與平衡驅動的工程事實:</strong>可測的線材效應本質上是電阻(電平與阻尼)與極端情況下的電容(IEM);多數「換線聽感」可追溯至密封、配戴與電平變化。平衡驅動加倍電壓擺幅、消除共地串音 —— 對難推負載與長線有實益,並非天生「更好聽」。現代 DAC 晶片(SNR &gt;110 dB、THD &lt;0.001%)已超越換能器極限;訊源的可聞差異主要來自輸出阻抗、功率上限與 DSP,而非解碼晶片。</p>
+
+<h2>§5 ANC 與 DSP 系統(1:35–1:55)</h2>
+<div class="grid2">
+  <figure class="diagram">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Active_Noise_Reduction.svg" alt="主動降噪反相波示意圖">
+    <figcaption>ANC 原理:噪音波 + 反相波 = 於耳膜處破壞性干涉。看似簡單的加法,工程難點全在「反相波要多準、多快」。<span class="muted">圖:Wikimedia Commons</span></figcaption>
+  </figure>
+  <div>
+    <div class="tablewrap"><table>
+      <tr><th>拓撲</th><th>麥克風</th><th>特性</th></tr>
+      <tr><td><strong>前饋 FF</strong></td><td>外側,先聽到噪音</td><td>「預測式」抵銷;主要 &lt;1 kHz 有效;預測錯誤=加噪;怕風噪</td></tr>
+      <tr><td><strong>回授 FB</strong></td><td>內側,聽耳內殘餘</td><td>頻寬較廣、自動修正配戴差異;迴路穩定性(嘯叫)是經典控制問題</td></tr>
+      <tr><td><strong>混合 Hybrid</strong></td><td>內外兼備</td><td>旗艦標配;100–300 Hz 可達 30–45 dB 衰減;成本=兩組好麥克風+強 DSP</td></tr>
+    </table></div>
+  </div>
+</div>
+<ul>
+  <li><strong>次級路徑問題:</strong>「單體 → 耳膜」轉移函數隨每次配戴、每副眼鏡、每種髮型改變;自適應濾波(FxLMS 家族)與入耳校正音持續重新辨識此路徑 —— 這是 ANC 從「電路」變成「演算法」的分水嶺。</li>
+  <li><strong>物理極限:</strong>波長太短即無法單點抵銷 → ANC 僅 ~1–2 kHz 以下有效;高頻交給被動隔音。<strong>總衰減 = 被動 + 主動</strong>,兩者的交接頻率是系統級規格。</li>
+  <li><strong>副作用工程:</strong>低頻壓力調變之「耳壓感」(eardrum suck)、前饋麥克風風噪(網罩 + 偵測切換)、麥克風/ADC 自體噪聲底、堵耳效應補償。<strong>通透模式</strong>是 ANC 的反函數 —— 自然地重播外界 + 處理自己的聲音,工程上比降噪更難。</li>
+  <li><strong>DSP 堆疊全景:</strong>出廠調音 EQ → 使用者 PEQ → 心理聲學低音 → 動態響度補償 → 配戴自適應(回授麥克風實測入耳響應、自動補低頻)→ 空間音訊(IMU 頭部追蹤 + 個人化 HRTF)→ 聽力個人化(聽力圖增益,已入 OTC 助聽監管領域)→ 通話(波束成形 + 骨導感測 + AI 降噪)。</li>
+  <li><strong>藍牙鏈路:</strong>SBC(基準)→ AAC(Apple 生態)→ aptX 家族 / LDAC(至 990 kbps)→ LE Audio <strong>LC3</strong>(同碼率更佳品質、更低延遲、Auracast 廣播)。延遲:SBC/AAC 約 150–250 ms;遊戲模式 / LC3 約 40–80 ms;真正口型同步需 2.4 GHz 私有協定(&lt;20 ms)。</li>
+</ul>
+
+<div class="disc"><b>課堂討論:</b>為什麼「通透模式做得自然」比「降噪做得深」更難?提示:從次級路徑、堵耳效應、自體聲音三個方向論證。</div>
+
+<h2>重點整理</h2>
+<div class="keys">
+  <b>本講五個帶得走的觀念:</b>
+  <ol style="margin-bottom:0">
+    <li>驅動方式決定命運:點驅動(動圈)→ 分割振動;面驅動(平板/靜電)→ 低失真但低靈敏度/高成本;槓桿驅動(BA)→ 微型但窄頻寬。</li>
+    <li>集中參數模型:腔體=電容、孔道=電感、阻尼=電阻 —— 低頻調音就是在解一個 RLC 電路。</li>
+    <li>壓力腔效應是耳機低頻的特權;洩漏是它的天敵;產品必須在「耐洩漏」與「依賴密封」間選邊。</li>
+    <li>八分之一法則與功率預算計算,是「需不需要耳擴」的唯一科學答案。</li>
+    <li>ANC 的本質是自適應控制(次級路徑追蹤),物理極限在 1–2 kHz;總衰減=被動+主動。</li>
+  </ol>
+</div>
+
+<div class="hw"><b>課後作業 3(6%):</b>取得一副廢棄耳機(或觀看指定拆解影片),繪製其聲學系統圖:標注前/後腔、洩壓孔、阻尼位置與單體形式,以集中參數語言推論每一元素的調音意圖(800 字 + 標注圖)。<br><b>課前閱讀(第四講):</b>3D 人體計測與耳機舒適度研究節選(<a href="https://link.springer.com/chapter/10.1007/978-3-031-61060-8_2">Springer</a>);CMF 設計方法導讀。</div>
+
+<div class="pn">
+  <a href="lecture2.html">← 第二講 聲學基礎與心理聲學</a>
+  <a href="lecture4.html">第四講 工業設計、材料與結構 →</a>
+</div>
+</main>
+</body>
+</html>

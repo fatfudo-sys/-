@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二講 聲學基礎與心理聲學 — 耳機設計專論</title>
+<style>
+  :root{--bg:#0d1117;--bg2:#161b22;--card:#1b2230;--line:#2b3444;--text:#e6edf3;--muted:#9aa7b8;--accent:#4fc3f7;--accent2:#f7b64f;--code:#0a0e14;--max:980px}
+  @media (prefers-color-scheme: light){:root{--bg:#f7f9fb;--bg2:#fff;--card:#fff;--line:#dde4ec;--text:#1c2733;--muted:#5b6b7d;--accent:#0277bd;--accent2:#b06f00;--code:#eef2f7}}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{background:var(--bg);color:var(--text);font:16px/1.9 "Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .topbar .logo{font-weight:800;font-size:16px;color:var(--text)}.topbar .logo span{color:var(--accent)}
+  .topbar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+  .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}.topbar nav a:hover{color:var(--accent);text-decoration:none}
+  main{max-width:var(--max);margin:0 auto;padding:88px 24px 70px}
+  .kicker{color:var(--accent2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h1{font-size:31px;margin:6px 0 16px;line-height:1.4}
+  h2{font-size:24px;margin:44px 0 14px;line-height:1.4;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:19px;margin:28px 0 10px}
+  p{margin:0 0 14px}p.lead{font-size:17.5px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 26px}li{margin-bottom:8px}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:18px 0}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout.warn{border-left-color:var(--accent2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  figure{margin:22px 0}figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
+  figure.diagram{background:#fff;border-radius:12px;padding:16px;border:1px solid var(--line)}
+  figure.diagram img{border:none;max-height:380px;object-fit:contain}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:580px;font-size:14.5px}
+  th{background:var(--bg2);text-align:left;padding:10px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .lo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .lo b{color:var(--accent2)}
+  .hw{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .hw b{color:var(--accent2)}
+  .disc{border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:18px 0}
+  .disc b{color:var(--accent)}
+  .keys{background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:26px 0}
+  .keys b{color:var(--accent2)}
+  .eq{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:15px;overflow-x:auto}
+  .pn{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--line);padding-top:22px;flex-wrap:wrap}
+  .pn a{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-weight:600}
+  code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:3px 12px;font-size:12.5px;margin:3px 4px 0 0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+  <div class="logo">🎧 耳機設計<span>專論</span></div>
+  <nav><a href="index.html">課程首頁</a><a href="lecture1.html">第一講</a><a href="lecture2.html" style="color:var(--accent)">第二講</a><a href="lecture3.html">第三講</a><a href="lecture4.html">第四講</a><a href="lecture5.html">第五講</a><a href="lecture6.html">第六講</a></nav>
+</div></header>
+<main>
+
+<span class="kicker">Lecture 2 · 120 min · 完整講義</span>
+<h1>第二講 聲學基礎與心理聲學</h1>
+<p class="lead">耳朵是喇叭的一部分:本講從波動物理出發,建立「外耳即濾波器」的核心觀念,然後把「好聲音」從玄學變成科學 —— 目標曲線與偏好統計。</p>
+<div><span class="chip">聲學物理</span><span class="chip">心理聲學</span><span class="chip">HRTF</span><span class="chip">目標曲線</span><span class="chip">Harman 研究</span></div>
+
+<div class="lo"><b>學習目標:</b>修畢本講後,你應能 (1) 用波長尺度推理耳機各頻段行為的物理成因;(2) 推導耳道四分之一波長共振並解釋 3 kHz 耳增益;(3) 區分自由場 / 擴散場 / Harman 目標的理論基礎與適用場合;(4) 用頻段語言(而非形容詞)描述聲音差異。</div>
+
+<h2>§1 波動物理基礎(0:00–0:25)</h2>
+
+<h3>1.1 聲壓與分貝:設計者的數字語感</h3>
+<p>聲音是空氣的壓力擾動。人耳可聞的壓力範圍極大:聽閾約 20 µPa,痛閾約 20 Pa —— 相差一百萬倍。因此採用對數尺度:</p>
+<div class="eq">SPL = 20 · log₁₀(p / p₀) dB,p₀ = 20 µPa</div>
+<p>設計者必須內化的數字語感:</p>
+<ul>
+  <li><strong>+6 dB = 聲壓加倍</strong>(振膜位移加倍);<strong>+3 dB = 聲功率加倍</strong>(功耗加倍);<strong>+10 dB ≈ 主觀「兩倍大聲」</strong>。三者經常被混用,而它們的差別正是行銷話術的藏身處。</li>
+  <li>常見基準:安靜房間 ~30 dB、對話 ~65 dB、通勤地鐵 ~80–90 dB、演唱會 ~100–110 dB。</li>
+  <li>訓練有素的聽者能分辨約 0.5–1 dB 的寬頻電平差 —— 這個「恰可辨差(JND)」決定了一切工程公差,也決定了 A/B 測試為何必須電平匹配(±0.5 dB 內),否則「比較大聲」永遠贏。</li>
+</ul>
+
+<h3>1.2 波長:耳機聲學的第一直覺</h3>
+<div class="eq">λ = c / f,c ≈ 343 m/s(20 °C)</div>
+<div class="tablewrap"><table>
+  <tr><th>頻率</th><th>波長</th><th>與耳機尺度的關係</th></tr>
+  <tr><td>20 Hz</td><td>17.2 m</td><td>遠大於任何耳機尺寸 → 集中參數(電路類比)區,幾何形狀無關緊要,只有體積、質量、阻尼有意義</td></tr>
+  <tr><td>1 kHz</td><td>34.3 cm</td><td>接近頭部尺度 → HRTF 繞射效應的主場</td></tr>
+  <tr><td>3 kHz</td><td>11.4 cm</td><td>四分之一波長 ≈ 2.9 cm ≈ 耳道長度 → 耳增益共振</td></tr>
+  <tr><td>10 kHz</td><td>3.4 cm</td><td>與耳廓、腔體同尺度 → 駐波與模態區,對幾何極度敏感</td></tr>
+  <tr><td>20 kHz</td><td>1.7 cm</td><td>與耳道直徑同尺度 → 測量治具假影區、個體差異最大區</td></tr>
+</table></div>
+<div class="callout"><strong>第一直覺:</strong>看到頻響圖上的任何特徵,先算波長。低頻問題找「體積與洩漏」,中頻問題找「頭部與耳廓」,高頻問題找「腔體幾何與駐波」。這一條直覺能解釋耳機測量的八成現象。</div>
+
+<h2>§2 外耳聲學:耳朵是喇叭的一部分(0:25–0:55)</h2>
+
+<div class="grid2">
+  <div>
+    <h3>2.1 從肩膀到耳膜的增益鏈</h3>
+    <p>自由空間中的聲音抵達耳膜前,依序經過:軀幹與肩膀反射(數百 Hz 起的細微起伏)→ 頭部繞射(高頻遮蔽、雙耳強度差)→ <strong>耳廓(pinna)</strong>與<strong>耳甲腔(concha)</strong>的方向性反射(4–10 kHz 的凹陷與峰,是垂直定位的線索)→ <strong>耳道共振</strong>。</p>
+    <p>耳道近似一端封閉(耳膜)、一端開放的管,長約 25 mm。閉管的第一共振為四分之一波長:</p>
+    <div class="eq">f₁ = c / 4L ≈ 343 / (4 × 0.025) ≈ 3.4 kHz</div>
+    <p>加上耳甲腔共振(約 4–5 kHz)的疊加,人耳在 <strong>2–4 kHz 區有 15–20 dB 的總增益</strong> —— 這正是人聲子音、嬰兒哭聲所在的頻段;演化把我們的聽覺靈敏度峰值放在生存最需要的地方。</p>
+  </div>
+  <figure class="diagram">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Anatomy_of_the_Human_Ear.svg" alt="人耳解剖標示圖">
+    <figcaption>人耳解剖。外耳(耳廓+耳道)是被動聲學濾波器;中耳(聽小骨)是阻抗匹配變壓器;內耳(耳蝸)是頻譜分析器。耳機設計主要與外耳共舞。<span class="muted">圖:Wikimedia Commons(CC BY 2.5)</span></figcaption>
+  </figure>
+</div>
+
+<h3>2.2 HRTF 與耳機的「劫持點」</h3>
+<p>上述整條增益鏈隨聲源方向而變,合稱<strong>頭部相關轉移函數(HRTF)</strong> —— 每個人的 HRTF 如指紋般獨特。耳機在這條鏈上的不同位置「接管」聲學:</p>
+<div class="tablewrap"><table>
+  <tr><th>形式</th><th>劫持點</th><th>設計後果</th></tr>
+  <tr><td>耳罩式</td><td>耳廓之外</td><td>保留耳廓與耳道濾波 → 個體差異自然發生;腔體與耳廓的交互作用成為高頻不確定性來源</td></tr>
+  <tr><td>非密封耳塞</td><td>耳甲腔</td><td>部分保留耳甲效應;無法密封 → 低頻先天不足</td></tr>
+  <tr><td>入耳式 IEM</td><td>耳道中段</td><td>完全繞過耳廓 → 必須把耳增益「做回」調音;插入深度改變殘餘耳道共振(約 7–9 kHz 半波駐波)</td></tr>
+</table></div>
+<div class="callout">全課程最重要的心理聲學命題:<strong>耳膜處的目標響應,必須重建「優質音源在良好房間中、經過身體自身濾波後」原本會產生的結果。</strong>耳機越深入耳道,就越必須以電聲手段「假造」被繞過的解剖構造。</div>
+
+<h2>§3 心理聲學現象(0:55–1:15)</h2>
+
+<h3>3.1 等響曲線:響度是頻率的函數</h3>
+<figure class="diagram">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Lindos1.svg" alt="等響曲線圖">
+  <figcaption>ISO 226 等響曲線。橫軸頻率、縱軸 SPL;每條曲線上的所有點聽起來「一樣大聲」(單位:phon)。注意低頻曲線在小音量時急遽上翹。<span class="muted">圖:Lindosland, Wikimedia Commons(公有領域)</span></figcaption>
+</figure>
+<p>閱讀這張圖的三個設計結論:</p>
+<ol>
+  <li><strong>小音量聆聽必然單薄:</strong>60 phon 與 80 phon 曲線在 50 Hz 的間距遠大於在 1 kHz 的間距 —— 音量轉小時低頻「消失得更快」。這是「響度補償(loudness)」EQ 與現代動態 EQ 功能的理論依據。</li>
+  <li><strong>試聽音量是行銷武器:</strong>展示機音量調大 3 dB,低頻與高頻的主觀比例立即改變,聽感更「刺激」。專業評測必須以固定聲壓(如 75 dB SPL)校準。</li>
+  <li><strong>調音必須指定基準音量:</strong>同一條頻響在不同聆聽音量下的主觀平衡不同 —— Harman 研究的偏好測試固定在中等偏大音量進行,這是引用其結論時必須記得的邊界條件。</li>
+</ol>
+
+<h3>3.2 其餘關鍵現象</h3>
+<div class="tablewrap"><table>
+  <tr><th>現象</th><th>機制</th><th>設計後果</th></tr>
+  <tr><td><strong>遮蔽 Masking</strong></td><td>強音升高鄰近(尤其較高)頻率的聽閾</td><td>+6 dB 低頻棚會遮蔽 200–500 Hz 細節 → 「糊」;低音要「多而不糊」必須控制 100–300 Hz 過渡帶的形狀</td></tr>
+  <tr><td><strong>頭中定位</strong></td><td>立體聲左右聲道無交叉餽送、無方向性 HRTF 線索 → 大腦放棄外部化</td><td>聲像成於顱內;crossfeed DSP、空間音訊(HRTF 渲染 + 頭部追蹤)皆為解方</td></tr>
+  <tr><td><strong>堵耳效應 Occlusion</strong></td><td>密封耳道使骨導的自體低頻(說話、咀嚼、腳步)無法外洩,增益可達 20 dB</td><td>IEM 通勤走路「咚咚聲」、講話像悶在桶裡;解方:洩壓孔、深插至骨部、或 ANC 主動抵銷</td></tr>
+  <tr><td><strong>缺失基頻</strong></td><td>大腦由諧波列推斷基頻音高</td><td>小單體可「暗示」超出其能力的低頻;心理聲學低音增強 DSP 的原理</td></tr>
+  <tr><td><strong>雙耳配對敏感度</strong></td><td>左右耳膜訊號差是定位線索,大腦對頻譜差極敏感</td><td>左右單體配對 ±1.5 dB(高階 ±0.5–1 dB)是硬規格;配對不良 → 聲像偏移、飄忽</td></tr>
+</table></div>
+
+<div class="disc"><b>課堂實驗(併入 §3):</b>播放粉紅噪音,以參數 EQ 即時 A/B:(a) 3 kHz ±3 dB —— 全班記錄「靠近/遠離、清晰/悶」的主觀變化;(b) 100 Hz +6 dB 棚 —— 記錄 300 Hz 附近「變糊」的遮蔽效應。目的:把形容詞校準到頻段。</div>
+
+<h2>§4 目標曲線:從物理推導到偏好統計(1:25–1:50)</h2>
+
+<h3>4.1 為什麼「耳膜處平直」是錯的</h3>
+<p>在無響室中校準平直的喇叭,其聲音抵達聽者耳膜時已帶上 §2 的整條增益鏈 —— 一個以 3 kHz 為中心的大駝峰。若耳機在耳膜處測得平直,等於「抹掉」了這個駝峰,聽感必然黯淡、遙遠、不自然。因此耳機頻響必須對照「目標曲線」評價,而目標曲線的百年演進,就是「參考聲場該長什麼樣」的學術史:</p>
+
+<h3>4.2 三代目標曲線</h3>
+<div class="tablewrap"><table>
+  <tr><th>世代</th><th>曲線</th><th>理論基礎</th><th>評價</th></tr>
+  <tr><td>第一代<br>(物理推導)</td><td><strong>自由場 FF</strong>(舊 DIN 45500)</td><td>正前方無響室音源在耳膜產生的響應</td><td>單一方向的假設不符聆聽真實;普遍過亮偏瘦</td></tr>
+  <tr><td rowspan="1">第一代改良</td><td><strong>擴散場 DF</strong>(Theile, 1986;IEC 60268-7 採納)</td><td>全方向等能量入射之平均響應 —— 「理想混響室」</td><td>大幅改善;成為錄音室耳機經典(Etymotic ER4、舊 AKG/Beyer);但多數人仍覺低頻不足</td></tr>
+  <tr><td>第二代<br>(偏好統計)</td><td><strong>Harman 目標</strong>(Olive、Welti、McMullin,2013–2019)</td><td>方法反轉:不再問「物理上該如何」,改問「受控盲測下,聽者把 EQ 調成什麼樣」。結果 ≈ DF + 低頻棚(耳罩 &lt;100 Hz 約 +6 dB;入耳更多)+ 略收斂高頻;分 OE 2018 / IE 2019 兩版</td><td>偏好分群:約 64% 屬「Harman 型」多數,另有嗜低頻群(偏年輕)與嗜平淡群(偏年長 / 受訓聽者);預測模型可由頻響偏差統計預測偏好分數</td></tr>
+  <tr><td>第三代<br>(治具革新)</td><td><strong>B&amp;K 5128 世代</strong>(JM-1、DF+tilt 等,2020s)</td><td>新治具具解剖學正確的耳道與耳膜阻抗(有效至 20 kHz);以治具 DF 響應 + 可調「偏好斜率」(約 −0.8 至 −1.6 dB/oct)+ 可調低頻棚取代單一曲線</td><td>把「一條神聖曲線」改寫為「曲線族 + 偏好參數」;2024–25 追蹤研究顯示 Harman 式調音仍獲 ~72% 偏好,與新曲線統計持平</td></tr>
+</table></div>
+
+<h3>4.3 目標曲線的正確使用方式</h3>
+<ol>
+  <li><strong>它是統計中心,不是物理定律。</strong>偏離目標 = 偏離多數人偏好的機率上升,僅此而已。品牌「house sound」是有意識的偏離:Sennheiser 的暖中性、Beyerdynamic 的高頻抬升、Sony 消費線的低頻 —— 是定位,不是誤差。</li>
+  <li><strong>指定治具再談曲線。</strong>同一副耳機在 711 耦合器與 5128 上的曲線形狀不同;跨治具比較曲線是資料素養的常見翻車點。8 kHz 以上的窄峰谷多為治具假影,只看趨勢不看單點。</li>
+  <li><strong>公差語言:</strong>工程規格寫法如「Harman OE 2018,±2 dB(100 Hz–8 kHz)、±3 dB(全頻)」;±1 dB 的寬帶偏差已屬可聞,耳增益區 ±3 dB 即是明顯的性格差異。</li>
+  <li><strong>空間音訊的伏筆:</strong>雙耳渲染內容已在訊號中內含 HRTF —— 播放端若再套用完整耳增益目標會「重複計算」;AES 前沿研究指向接近 DF-flat 的空間音訊專用目標。此題在第六講「未來趨勢」回收。</li>
+</ol>
+
+<h2>§5 聆聽實驗:三條曲線盲聽(1:50–2:00)</h2>
+<p>示範:同一副 IEM,以 AutoEQ 分別校至 (a) Harman IE 2019、(b) 擴散場、(c) 耳膜平直。全班盲聽投票並用頻段語言記錄差異。預期結果:(c) 普遍被形容為「悶、遠」;(b) 被形容為「乾淨但薄」;(a) 獲多數偏好但有少數聽者選 (b) —— 現場重演偏好分群。</p>
+
+<h2>重點整理</h2>
+<div class="keys">
+  <b>本講五個帶得走的觀念:</b>
+  <ol style="margin-bottom:0">
+    <li>先算波長:低頻找體積與洩漏、中頻找頭部、高頻找腔體幾何 —— 一條直覺解釋八成測量現象。</li>
+    <li>耳道四分之一波長共振(≈3.4 kHz)+ 耳甲共振 = 15–20 dB 耳增益;耳機越深入耳道,越要以調音重建它。</li>
+    <li>JND ≈ 0.5–1 dB:它定義工程公差,也定義「沒有電平匹配的 A/B 都是騙局」。</li>
+    <li>目標曲線三代史 = 從物理推導(FF/DF)到偏好統計(Harman)到曲線族 + 參數(5128 世代)。</li>
+    <li>目標是統計中心;house sound 是有意識的偏離,是定位語言而非誤差。</li>
+  </ol>
+</div>
+
+<div class="hw"><b>課後作業 2(6%):</b>使用免費參數 EQ 與 AutoEQ 資料庫,將一款耳機分別校正至 Harman 與擴散場目標,盲聽比較並撰寫 600 字聆聽報告 —— 必須以頻段語言描述(例:「2–4 kHz 收 2 dB 後人聲距離後退」),禁用孤立形容詞。<br><b>課前閱讀(第三講):</b><a href="https://headphones.com/blogs/features/headphone-driver-types-explained">Headphones.com 換能器技術導讀</a>;複習電磁感應 F = B·l·i。</div>
+
+<div class="pn">
+  <a href="lecture1.html">← 第一講 演變史、市場與產業</a>
+  <a href="lecture3.html">第三講 換能器與電聲系統 →</a>
+</div>
+</main>
+</body>
+</html>

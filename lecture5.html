@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五講 經典設計分析(八大案例) — 耳機設計專論</title>
+<style>
+  :root{--bg:#0d1117;--bg2:#161b22;--card:#1b2230;--line:#2b3444;--text:#e6edf3;--muted:#9aa7b8;--accent:#4fc3f7;--accent2:#f7b64f;--code:#0a0e14;--max:980px}
+  @media (prefers-color-scheme: light){:root{--bg:#f7f9fb;--bg2:#fff;--card:#fff;--line:#dde4ec;--text:#1c2733;--muted:#5b6b7d;--accent:#0277bd;--accent2:#b06f00;--code:#eef2f7}}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{background:var(--bg);color:var(--text);font:16px/1.9 "Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .topbar .logo{font-weight:800;font-size:16px;color:var(--text)}.topbar .logo span{color:var(--accent)}
+  .topbar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+  .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}.topbar nav a:hover{color:var(--accent);text-decoration:none}
+  main{max-width:var(--max);margin:0 auto;padding:88px 24px 70px}
+  .kicker{color:var(--accent2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h1{font-size:31px;margin:6px 0 16px;line-height:1.4}
+  h2{font-size:24px;margin:44px 0 14px;line-height:1.4;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:19px;margin:28px 0 10px}
+  p{margin:0 0 14px}p.lead{font-size:17.5px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 26px}li{margin-bottom:8px}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:18px 0}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout.warn{border-left-color:var(--accent2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:860px){.grid3{grid-template-columns:1fr 1fr}}
+  @media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
+  figure{margin:22px 0}figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:580px;font-size:14.5px}
+  th{background:var(--bg2);text-align:left;padding:10px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .lo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .lo b{color:var(--accent2)}
+  .hw{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .hw b{color:var(--accent2)}
+  .disc{border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:18px 0}
+  .disc b{color:var(--accent)}
+  .keys{background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:26px 0}
+  .keys b{color:var(--accent2)}
+  .case{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:12px;padding:20px 24px;margin:22px 0}
+  .case h3{margin-top:0;color:var(--text)}
+  .case .tag{color:var(--accent2);font-size:13px;font-weight:700;letter-spacing:1px}
+  .pn{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--line);padding-top:22px;flex-wrap:wrap}
+  .pn a{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-weight:600}
+  code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:3px 12px;font-size:12.5px;margin:3px 4px 0 0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+  <div class="logo">🎧 耳機設計<span>專論</span></div>
+  <nav><a href="index.html">課程首頁</a><a href="lecture1.html">第一講</a><a href="lecture2.html">第二講</a><a href="lecture3.html">第三講</a><a href="lecture4.html">第四講</a><a href="lecture5.html" style="color:var(--accent)">第五講</a><a href="lecture6.html">第六講</a></nav>
+</div></header>
+<main>
+
+<span class="kicker">Lecture 5 · 120 min · 完整講義</span>
+<h1>第五講 經典設計分析(八大案例)</h1>
+<p class="lead">讀懂經典:每一款傳世之作都在回答一個時代問題。本講先給你分析工具(五構面分析法),再用八個案例示範工具的用法 —— 你的期中報告將用同一把刀解剖第九款。</p>
+<div><span class="chip">設計史</span><span class="chip">案例研究</span><span class="chip">五構面分析法</span></div>
+
+<div class="lo"><b>學習目標:</b>修畢本講後,你應能 (1) 獨立運用五構面分析法解剖任一款產品;(2) 從八案例歸納「技術能力 × 使用情境 × 品牌敘事」三力對齊的成功模式;(3) 辨識「偉大產品」與「成功產品」的差異並解釋其成因。</div>
+
+<h2>§1 方法論:五構面分析法(0:00–0:10)</h2>
+<div class="grid3">
+  <div class="card"><strong>① 設計脈絡</strong><br>誰、何時、為了什麼問題而設計?當時的技術與市場條件為何?</div>
+  <div class="card"><strong>② 聲學架構</strong><br>換能器、腔體、調音哲學;它在聲學上打出的「一手好牌」與付出的代價。</div>
+  <div class="card"><strong>③ 工業設計</strong><br>形式語彙、材料、人因、CMF;辨識度從何而來?</div>
+  <div class="card"><strong>④ 商業影響</strong><br>銷售、定價、品類創造或改寫;它改變了誰的損益表?</div>
+  <div class="card"><strong>⑤ 設計傳承</strong><br>它的 DNA 活在今日哪些產品裡?哪些決策被歷史證明是對的、錯的?</div>
+  <div class="card"><strong>使用要領</strong><br>五構面必須<em>互相解釋</em>:聲學選擇要能由脈絡說明,商業結果要能回溯到設計決策 —— 寫成五段互不相干的百科條目,是期中報告最常見的死法。</div>
+</div>
+
+<h2>§2 案例 I–IV:奠基時代(0:10–1:10,每案例約 15 分鐘)</h2>
+
+<div class="case">
+  <span class="tag">CASE 1 · 1937 · 德國</span>
+  <h3>Beyerdynamic DT 48 —— 「工具」的原型</h3>
+  <p><strong>① 脈絡:</strong>廣播電台與測聽醫學需要「可信賴、可重複」的監聽儀器 —— 客戶是工程師與醫師,不是樂迷。<strong>② 聲學:</strong>第一款商用動圈耳機;密閉式、高夾持力(以今日標準近乎刑具)—— 一切為隔音與一致性服務。<strong>③ 工業設計:</strong>金屬殼、可換件、零裝飾 —— 「儀器美學」:形式完全服從校準與維修。<strong>④ 商業:</strong>從 1937 年持續生產至 2012 年,75 年 —— 專業市場以「不變」為最高美德,產品壽命本身成為品牌信譽的複利。<strong>⑤ 傳承:</strong>「監聽耳機 = 可維修的儀器」這一觀念直通 HD 25、CD900ST;而它反面的教訓(人因的漠視)也提醒後人:專業使用者同樣是人。</p>
+</div>
+
+<div class="case">
+  <span class="tag">CASE 2 · 1968 · 德國</span>
+  <h3>Sennheiser HD 414 —— 一次真正的典範轉移</h3>
+  <p><strong>① 脈絡:</strong>1960 年代耳機 = 密閉、沉重、坐在音響前使用;Sennheiser 想做「戴著也輕鬆」的家用耳機。<strong>② 聲學:</strong>史上第一款開放式 —— 把單體背面敞開,後波自由輻射:消滅腔體駐波與壓迫感,換來通透自然的聲場(代價:零隔音、低頻依賴大振膜)。這不是參數改良,是<em>架構發明</em>。<strong>③ 工業設計:</strong>110 g 超輕結構 + 鮮黃海綿墊 —— 黃色不是裝飾,是把「輕盈」變成視覺語言的 CMF 決策,也是耳機史上第一個「顏色即品牌」案例。<strong>④ 商業:</strong>售出逾一千萬副,史上最暢銷耳機之一;把耳機從器材配件變成大眾消費品。<strong>⑤ 傳承:</strong>「開放式 = 自然聲」的聲學想像統治發燒圈至今;黃海綿成為 Sennheiser 的圖騰(復刻不斷)。</p>
+</div>
+
+<div class="case">
+  <span class="tag">CASE 3 · 1993–2003 · 德國</span>
+  <h3>Sennheiser HD 580 / 600 / 650 家族 —— 「中性」的公約數</h3>
+  <p><strong>① 脈絡:</strong>1990 年代發燒市場需要「參考級但買得起、用得久」的答案。<strong>② 聲學:</strong>斜置單體模擬近場喇叭入射角(第三講)、開放障板、溫和貼近擴散場而低頻略暖的調音 —— HD 600 的頻響至今仍被用作「中性」的教學範本與社群公約數。<strong>③ 工業設計:</strong>全件可拆換(單體、墊、頭帶、線)—— 三十年後的今天仍能買到每一顆零件。<strong>④ 商業:</strong>三十年不改架構、持續熱銷 —— 「平台長壽」策略:一次把聲學做對,然後靠零件與信譽收穫數十年。<strong>⑤ 傳承:</strong>幾乎所有「中性參考」定位的耳機都以它為座標原點;它也是「可維修性 = 品牌資產」的最佳實證,直接呼應第四講的永續論。</p>
+</div>
+
+<div class="case">
+  <span class="tag">CASE 4 · 1959– · 日本</span>
+  <h3>Stax 靜電系譜(SR-1 → SR-009 → X9000)—— 守住物理極限的六十年</h3>
+  <p><strong>① 脈絡:</strong>1959 年的 Stax 問的不是市場問題,是物理問題:換能器的極限在哪裡?<strong>② 聲學:</strong>靜電架構 —— 微米級帶電膜、面驅動、移動質量接近空氣(第三講);自創「Earspeaker」一詞與 Pro 偏壓 580 V 生態(專用耳擴),等於自建一個封閉技術體系。<strong>③ 工業設計:</strong>方形大障板、鏤空定子外露 —— 技術本身就是造型;數十年僅微調,辨識度靠「不變」累積。<strong>④ 商業:</strong>永遠的極小眾;2011 年由中國漫步者(Edifier)收購後品牌與產線延續 —— 小而極致的品牌以「被收購但被保留」的方式存活,是精品音訊的常見終局。<strong>⑤ 傳承:</strong>「解析天花板」的心智定位六十年未被奪走;Sennheiser HE-1、Audeze CRBN、Shure KSE1200 都是向這個系譜的致敬與挑戰。</p>
+</div>
+
+<h2>§3 案例 V–VIII:現代時代(1:20–1:50,每案例約 7–8 分鐘)</h2>
+
+<div class="case">
+  <span class="tag">CASE 5 · 1989 · 日本</span>
+  <h3>Sony MDR-CD900ST 與 MDR-R10 —— 雙生策略</h3>
+  <p>同一年、同一家公司、兩個極端:<strong>CD900ST</strong> —— 為 Sony Music 錄音室開發,密閉、直白、耐操、全件可修,成為日本錄音室的事實標準並量產至今;<strong>MDR-R10</strong> —— 生物纖維素振膜、櫸木耳殼、US$2,500 的工藝宣言,產量稀少,今日拍賣價數倍於原價。<strong>分析重點:</strong>專業標準機賺「信譽」,工藝旗艦賺「敘事」,兩者共同反哺消費線(WH-1000X 的技術背書從何而來?)—— 這是產品組合策略(第六講)的最早成熟示範。<strong>傳承:</strong>「錄音室同款」至今仍是行銷金句;R10 的生物纖維素振膜血脈延續於 Fostex 高階線。</p>
+</div>
+
+<div class="case">
+  <span class="tag">CASE 6 · 2000 · 美國</span>
+  <h3>Bose QuietComfort —— 重新定義購買理由</h3>
+  <p><strong>① 脈絡:</strong>創辦人 Amar Bose 在 1978 年的跨大西洋航班上戴著早期耳機被引擎噪音擊敗,回程即開始計算 ANC 可行性;軍規降噪(航空頭盔)先行,2000 年 QC1 民用化。<strong>② 聲學:</strong>回授式 ANC + 密閉耳罩;音質評價平平 —— 但這不是它要贏的軸。<strong>③ 工業設計:</strong>低調、輕量、旅行摺疊 + 收納盒 —— 為「機艙」這個情境而生。<strong>④ 商業:</strong>販賣「安靜」而非「音質」—— 把購買理由從性能軸換到情境軸,開創通勤 ANC 品類並壟斷心智十餘年;機場體驗店與航空公司合作是教科書級的情境行銷。<strong>⑤ 傳承:</strong>今日每一副 ANC 旗艦都活在 QC 開創的品類裡;「以情境定義產品」成為消費電子的標準劇本。</p>
+</div>
+
+<div class="case">
+  <span class="tag">CASE 7 · 2008 · 美國</span>
+  <h3>Beats by Dre —— 意義軸的勝利</h3>
+  <p><strong>① 脈絡:</strong>iPod 時代白色耳機線氾濫,音樂人 Dr. Dre 與唱片大亨 Jimmy Iovine 判斷:年輕人願意為「身份」付 300 美元,不願為「頻響」付 100 美元。<strong>② 聲學:</strong>初代 Studio 低頻大幅抬升、測量表現被工程界群嘲 —— 但調音本身就是風格宣言(嘻哈的低音文化)。<strong>③ 工業設計:</strong>亮面烤漆、紅線、金屬「b」—— 100 公尺可辨識;耳機第一次被設計成「戴在頭上的球鞋」。<strong>④ 商業:</strong>名人佩戴(NBA 球星、奧運選手)取代規格表;2014 年 Apple 以 <strong>30 億美元</strong>收購 —— 資本市場為品牌敘事標價。<strong>⑤ 傳承:</strong>全行業被迫補修「設計 × 行銷」學分;Beats 被 Apple 保留為文化/運動副牌(第六講雙品牌策略);而其後期產品測量表現大幅改善 —— 敘事贏得市場後,工程悄悄補課,值得玩味。</p>
+</div>
+
+<div class="case">
+  <span class="tag">CASE 8 · 2016– · 美國</span>
+  <h3>Apple AirPods / Pro / Max —— 品類的重新定義</h3>
+  <p><strong>① 脈絡:</strong>iPhone 7 取消耳機孔 —— Apple 自己製造了問題,再自己販售答案。<strong>② 聲學/系統:</strong>初代 AirPods 聲學平平,真正的發明是 W1 晶片(配對、雙耳同步、切換)與充電盒(重新定義續航);AirPods Pro 補上聲學課:耐洩漏前庭 + 回授麥克風自適應 EQ + 混合 ANC(第三講全部知識點的量產示範);AirPods Max 以 CNC 鋁與數位錶冠把「材料敘事」推到品類頂點。<strong>③ 工業設計:</strong>白色柄 = 行走的廣告;豆柄之爭(柄式重心與麥克風位置 vs. 豆式隱蔽)定義了 TWS 兩大形態。<strong>④ 商業:</strong>AirPods 業務營收一度超過 Spotify 全公司 —— 「配件」成為巨型業務;生態系鎖定(無縫切換、尋找網路)使競品在 iPhone 用戶中近乎無法競爭。<strong>⑤ 傳承:</strong>TWS 品類形態由它定型;「耳機 = 穿戴運算平台」的第五次情境轉移由它完成;OTC 助聽功能(Pro 2)開啟第六次轉移的序章 —— 聽力健康(第六講)。</p>
+</div>
+
+<h2>§4 跨案例歸納(1:50 前)</h2>
+<div class="tablewrap"><table>
+  <tr><th>案例</th><th>技術能力</th><th>使用情境</th><th>品牌敘事</th><th>結果</th></tr>
+  <tr><td>DT 48</td><td>◎ 開創</td><td>◎ 精準(廣播/醫學)</td><td>○ 儀器信譽</td><td>75 年長壽</td></tr>
+  <tr><td>HD 414</td><td>◎ 架構發明</td><td>◎ 家用輕鬆聆聽</td><td>◎ 黃色圖騰</td><td>千萬銷量,典範轉移</td></tr>
+  <tr><td>HD 600 家族</td><td>◎ 平台完成度</td><td>◎ 發燒參考</td><td>◎ 「中性」公約數</td><td>三十年平台</td></tr>
+  <tr><td>Stax</td><td>◎ 物理極限</td><td>△ 極小眾</td><td>◎ 解析天花板</td><td>小而不倒,被收購而延續</td></tr>
+  <tr><td>R10</td><td>◎ 工藝極限</td><td>△ 模糊</td><td>○ 傳說化</td><td>商業註腳、拍賣傳奇</td></tr>
+  <tr><td>QC 系列</td><td>○ ANC 領先</td><td>◎ 機艙/通勤</td><td>◎ 「安靜」</td><td>品類開創與長期壟斷</td></tr>
+  <tr><td>Beats</td><td>△ 後補課</td><td>◎ 街頭/運動</td><td>◎ 身份符號</td><td>30 億美元收購</td></tr>
+  <tr><td>AirPods</td><td>◎ 系統工程</td><td>◎ 手機日常</td><td>◎ 生態系</td><td>品類重定義</td></tr>
+</table></div>
+<div class="callout"><strong>歸納定律:</strong>「技術能力 × 使用情境 × 品牌敘事」三力皆強者成為經典;三缺一者各有典型命運 —— 缺敘事者成為業內傳說(R10),缺情境者成為註腳或小眾圖騰(Stax 是唯一以極致敘事補償情境缺位而存活的特例),缺技術者若敘事足夠強大,可以<em>先贏後補課</em>(Beats)—— 但只有一次機會。</div>
+
+<div class="disc"><b>課堂討論:</b>「偉大的產品」(R10、Stax)與「成功的產品」(Beats、AirPods)之間的張力,對你的期末專題意味著什麼?你打算把三力的權重如何分配?</div>
+
+<h2>重點整理</h2>
+<div class="keys">
+  <b>本講四個帶得走的觀念:</b>
+  <ol style="margin-bottom:0">
+    <li>五構面分析法的靈魂是「互相解釋」:聲學決策由脈絡說明、商業結果回溯設計決策。</li>
+    <li>三力定律:技術 × 情境 × 敘事 —— 對齊者成經典,缺位者命運可預測。</li>
+    <li>專業市場的複利是「不變」(DT 48、CD900ST),消費市場的複利是「平台」(HD 600、AirPods)。</li>
+    <li>架構發明(HD 414 開放式)> 參數改良;真正的典範轉移都改寫了「耳機該是什麼」的定義。</li>
+  </ol>
+</div>
+
+<div class="hw"><b>期中報告(20%,兩週後繳交):</b>自八案例之外另選一款具歷史意義的耳機(建議:AKG K1000、Etymotic ER4、Grado SR60、Audeze LCD-2、Sony WH-1000XM3、Focal Utopia、水月雨 Blessing 2、Koss Porta Pro…),以五構面分析法撰寫 2,500 字以上分析,須含:(a) 自繪聲學架構示意圖一張;(b) 設計傳承譜系圖一張;(c) 至少三個可查證的量化事實(年份、售價、銷量、測量數據)。評分:構面互相解釋的程度 50%、事實密度與正確性 30%、圖面品質 20%。<br><b>課前閱讀(第六講):</b>Harman 併購史整理;Chi-Fi 現象報導選讀。</div>
+
+<div class="pn">
+  <a href="lecture4.html">← 第四講 工業設計、材料與結構</a>
+  <a href="lecture6.html">第六講 品牌研究與未來趨勢 →</a>
+</div>
+</main>
+</body>
+</html>

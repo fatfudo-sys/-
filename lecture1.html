@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一講 耳機的演變史、市場與產業結構 — 耳機設計專論</title>
+<style>
+  :root{--bg:#0d1117;--bg2:#161b22;--card:#1b2230;--line:#2b3444;--text:#e6edf3;--muted:#9aa7b8;--accent:#4fc3f7;--accent2:#f7b64f;--code:#0a0e14;--max:980px}
+  @media (prefers-color-scheme: light){:root{--bg:#f7f9fb;--bg2:#fff;--card:#fff;--line:#dde4ec;--text:#1c2733;--muted:#5b6b7d;--accent:#0277bd;--accent2:#b06f00;--code:#eef2f7}}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{background:var(--bg);color:var(--text);font:16px/1.9 "Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .topbar .logo{font-weight:800;font-size:16px;color:var(--text)}.topbar .logo span{color:var(--accent)}
+  .topbar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+  .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}.topbar nav a:hover{color:var(--accent);text-decoration:none}
+  main{max-width:var(--max);margin:0 auto;padding:88px 24px 70px}
+  .kicker{color:var(--accent2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h1{font-size:31px;margin:6px 0 16px;line-height:1.4}
+  h2{font-size:24px;margin:44px 0 14px;line-height:1.4;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:19px;margin:28px 0 10px}
+  p{margin:0 0 14px}p.lead{font-size:17.5px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 26px}li{margin-bottom:8px}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:18px 0}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout.warn{border-left-color:var(--accent2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  figure{margin:22px 0}figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
+  figure.diagram{background:#fff;border-radius:12px;padding:16px;border:1px solid var(--line)}
+  figure.diagram img{border:none;max-height:380px;object-fit:contain}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:580px;font-size:14.5px}
+  th{background:var(--bg2);text-align:left;padding:10px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.t{white-space:nowrap;color:var(--accent2);font-weight:700}
+  .lo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .lo b{color:var(--accent2)}
+  .hw{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .hw b{color:var(--accent2)}
+  .disc{border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:18px 0}
+  .disc b{color:var(--accent)}
+  .keys{background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:26px 0}
+  .keys b{color:var(--accent2)}
+  .pn{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--line);padding-top:22px;flex-wrap:wrap}
+  .pn a{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-weight:600}
+  code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:3px 12px;font-size:12.5px;margin:3px 4px 0 0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+  <div class="logo">🎧 耳機設計<span>專論</span></div>
+  <nav><a href="index.html">課程首頁</a><a href="lecture1.html" style="color:var(--accent)">第一講</a><a href="lecture2.html">第二講</a><a href="lecture3.html">第三講</a><a href="lecture4.html">第四講</a><a href="lecture5.html">第五講</a><a href="lecture6.html">第六講</a></nav>
+</div></header>
+<main>
+
+<span class="kicker">Lecture 1 · 120 min · 完整講義</span>
+<h1>第一講 耳機的演變史、市場與產業結構</h1>
+<p class="lead">從電話接線生到 TWS:一部由「使用情境」驅動的設計史。本講建立全課程的分析底盤 —— 任何一款耳機,都是「技術能力 × 使用情境 × 商業結構」三股力量的交點。</p>
+<div><span class="chip">演變史</span><span class="chip">市場分析</span><span class="chip">產業供應鏈</span><span class="chip">價值鏈</span></div>
+
+<div class="lo"><b>學習目標:</b>修畢本講後,你應能 (1) 以「使用情境轉移」框架解釋耳機百年演變的每個轉折;(2) 描繪全球耳機市場的區隔、價格帶與量值結構;(3) 畫出從換能器元件到品牌通路的完整價值鏈,並指出各環節的利潤與權力所在。</div>
+
+<h2>§1 開場命題:耳機是喇叭的縮小版嗎?(0:00–0:15)</h2>
+<p>先回答本課程的第一個觀念題。喇叭激發的是「房間」:聲波離開振膜後經過數公尺的空氣、牆面反射、與另一隻耳朵共享的聲場,最後才抵達耳膜。耳機激發的是「腔體」:振膜與耳膜之間只有幾立方公分、甚至不足一立方公分的封閉空氣,而且這個空間的一半是<em>你自己的解剖構造</em>。</p>
+<p>這個差異推導出三個全課程反覆出現的結論:</p>
+<ol>
+  <li><strong>低頻機制不同。</strong>喇叭在房間中靠聲功率;耳機在密閉腔內靠「壓力腔效應」—— 振膜位移直接對應耳膜聲壓,所以一顆 10 mm 的單體可以平直重播 20 Hz(第三講詳述)。</li>
+  <li><strong>「平直」的定義不同。</strong>喇叭以無響室軸向響應為準;耳機的目標響應必須內含人體自身的濾波(耳增益),「耳膜處平直」反而是錯的(第二講詳述)。</li>
+  <li><strong>個體差異是一級變數。</strong>每個人的耳廓、耳道、配戴位置都不同;喇叭工程師面對「一個房間」,耳機工程師面對「八十億個房間」。</li>
+</ol>
+<div class="callout">因此,耳機不是喇叭的縮小版,而是一個獨立物種:<strong>它是「人體的延伸聲學系統」,一半的零件長在使用者頭上。</strong></div>
+
+<h2>§2 演變史 I:1891–1979,從通訊工具到隨身革命(0:15–0:50)</h2>
+<figure>
+  <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=1400&q=80" alt="金屬耳殼與皮革頭帶的復古耳機">
+  <figcaption>金屬耳殼、皮革頭帶、單邊出線 —— 這套語彙從電話交換機時代延續至今。<span class="muted">Photo: Unsplash</span></figcaption>
+</figure>
+
+<h3>2.1 電聲濫觴(1891–1937)</h3>
+<p>耳機的祖先不是音樂設備,而是<strong>勞動工具</strong>。1890 年代的電話接線生整日頭戴數百克重的碳粒式受話器,「頭戴、雙耳、長時間配戴」的人因問題從第一天就存在。1910 年,猶他州的 Nathaniel Baldwin 在自家廚房手工製作出靈敏度遠勝當時制式品的耳機,寫信給美國海軍推銷 —— 海軍測試後大量下訂。Baldwin 的故事給設計史兩個教訓:其一,耳機的第一個殺手級應用是<em>軍事通訊</em>(訊息清晰度,而非音質);其二,他拒絕申請專利、又把獲利投入失敗的事業,最終破產 —— 技術優勢不等於商業成功,這個主題將在百年後的無數案例中重演。</p>
+<p>1924 年 Eugen Beyer 在柏林創立 Beyerdynamic,1937 年推出 <strong>DT 48</strong> —— 第一款商用「動圈式」耳機。動圈架構(磁隙中的音圈驅動振膜)自此成為市場主流至今,市佔率約 95%。DT 48 更驚人的是產品壽命:持續生產至 2012 年,橫跨 75 年 —— 因為它的客戶是廣播電台、測聽室與實驗室,要的是「數十年不變的參考」。<strong>專業市場獎勵一致性,消費市場獎勵新鮮感</strong> —— 這是理解耳機產品策略的第一組對偶。</p>
+
+<h3>2.2 立體聲與消費市場的誕生(1958–1968)</h3>
+<p>1958 年,美國人 John Koss 本想賣的是一台可攜式電唱機,耳機(SP/3)只是展示配件 —— 結果經銷商只想訂耳機。Koss 意外揭開了第一次<strong>使用情境轉移:從通訊工具到音樂欣賞</strong>。時代條件是立體聲唱片(1957 年量產)的普及:立體聲需要左右耳分離的聆聽,耳機天生就是立體聲的完美載體。Koss 隨後以「Beatlephone」(披頭四聯名)開創名人行銷 —— 比 Beats 早了半世紀。</p>
+<p>1959 年,日本 Stax 推出 SR-1 靜電「Earspeaker」,宣告耳機的另一條路線:不追求普及,追求換能器物理的極限(第三、五講詳述)。1968 年,Sennheiser HD 414 完成一次真正的<strong>聲學典範轉移</strong>:在此之前所有耳機都是密閉式 —— 沉重、壓迫、聲音悶在頭裡。HD 414 把單體背面打開,讓後波自由輻射,配上 110 g 的超輕結構與標誌性的黃色海綿,「開放、輕盈、自然」一夕之間重新定義了耳機該有的樣子。HD 414 最終銷售超過一千萬副,是史上最暢銷的耳機之一;「開放式 = 高傳真」的聲學想像從此寫入行業 DNA。</p>
+
+<h3>2.3 Walkman:第二次情境轉移(1979)</h3>
+<p>1979 年 Sony Walkman TPS-L2 上市,原配耳機 MDR-3 重僅約 45 g。這是<strong>第二次使用情境轉移:從居家到隨身</strong>。注意設計規格如何被改寫:在客廳,重量與體積幾乎不是規格;在街上,它們壓倒一切。同時,電池驅動的隨身聽輸出功率有限,「高靈敏度」第一次成為關鍵規格 —— 這條規格線一路延伸到今日手機直推與 TWS 的功耗預算。Walkman 也第一次把耳機變成<strong>公共空間的私人領域</strong>:社會學家稱之為「音訊繭」(audio cocoon),這個概念在 ANC 時代將再次回歸。</p>
+
+<h2>§3 演變史 II:1980–現在,專業工具、時尚符號與運算平台(0:50–1:10)</h2>
+
+<h3>3.1 第三次轉移:聆聽 → 專業工具(1980s–1990s)</h3>
+<p>1980 年代的舞台音量戰爭催生了 IEM(入耳式監聽):鼓手與歌手需要在 110 dB 的舞台上聽見自己。調音師 Jerry Harvey(後創 Ultimate Ears 與 JH Audio)為 Van Halen 鼓手 Alex Van Halen 製作的客製入耳監聽,把助聽器產業的平衡銜鐵(BA)單體與耳模技術帶進音訊世界。同一時期,Sony MDR-CD900ST(1989)成為日本錄音室的事實標準。專業情境把「隔音、配戴穩固、可維修、單體一致性」推上規格首位 —— 這些規格後來全部回流消費產品。</p>
+
+<h3>3.2 第四次轉移:音質 → 身份符號(2000s)</h3>
+<p>2000 年 Bose QuietComfort 把軍規主動降噪民用化,販賣的不是「更好的聲音」而是「安靜」—— 購買理由的重新定義,是行銷工程的經典(第五講案例)。2008 年 Beats by Dre 上市:以 CMF(亮面烤漆、紅色線材、金屬「b」標)與嘻哈名人敘事,把耳機變成<strong>穿在頭上的球鞋</strong>。音訊工程界對其測量表現嗤之以鼻,但 2014 年 Apple 以 30 億美元收購 Beats —— 資本市場為「品牌敘事」標出了價格。第四次轉移的教訓:<strong>當產品類別成熟,差異化會從性能軸遷移到意義軸。</strong></p>
+
+<h3>3.3 第五次轉移:配件 → 穿戴運算平台(2016–)</h3>
+<p>2016 年 AirPods 上市。真正的創新不在聲學(非密封耳塞的聲學表現平平),而在<strong>系統工程</strong>:W1 晶片解決了藍牙配對與雙耳同步兩大痛點,充電盒重新定義了電池壽命的計算方式,「拿出來就連上」的體驗讓耳機成為 iPhone 的預設周邊。此後產品的重心徹底位移:SoC、麥克風陣列、韌體、App 生態取代被動聲學,成為研發與 BOM 的主體。耳機成為「戴在耳朵上的電腦」—— 而電腦的規則(晶片節奏、韌體迭代、生態系鎖定)開始支配這個品類。</p>
+
+<h3>3.4 五次轉移總表(本講核心框架)</h3>
+<div class="tablewrap"><table>
+  <tr><th>轉移</th><th>時期</th><th>驅動事件</th><th>設計規格的改寫</th></tr>
+  <tr><td>① 通訊 → 音樂欣賞</td><td>1958</td><td>Koss SP/3、立體聲唱片</td><td>語音頻寬 → 全頻段保真;「Hi-Fi」成為規格語言</td></tr>
+  <tr><td>② 居家 → 隨身</td><td>1979</td><td>Sony Walkman</td><td>重量、體積、靈敏度壓倒一切;開放式輕量結構</td></tr>
+  <tr><td>③ 聆聽 → 專業工具</td><td>1980–90s</td><td>舞台 IEM、錄音室標準機</td><td>隔音、穩固、可維修、一致性成為核心規格</td></tr>
+  <tr><td>④ 音質 → 身份符號</td><td>2000–08</td><td>Bose QC、Beats</td><td>CMF、品牌敘事進入產品定義;「安靜」與「風格」成為賣點</td></tr>
+  <tr><td>⑤ 配件 → 運算平台</td><td>2016</td><td>Apple AirPods</td><td>SoC / 韌體 / 生態系取代被動聲學成為研發主體</td></tr>
+</table></div>
+<div class="disc"><b>課堂討論(10 分鐘):</b>第六次使用情境轉移會是什麼?候選:全天候配戴的「聽力健康 / AI 助理」情境(耳機 → 耳戴式電腦)、AR 音訊層、開放式「共享聆聽」。請以「哪個規格會被改寫」為判準論證,而非以技術炫目程度。</div>
+
+<h2>§4 市場結構(1:20–1:50)</h2>
+
+<h3>4.1 規模、量值與品類結構</h3>
+<p>以 2020 年代中期為基準:全球耳機市場銷售額約在 <strong>500–600 億美元</strong>量級,年出貨以「數億副」計。品類結構上,<strong>TWS 已佔出貨量六成以上</strong>,年出貨約 3 億副量級;傳統有線耳機以量計仍龐大(入門市場與專業市場),但銷售額佔比持續萎縮;耳罩式無線(以 ANC 旗艦為代表)是單價與毛利最高的主流品類。</p>
+<p>成長動能的地理分布高度不均:北美與西歐是 ANC 旗艦與生態系產品的主場;<strong>印度</strong>是入門 TWS 的最大成長引擎(本土品牌 boAt 以 US$20 以下產品衝上全球出貨前列);<strong>中國</strong>同時存在全球最大的製造供應鏈與最活躍的發燒 IEM 生態(Chi-Fi,第六講詳述);<strong>日本</strong>保有獨特的器材店文化與高單價隨身聽市場。</p>
+
+<h3>4.2 價格帶金字塔</h3>
+<div class="tablewrap"><table>
+  <tr><th>價格帶</th><th>區間</th><th>主導者</th><th>競爭邏輯</th></tr>
+  <tr><td>入門</td><td>&lt; US$50</td><td>白牌、boAt、小米、KZ</td><td>量最大;供應鏈成本戰;通路與電商演算法決定生死</td></tr>
+  <tr><td>主流</td><td>US$50–250</td><td>Apple、Sony、Bose、Samsung</td><td>ANC 深度、通話品質、生態系整合;行銷資本密集</td></tr>
+  <tr><td>發燒</td><td>US$250–2,000</td><td>Sennheiser、Focal、Audeze、HiFiMAN、旗艦 IEM</td><td>測量表現 + 社群口碑;評測媒體與測量資料庫影響力極大</td></tr>
+  <tr><td>旗艦 / 靜電</td><td>US$2,000–60,000</td><td>Stax、Sennheiser HE-1、Warwick、頂級客製 IEM</td><td>技術宣言與品牌光環;營收意義小,敘事意義大</td></tr>
+</table></div>
+<div class="callout warn"><strong>分析要領:</strong>不同價格帶是<em>不同的產業</em>:入門帶的關鍵能力是供應鏈與通路,主流帶是系統工程與行銷資本,發燒帶是調音信譽與社群經營。用同一套策略分析全部價格帶,是市場分析最常見的錯誤。</div>
+
+<h3>4.3 品牌市佔格局</h3>
+<p>TWS 市場:Apple 長期領先(市佔約四分之一強,且吃下利潤的大部分),其後為 Samsung(含 Harman 系)、小米、boAt、華為等;前五名以外是極長的長尾。耳罩式 ANC 市場則是 Sony(WH-1000X 系列)、Bose、Apple(AirPods Max)三強加上眾多追趕者。發燒市場高度分眾,沒有任何品牌市佔超過個位數百分比 —— 這正是新品牌(尤其 Chi-Fi)能持續進場的結構原因。</p>
+
+<h2>§5 產業結構與價值鏈(1:50 前完成)</h2>
+<h3>5.1 價值鏈全圖</h3>
+<div class="tablewrap"><table>
+  <tr><th>環節</th><th>代表廠商</th><th>權力與利潤來源</th></tr>
+  <tr><td>換能器元件</td><td>Knowles、Sonion(BA 雙寡佔);Foster/豐達、美律 Merry(動圈)</td><td>BA 有專利與製程門檻;動圈供應鏈成熟、議價力低</td></tr>
+  <tr><td>晶片平台 SoC</td><td>Qualcomm、Airoha(絡達)、BES(恆玄)</td><td>藍牙 / ANC / DSP 整合度決定品牌商的功能天花板;參考設計(reference design)大幅降低進入門檻 —— 也稀釋了差異化</td></tr>
+  <tr><td>ODM / OEM</td><td>GoerTek 歌爾、Luxshare 立訊、美律、Primax</td><td>聲學組裝良率是核心 know-how;為 Apple 代工的規模經濟外溢至全行業</td></tr>
+  <tr><td>品牌商</td><td>Apple、Sony、Bose、Sennheiser、Samsung…</td><td>調音、韌體、通路、品牌敘事;硬體毛利 + 生態系鎖定</td></tr>
+  <tr><td>通路 / 媒體</td><td>電商、專門店、評測媒體、測量資料庫(Rtings、Squig.link)</td><td>測量公開化削弱品牌的資訊不對稱 —— 行銷語言正在被迫改寫(第六講)</td></tr>
+</table></div>
+
+<h3>5.2 BOM 的殘酷真相</h3>
+<p>一副主流無線耳機的物料成本(BOM)中,<strong>換能器往往只佔數美元</strong> —— 一顆優秀的動圈單體出廠價可能不到一杯咖啡。成本重心在 SoC、電池、麥克風陣列、機構件與各國認證;研發重心在韌體、App 與聲學調校團隊。這解釋了本講的產業第一定律:</p>
+<div class="callout"><strong>「做出好聲音」的門檻從未如此低,「做出好產品」的門檻從未如此高。</strong>新品牌可以買到與大廠同級的單體與晶片,買不到的是系統整合能力、量產品質體系與品牌信任。</div>
+
+<h2>重點整理</h2>
+<div class="keys">
+  <b>本講五個帶得走的觀念:</b>
+  <ol style="margin-bottom:0">
+    <li>耳機不是縮小的喇叭:壓力腔低頻、內含人體濾波的目標響應、個體差異為一級變數。</li>
+    <li>耳機史 = 五次使用情境轉移史;每次轉移都改寫規格優先序,而非只是「技術進步」。</li>
+    <li>專業市場獎勵一致性,消費市場獎勵新鮮感 —— 兩者需要不同的產品組織。</li>
+    <li>價格帶即產業:入門看供應鏈、主流看系統工程與行銷、發燒看調音信譽。</li>
+    <li>BOM 重心已從換能器移到晶片 / 電池 / 韌體;差異化門檻在系統,不在單體。</li>
+  </ol>
+</div>
+
+<div class="hw"><b>課後作業 1(6%):</b>選擇一款你擁有的耳機,撰寫 800 字分析:(1) 它屬於哪一次使用情境轉移的產物?(2) 依公開資訊推測其價值鏈各環節(單體、晶片、組裝、品牌);(3) 它的價格帶定位與同帶三個競品之比較。<br><b>課前閱讀(第二講):</b>Toole《Sound Reproduction》Ch.1–2 節選;<a href="https://headphones.com/pages/measurements-and-frequency-response">Headphones.com 測量與頻率響應導讀</a>。</div>
+
+<div class="pn">
+  <a href="index.html">← 課程首頁</a>
+  <a href="lecture2.html">第二講 聲學基礎與心理聲學 →</a>
+</div>
+</main>
+</body>
+</html>
