@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Headphone Design — A Complete Lesson</title>
-<meta name="description" content="A full-detail research course on headphone design: acoustics, drivers, target curves, measurement, ANC, ergonomics, materials, manufacturing and the design process.">
+<title>耳機設計專論 — 六講大學課程(3 學分)</title>
+<meta name="description" content="大學三學分等級之耳機設計專業課程:六講、每講兩小時。涵蓋聲學、心理聲學、換能器、工業設計、材料結構、市場產業、演變史、經典設計分析與品牌研究。">
 <style>
   :root{
     --bg:#0d1117; --bg2:#161b22; --card:#1b2230; --line:#2b3444;
@@ -17,99 +17,95 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;scroll-padding-top:84px}
-  body{background:var(--bg);color:var(--text);font:16px/1.7 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+  body{background:var(--bg);color:var(--text);font:16px/1.85 "Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
 
-  /* top bar */
   header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);
     backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .topbar .inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
   .topbar .logo{font-weight:800;letter-spacing:.5px;font-size:17px;color:var(--text)}
   .topbar .logo span{color:var(--accent)}
-  .topbar nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+  .topbar nav{margin-left:auto;display:flex;gap:15px;flex-wrap:wrap}
   .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}
   .topbar nav a:hover{color:var(--accent);text-decoration:none}
 
-  /* layout */
   .layout{display:flex;max-width:1400px;margin:0 auto;padding-top:58px}
-  aside.toc{position:sticky;top:58px;align-self:flex-start;width:270px;max-height:calc(100vh - 58px);
+  aside.toc{position:sticky;top:58px;align-self:flex-start;width:275px;max-height:calc(100vh - 58px);
     overflow-y:auto;padding:26px 10px 40px 20px;border-right:1px solid var(--line);flex-shrink:0}
-  aside.toc h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:0 0 10px 10px}
-  aside.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);font-size:13.5px;line-height:1.4}
+  aside.toc h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:14px 0 8px 10px}
+  aside.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);font-size:13.5px;line-height:1.5}
   aside.toc a:hover{color:var(--text);background:var(--card);text-decoration:none}
-  aside.toc a.active{color:var(--accent);background:var(--card);font-weight:600}
+  aside.toc a.active{color:var(--accent);background:var(--card);font-weight:700}
   main{flex:1;min-width:0;padding:0 28px 80px}
   .wrap{max-width:var(--max);margin:0 auto}
 
-  /* hero */
   .hero{position:relative;border-radius:0 0 18px 18px;overflow:hidden;margin:0 -28px}
-  .hero img{width:100%;height:430px;object-fit:cover;display:block;filter:brightness(.45)}
-  .hero .overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 8%;}
-  .hero h1{font-size:clamp(30px,5vw,52px);line-height:1.15;color:#fff;max-width:760px}
+  .hero img{width:100%;height:440px;object-fit:cover;display:block;filter:brightness(.42)}
+  .hero .overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 8%}
+  .hero h1{font-size:clamp(28px,4.6vw,48px);line-height:1.25;color:#fff;max-width:800px}
   .hero h1 em{color:var(--accent);font-style:normal}
-  .hero p{color:#d7e2ec;max-width:640px;margin-top:14px;font-size:17px}
-  .hero .cta{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap}
+  .hero p{color:#d7e2ec;max-width:680px;margin-top:14px;font-size:17px}
+  .hero .badges{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+  .hero .badges span{background:#ffffff22;border:1px solid #ffffff55;color:#fff;padding:5px 14px;border-radius:99px;font-size:13.5px;font-weight:600;backdrop-filter:blur(4px)}
+  .hero .cta{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap}
   .hero .cta a{background:var(--accent);color:#06131c;font-weight:700;padding:11px 22px;border-radius:9px}
   .hero .cta a.ghost{background:transparent;border:1.5px solid #ffffff88;color:#fff}
   .hero .cta a:hover{text-decoration:none;filter:brightness(1.1)}
 
-  /* sections */
   section{padding-top:56px}
-  .kicker{color:var(--accent2);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
-  h2{font-size:30px;margin:6px 0 18px;line-height:1.25}
-  h3{font-size:20px;margin:30px 0 10px;color:var(--accent)}
-  p{margin:0 0 14px;color:var(--text)}
-  p.lead{font-size:18px;color:var(--muted)}
-  ul,ol{margin:0 0 16px 24px}
+  .kicker{color:var(--accent2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h2{font-size:29px;margin:6px 0 18px;line-height:1.35}
+  h3{font-size:19.5px;margin:30px 0 10px;color:var(--accent)}
+  h4{font-size:16.5px;margin:20px 0 8px}
+  p{margin:0 0 14px}
+  p.lead{font-size:17.5px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 26px}
   li{margin-bottom:7px}
-  strong{color:var(--text)}
   .muted{color:var(--muted)}
 
-  /* components */
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
   .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
   .callout.warn{border-left-color:var(--accent2)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-  @media(max-width:900px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
-  @media(max-width:600px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr 1fr}}
+  @media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
 
   figure{margin:22px 0}
   figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
   figure.diagram{background:#fff;border-radius:12px;padding:18px;border:1px solid var(--line)}
-  figure.diagram img{border:none;max-height:420px;object-fit:contain}
-  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.5}
-  .imgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
-  @media(max-width:800px){.imgrid{grid-template-columns:1fr 1fr}}
-  .imgrid figure{margin:0}
-  .imgrid img{height:150px;object-fit:cover}
+  figure.diagram img{border:none;max-height:400px;object-fit:contain}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.6}
 
   .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
-  table{border-collapse:collapse;width:100%;min-width:620px;font-size:14.5px}
+  table{border-collapse:collapse;width:100%;min-width:600px;font-size:14.5px}
   th{background:var(--bg2);text-align:left;padding:11px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
-  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--text)}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
   tr:last-child td{border-bottom:none}
+  td.t{white-space:nowrap;color:var(--accent2);font-weight:700;font-variant-numeric:tabular-nums}
 
-  .steps{counter-reset:step;list-style:none;margin-left:0}
-  .steps li{counter-increment:step;position:relative;padding:0 0 18px 52px}
-  .steps li::before{content:counter(step);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;
-    background:var(--accent);color:#06131c;font-weight:800;display:flex;align-items:center;justify-content:center}
-  .steps li::after{content:"";position:absolute;left:16px;top:38px;bottom:0;width:2px;background:var(--line)}
-  .steps li:last-child::after{display:none}
-  .steps li b{display:block;font-size:16px;margin-bottom:3px}
+  .lesson-head{background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:14px 0 24px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .lesson-head .num{font-size:44px;font-weight:900;color:var(--accent);line-height:1}
+  .lesson-head .meta{flex:1;min-width:220px}
+  .lesson-head .meta b{font-size:19px;display:block;margin-bottom:4px}
+  .lesson-head .meta span{color:var(--muted);font-size:14px}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:3px 12px;font-size:12.5px;margin:3px 4px 0 0}
+
+  .lo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .lo b{color:var(--accent2)}
+  .hw{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .hw b{color:var(--accent2)}
 
   dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:8px 20px;margin:16px 0}
   dl.gloss dt{font-weight:700;color:var(--accent)}
   @media(max-width:640px){dl.gloss{grid-template-columns:1fr}dl.gloss dd{margin-bottom:8px}}
-
   code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
 
   footer{border-top:1px solid var(--line);margin-top:70px;padding:34px 28px;color:var(--muted);font-size:13.5px;text-align:center}
   footer a{color:var(--muted);text-decoration:underline}
   .totop{position:fixed;right:22px;bottom:22px;background:var(--accent);color:#06131c;width:44px;height:44px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;opacity:0;pointer-events:none;transition:.25s}
+    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;opacity:0;pointer-events:none;transition:.25s;z-index:60}
   .totop.show{opacity:1;pointer-events:auto}
   @media(max-width:980px){aside.toc{display:none}.hero{margin:0 -18px}main{padding:0 18px 60px}}
 </style>
@@ -118,584 +114,550 @@
 
 <header class="topbar">
   <div class="inner">
-    <div class="logo">🎧 Headphone<span>Design</span>.lesson</div>
+    <div class="logo">🎧 耳機設計<span>專論</span></div>
     <nav>
-      <a href="#history">History</a><a href="#psychoacoustics">Psychoacoustics</a><a href="#drivers">Drivers</a>
-      <a href="#targets">Targets</a><a href="#anc">ANC</a><a href="#ergonomics">Ergonomics</a><a href="#process">Process</a>
+      <a href="#syllabus">課程綱要</a><a href="#L1">第一講</a><a href="#L2">第二講</a><a href="#L3">第三講</a>
+      <a href="#L4">第四講</a><a href="#L5">第五講</a><a href="#L6">第六講</a><a href="#refs">參考書目</a>
     </nav>
   </div>
 </header>
 
 <div class="layout">
 <aside class="toc" id="toc">
-  <h4>Course Contents</h4>
-  <a href="#history">1 · Introduction &amp; History</a>
-  <a href="#psychoacoustics">2 · Sound &amp; Psychoacoustics</a>
-  <a href="#formfactors">3 · Categories &amp; Form Factors</a>
-  <a href="#drivers">4 · Driver Technologies</a>
-  <a href="#acoustics">5 · Earcup Acoustic Design</a>
-  <a href="#targets">6 · Target Curves</a>
-  <a href="#measurement">7 · Measurement</a>
-  <a href="#electrical">8 · Electrical Design</a>
-  <a href="#anc">9 · Wireless, DSP &amp; ANC</a>
-  <a href="#ergonomics">10 · Ergonomics &amp; ID</a>
-  <a href="#materials">11 · Materials &amp; Manufacturing</a>
-  <a href="#process">12 · The Design Process</a>
-  <a href="#safety">13 · Safety &amp; Standards</a>
-  <a href="#sustainability">14 · Sustainability</a>
-  <a href="#exercises">15 · Practical Exercises</a>
-  <a href="#glossary">16 · Glossary</a>
-  <a href="#references">17 · References</a>
+  <h4>課程資訊</h4>
+  <a href="#syllabus">課程綱要與評量</a>
+  <h4>六講課程(每講 2 小時)</h4>
+  <a href="#L1">第一講 · 演變史、市場與產業</a>
+  <a href="#L2">第二講 · 聲學與心理聲學</a>
+  <a href="#L3">第三講 · 換能器與電聲系統</a>
+  <a href="#L4">第四講 · 工業設計、材料與結構</a>
+  <a href="#L5">第五講 · 經典設計分析</a>
+  <a href="#L6">第六講 · 品牌研究與未來趨勢</a>
+  <h4>附錄</h4>
+  <a href="#project">期末專題規格</a>
+  <a href="#gloss">核心術語表</a>
+  <a href="#refs">參考書目與資源</a>
 </aside>
 
 <main>
 <div class="hero">
-  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&q=80" alt="Black wireless over-ear headphones on a yellow background">
+  <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&q=80" alt="黃色背景上的黑色無線耳罩式耳機">
   <div class="overlay">
-    <span class="kicker">A complete research lesson</span>
-    <h1>How <em>Headphones</em> Are Really Designed</h1>
-    <p>The physics, the engineering, the ergonomics, the manufacturing — and the design process that ties it all together. From zero to critically evaluating (or beginning to design) a headphone.</p>
+    <span class="kicker">University-level course · 3 credits</span>
+    <h1>耳機設計專論<br><em>Advanced Headphone Design</em></h1>
+    <p>六講 × 每講 2 小時。從聲學物理、心理聲學、換能器工程,到工業設計、材料結構、市場產業、經典設計分析與品牌研究 —— 一門完整的大學三學分專業課程。</p>
+    <div class="badges">
+      <span>6 講 × 2 小時</span><span>3 學分等級</span><span>設計 × 工程 × 商業</span><span>含期末專題</span>
+    </div>
     <div class="cta">
-      <a href="#history">Start the lesson</a>
-      <a class="ghost" href="#exercises">Jump to exercises</a>
+      <a href="#syllabus">閱讀課程綱要</a>
+      <a class="ghost" href="#L1">直接進入第一講</a>
     </div>
   </div>
 </div>
 <div class="wrap">
 
-<!-- ============ 1 ============ -->
-<section id="history">
-  <span class="kicker">Chapter 1</span>
-  <h2>Introduction &amp; Brief History</h2>
-  <p class="lead">A headphone is an electroacoustic transducer system worn on or in the ear that converts an electrical audio signal into sound pressure at the eardrum.</p>
-  <p>Unlike a loudspeaker, which excites a room, a headphone excites a tiny, highly individual acoustic space — the volume between the driver and your eardrum. Almost every design decision in this lesson flows from that single difference.</p>
-  <figure>
-    <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=1400&q=80" alt="Retro-styled on-ear headphones with metal earcups and leather headband">
-    <figcaption>Classic on-ear construction: metal cups, leather band — a design language stretching back a century. <span class="muted">Photo: Unsplash</span></figcaption>
-  </figure>
-  <h3>Milestones</h3>
+<!-- ================= SYLLABUS ================= -->
+<section id="syllabus">
+  <span class="kicker">Course Syllabus</span>
+  <h2>課程綱要 Course Syllabus</h2>
   <div class="tablewrap"><table>
-    <tr><th>Year</th><th>Milestone</th></tr>
-    <tr><td>1891–1910</td><td>Telephone-operator headsets; Nathaniel Baldwin builds the first modern audio headphones in his kitchen (1910), sold to the U.S. Navy.</td></tr>
-    <tr><td>1937</td><td>Beyerdynamic DT 48 — the first dynamic headphone sold to consumers.</td></tr>
-    <tr><td>1958</td><td>John Koss's SP/3 — first stereo headphone marketed for music; creates the consumer category.</td></tr>
-    <tr><td>1959</td><td>Stax SR-1 — the first electrostatic "earspeaker."</td></tr>
-    <tr><td>1968</td><td>Sennheiser HD 414 — the first <strong>open-back</strong> headphone; light, airy sound that redefined expectations.</td></tr>
-    <tr><td>1979</td><td>Sony Walkman makes portable listening mainstream and pushes miniaturization.</td></tr>
-    <tr><td>1980s–90s</td><td>In-ear monitors developed for stage musicians (Jerry Harvey, Ultimate Ears); balanced armatures migrate from hearing aids.</td></tr>
-    <tr><td>2000</td><td>Bose QuietComfort commercializes active noise cancellation for travelers.</td></tr>
-    <tr><td>2008–14</td><td>Beats by Dre turns headphones into fashion; planar-magnetic renaissance (HiFiMAN, Audeze).</td></tr>
-    <tr><td>2016</td><td>Apple AirPods normalize true-wireless earbuds; the industry pivots to DSP-defined products.</td></tr>
-    <tr><td>2018–now</td><td>Harman target research reshapes tuning; adaptive ANC, transparency, spatial audio, LE Audio/LC3, lossless-wireless attempts.</td></tr>
+    <tr><th>項目</th><th>內容</th></tr>
+    <tr><td>課程名稱</td><td>耳機設計專論 Advanced Headphone Design</td></tr>
+    <tr><td>學分 / 時數</td><td>3 學分等級 · 課堂 6 講 × 2 小時(12 小時),搭配每講 4–6 小時課前閱讀與課後作業、及期末專題(約 24 小時),總學習投入約 70 小時</td></tr>
+    <tr><td>適合對象</td><td>工業設計、電機 / 聲學工程、產品管理與行銷相關科系高年級生或碩士生;業界產品經理、ID / EE 工程師</td></tr>
+    <tr><td>先修建議</td><td>基礎物理(波動)、基礎設計方法;無需聲學背景,第二講將建立完整基礎</td></tr>
+    <tr><td>教學方式</td><td>講授 60% · 實例拆解與聆聽實驗 25% · 討論與評圖 15%</td></tr>
+    <tr><td>課程目標</td><td>修畢後能:(1) 以聲學與心理聲學原理解讀耳機測量數據與調音決策;(2) 評估換能器、腔體、材料與結構之工程取捨;(3) 以人因與 CMF 觀點執行耳機工業設計;(4) 分析市場結構、品牌策略與經典產品成敗;(5) 完成一份具專業水準的耳機概念設計與品牌定位提案</td></tr>
   </table></div>
-  <div class="callout"><strong>The core lesson of history:</strong> headphone design has repeatedly been reshaped by <em>use-case shifts</em> (telephony → hi-fi → portable → mobile/wireless) more than by pure acoustics. A great headphone design always starts with "who is wearing this, where, and why."</div>
+
+  <h3>評量方式 Grading</h3>
+  <div class="tablewrap"><table>
+    <tr><th>項目</th><th>比重</th><th>說明</th></tr>
+    <tr><td>課堂參與及討論</td><td>10%</td><td>每講之案例討論與聆聽實驗記錄</td></tr>
+    <tr><td>課後作業 × 5</td><td>30%</td><td>第一至四、六講各一份(每份 6%),見各講「課後作業」</td></tr>
+    <tr><td>經典設計分析報告</td><td>20%</td><td>第五講指定:2,500 字以上,依「五構面分析法」完成一款經典耳機的完整分析</td></tr>
+    <tr><td>期末專題</td><td>40%</td><td>耳機概念設計 + 產品規格書 + 品牌定位提案,詳見<a href="#project">期末專題規格</a></td></tr>
+  </table></div>
+
+  <h3>六講總覽</h3>
+  <div class="tablewrap"><table>
+    <tr><th>講次</th><th>主題</th><th>涵蓋領域</th></tr>
+    <tr><td>第一講</td><td>耳機的演變史、市場與產業結構</td><td>演變 · 市場 · 供應鏈</td></tr>
+    <tr><td>第二講</td><td>聲學基礎與心理聲學</td><td>聲學 · 心理學 · 目標曲線</td></tr>
+    <tr><td>第三講</td><td>換能器技術與電聲系統設計</td><td>驅動單元 · 腔體 · 測量 · ANC/DSP</td></tr>
+    <tr><td>第四講</td><td>工業設計、人因工程、材料與結構</td><td>設計 · 材料 · 結構 · 製造</td></tr>
+    <tr><td>第五講</td><td>經典設計分析(八大案例)</td><td>設計史 · 案例研究</td></tr>
+    <tr><td>第六講</td><td>品牌研究、市場策略與未來趨勢</td><td>品牌 · 策略 · 趨勢 · 期末專題說明</td></tr>
+  </table></div>
 </section>
 
-<!-- ============ 2 ============ -->
-<section id="psychoacoustics">
-  <span class="kicker">Chapter 2</span>
-  <h2>Sound Fundamentals &amp; Psychoacoustics</h2>
-  <h3>2.1 Physical basics</h3>
+<!-- ================= LESSON 1 ================= -->
+<section id="L1">
+  <span class="kicker">Lecture 1 · 2 hours</span>
+  <h2>第一講 耳機的演變史、市場與產業結構</h2>
+  <div class="lesson-head">
+    <div class="num">01</div>
+    <div class="meta">
+      <b>從電話接線生到 TWS:一部由「使用情境」驅動的設計史</b>
+      <span>領域:演變史 · 市場分析 · 產業供應鏈</span><br>
+      <span class="chip">演變</span><span class="chip">市場</span><span class="chip">產業結構</span><span class="chip">價值鏈</span>
+    </div>
+  </div>
+  <div class="lo"><b>學習目標:</b>能以「使用情境轉移」框架解釋耳機百年演變;能描繪全球耳機市場之區隔、價格帶與量值結構;能繪製從驅動單元供應商到品牌商的完整價值鏈。</div>
+
+  <h3>課堂時間配置(120 分鐘)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>時間</th><th>單元</th><th>內容</th></tr>
+    <tr><td class="t">0:00–0:15</td><td>課程導論</td><td>課程架構、評量說明、期末專題預告;核心命題:「耳機是把揚聲器戴在頭上,還是完全不同的物種?」</td></tr>
+    <tr><td class="t">0:15–0:50</td><td>演變史 I(1891–1979)</td><td>電話接線生耳機 → Baldwin(1910)→ Beyerdynamic DT 48(1937)→ Koss SP/3(1958)→ Stax SR-1(1959)→ Sennheiser HD 414(1968)→ Walkman(1979)</td></tr>
+    <tr><td class="t">0:50–1:10</td><td>演變史 II(1980–現在)</td><td>IEM 與舞台監聽 → Bose QC(2000)→ Beats(2008)→ AirPods(2016)→ DSP 定義產品時代;歸納:五次「使用情境轉移」</td></tr>
+    <tr><td class="t">1:10–1:20</td><td>休息</td><td>—</td></tr>
+    <tr><td class="t">1:20–1:50</td><td>市場與產業結構</td><td>市場規模與區隔、價格帶金字塔、TWS 佔比、品牌市佔、ODM/OEM 供應鏈、價值鏈拆解</td></tr>
+    <tr><td class="t">1:50–2:00</td><td>討論與作業說明</td><td>小組討論:「下一次使用情境轉移會是什麼?」</td></tr>
+  </table></div>
+
+  <h3>1.1 演變史:五次使用情境轉移</h3>
+  <figure>
+    <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=1400&q=80" alt="金屬耳殼與皮革頭帶的復古耳機">
+    <figcaption>金屬耳殼、皮革頭帶 —— 延續一世紀的設計語彙。<span class="muted">Photo: Unsplash</span></figcaption>
+  </figure>
+  <p>耳機史的關鍵不是技術年表,而是<strong>五次使用情境轉移</strong>,每一次都重寫了設計規格的優先順序:</p>
+  <div class="tablewrap"><table>
+    <tr><th>轉移</th><th>時期</th><th>驅動事件</th><th>設計規格的改寫</th></tr>
+    <tr><td>通訊 → 音樂欣賞</td><td>1958</td><td>Koss SP/3、立體聲唱片普及</td><td>從語音頻寬轉向全頻段保真;「Hi-Fi」成為規格語言</td></tr>
+    <tr><td>居家 → 隨身</td><td>1979</td><td>Sony Walkman</td><td>重量、體積、靈敏度(電池驅動)壓倒一切;開放式輕量結構(MDR-3)</td></tr>
+    <tr><td>聆聽 → 專業工具</td><td>1980–90s</td><td>舞台 IEM、錄音室標準機</td><td>隔音、配戴穩固、可維修性、單體一致性成為核心規格</td></tr>
+    <tr><td>音質 → 時尚身份</td><td>2008</td><td>Beats by Dre</td><td>CMF、品牌敘事與名人行銷進入產品定義;低音調音成為風格宣言</td></tr>
+    <tr><td>配件 → 穿戴運算平台</td><td>2016</td><td>Apple AirPods</td><td>SoC、麥克風陣列、電池、韌體與 App 生態取代被動聲學成為 BOM 與研發主體</td></tr>
+  </table></div>
+  <div class="callout"><strong>本課程第一原理:</strong>偉大的耳機設計不始於單體選型,而始於回答 ——「誰、在哪裡、為什麼戴上它?」</div>
+
+  <h3>1.2 市場結構(以 2020 年代中期為基準)</h3>
   <ul>
-    <li><strong>Sound</strong> is a pressure wave. Frequency (Hz) maps to pitch, amplitude to loudness; human hearing spans roughly <strong>20 Hz – 20 kHz</strong> (upper limit falls with age).</li>
-    <li><strong>Sound Pressure Level (SPL)</strong> is measured in dB relative to 20 µPa. Every +10 dB is perceived as roughly "twice as loud"; +3 dB doubles acoustic power.</li>
-    <li><strong>Wavelength matters:</strong> at 20 kHz, λ ≈ 17 mm — the same order as ear-canal and earcup dimensions. High-frequency response in headphones is dominated by resonances and standing waves in the ear coupling, and varies wildly between individuals and even between re-seats.</li>
+    <li><strong>規模與量值:</strong>全球耳機市場約 500–600 億美元量級,年出貨以「億副」計;其中 TWS 佔銷售額與出貨量之最大宗(單位佔比逾六成),年出貨約 3 億副量級。</li>
+    <li><strong>價格帶金字塔:</strong>入門(&lt;US$50,量最大、白牌與新興市場品牌主導)→ 主流(US$50–250,Sony / Bose / Apple / Samsung 廝殺 ANC 與生態系)→ 發燒(US$250–2,000,Sennheiser / Focal / 平板磁性品牌)→ 旗艦 / 靜電(US$2,000–60,000,Stax、Sennheiser HE-1 等,行銷意義大於營收)。</li>
+    <li><strong>品牌市佔格局:</strong>TWS 由 Apple 領先(約四分之一強),其後為 Samsung、小米、boAt(印度)等;傳統耳罩市場則高度分眾。</li>
+    <li><strong>區域特徵:</strong>北美重 ANC 與通勤、日本存在深厚發燒文化與器材店通路、中國崛起「Chi-Fi」性價比 IEM 生態(第六講詳述)、印度為入門 TWS 最大成長引擎。</li>
   </ul>
 
-  <h3>2.2 The outer ear is part of the speaker</h3>
+  <h3>1.3 產業結構與價值鏈</h3>
+  <div class="tablewrap"><table>
+    <tr><th>價值鏈環節</th><th>代表廠商</th><th>備註</th></tr>
+    <tr><td>換能器元件</td><td>Knowles、Sonion(BA);Foster / 豐達、美律 Merry(動圈)</td><td>BA 市場高度雙寡佔;動圈單體台灣、日本、中國供應鏈成熟</td></tr>
+    <tr><td>晶片平台(SoC)</td><td>Qualcomm、Airoha(絡達,聯發科系)、BES(恆玄)</td><td>藍牙 / ANC / DSP 整合晶片決定產品功能天花板</td></tr>
+    <tr><td>ODM / OEM 組裝</td><td>GoerTek(歌爾)、Luxshare(立訊)、美律、Primax</td><td>AirPods 供應鏈即歌爾 / 立訊雙軌;聲學組裝良率為核心 know-how</td></tr>
+    <tr><td>品牌商</td><td>Apple、Sony、Bose、Sennheiser、Samsung(Harman/AKG/JBL)…</td><td>掌握調音、韌體、通路與品牌敘事;硬體毛利與生態系鎖定並重</td></tr>
+    <tr><td>通路與媒體</td><td>電商、專門店、評測媒體與測量資料庫(Rtings、Squig.link)</td><td>測量資料公開化正在改變資訊不對稱與行銷語言</td></tr>
+  </table></div>
+  <div class="callout warn"><strong>產業洞察:</strong>一副主流無線耳機的 BOM 中,<u>換能器往往只佔數美元</u>;成本重心在 SoC、電池、麥克風、機構與認證,研發重心在韌體與 App。這解釋了為何新品牌容易「做出聲音」,卻難以做出「產品」。</div>
+
+  <div class="hw"><b>課後作業 1(6%):</b>選擇一款你擁有的耳機,撰寫 800 字分析:(1) 它屬於哪一次使用情境轉移的產物?(2) 依公開資訊推測其價值鏈(單體、晶片、組裝、品牌)各環節;(3) 它的價格帶定位與同帶競品。<br><b>課前閱讀(第二講):</b>Toole《Sound Reproduction》Ch.1–2 節選;Harman 目標曲線研究導讀。</div>
+</section>
+
+<!-- ================= LESSON 2 ================= -->
+<section id="L2">
+  <span class="kicker">Lecture 2 · 2 hours</span>
+  <h2>第二講 聲學基礎與心理聲學</h2>
+  <div class="lesson-head">
+    <div class="num">02</div>
+    <div class="meta">
+      <b>耳朵是喇叭的一部分:從波動物理到偏好科學</b>
+      <span>領域:聲學 · 心理聲學 · 目標曲線</span><br>
+      <span class="chip">聲學</span><span class="chip">心理學</span><span class="chip">HRTF</span><span class="chip">Harman 目標</span>
+    </div>
+  </div>
+  <div class="lo"><b>學習目標:</b>能解釋耳道共振與 3 kHz 耳增益之來源及其對調音的意義;能區分自由場、擴散場與 Harman 目標曲線之理論基礎;能閱讀頻率響應圖並指出「悶、亮、刺、糊」對應的頻段偏差。</div>
+
+  <h3>課堂時間配置(120 分鐘)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>時間</th><th>單元</th><th>內容</th></tr>
+    <tr><td class="t">0:00–0:25</td><td>波動物理基礎</td><td>SPL 與 dB、波長尺度效應(20 kHz ≈ 17 mm)、共振與駐波</td></tr>
+    <tr><td class="t">0:25–0:55</td><td>外耳聲學與 HRTF</td><td>耳廓 / 耳甲 / 耳道之濾波、四分之一波長共振、耳增益;耳罩式 vs. 入耳式對外耳系統的不同「劫持」方式</td></tr>
+    <tr><td class="t">0:55–1:15</td><td>心理聲學現象</td><td>等響曲線、遮蔽效應、頭中定位、堵耳效應、恰可辨差(JND)</td></tr>
+    <tr><td class="t">1:15–1:25</td><td>休息</td><td>—</td></tr>
+    <tr><td class="t">1:25–1:50</td><td>目標曲線科學</td><td>自由場 → 擴散場(Theile 1986)→ Harman(Olive/Welti 2013–19)→ B&amp;K 5128 世代;偏好分群研究</td></tr>
+    <tr><td class="t">1:50–2:00</td><td>聆聽實驗</td><td>現場 EQ 演示:同一耳機套用三種目標曲線之 A/B 盲聽</td></tr>
+  </table></div>
+
+  <h3>2.1 外耳聲學:設計者必須內化的一張圖</h3>
   <div class="grid2">
     <div>
-      <p>In free air, the pinna, concha, and ear canal impose direction-dependent filtering — the <strong>Head-Related Transfer Function (HRTF)</strong>. The ear canal itself is a ~25 mm closed pipe with a quarter-wave resonance near <strong>2.5–3 kHz</strong>, giving humans peak sensitivity there.</p>
-      <p>A headphone bypasses part of this system: <strong>over-ears</strong> preserve most pinna interaction, while <strong>IEMs</strong> bypass the pinna entirely and must <em>build the missing 3&nbsp;kHz ear-gain into their tuning</em>.</p>
-      <div class="callout">The single most important psychoacoustic concept in headphone design: <strong>the target response at the eardrum must recreate what a good sound source in a room would have produced after the body's own filtering.</strong></div>
+      <p>自由空氣中,耳廓、耳甲與耳道對聲音施加隨方向而異的濾波 —— <strong>頭部相關轉移函數(HRTF)</strong>。耳道本身是約 25 mm 的閉管,四分之一波長共振落在 <strong>2.5–3 kHz</strong>,這正是人耳最靈敏的頻段。</p>
+      <p>耳機「繞過」了這個系統的一部分:<strong>耳罩式</strong>保留大部分耳廓交互作用;<strong>入耳式</strong>則完全繞過耳廓,必須<em>把缺失的 3 kHz 耳增益「做回」調音之中</em>。</p>
+      <div class="callout">全課程最重要的心理聲學命題:<strong>耳膜處的目標響應,必須重建「優質音源在良好房間中、經過身體自身濾波後」原本會產生的結果。</strong></div>
     </div>
     <figure class="diagram">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Anatomy_of_the_Human_Ear.svg" alt="Labeled anatomical diagram of the human ear">
-      <figcaption>Anatomy of the human ear — pinna, canal, eardrum. The canal's quarter-wave resonance defines the critical 3 kHz "ear-gain" region. <span class="muted">Diagram: Wikimedia Commons (CC BY 2.5)</span></figcaption>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Anatomy_of_the_Human_Ear.svg" alt="人耳解剖標示圖">
+      <figcaption>人耳解剖:耳廓、耳道、耳膜。耳道四分之一波長共振定義了關鍵的 3 kHz「耳增益」區。<span class="muted">圖:Wikimedia Commons(CC BY 2.5)</span></figcaption>
     </figure>
   </div>
 
-  <h3>2.3 Perceptual phenomena the designer must know</h3>
+  <h3>2.2 心理聲學現象與設計後果</h3>
   <figure class="diagram">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Lindos1.svg" alt="Equal-loudness contours graph showing required SPL versus frequency at different loudness levels">
-    <figcaption>Equal-loudness contours (ISO 226): the ear needs relatively more bass and treble SPL at low volumes — the basis of "loudness" compensation. <span class="muted">Diagram: Lindosland, Wikimedia Commons (public domain)</span></figcaption>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Lindos1.svg" alt="等響曲線圖">
+    <figcaption>等響曲線(ISO 226):低音量時人耳對低頻與高頻相對不敏感 —— 「響度補償」EQ 的理論基礎。<span class="muted">圖:Lindosland, Wikimedia Commons(公有領域)</span></figcaption>
   </figure>
   <div class="tablewrap"><table>
-    <tr><th>Phenomenon</th><th>Design consequence</th></tr>
-    <tr><td><strong>Equal-loudness contours</strong> (ISO 226)</td><td>Bass/treble need relatively more SPL at quiet volumes; explains "loudness" EQ and why quiet listening sounds thin.</td></tr>
-    <tr><td><strong>Ear-gain region</strong> (2–4 kHz)</td><td>Undershooting sounds distant/veiled; overshooting sounds shouty/harsh.</td></tr>
-    <tr><td><strong>Masking</strong></td><td>Elevated bass masks lower-midrange detail; a 6 dB bass shelf can sound "muddy" even with flat mids.</td></tr>
-    <tr><td><strong>In-head localization</strong></td><td>Stereo images inside the skull without crossfeed; motivates crossfeed DSP and spatial audio.</td></tr>
-    <tr><td><strong>Occlusion effect</strong></td><td>Blocking the canal boosts bone-conducted own-voice/footsteps — major IEM/ANC-bud complaint; mitigated by venting or DSP.</td></tr>
-    <tr><td><strong>Missing fundamental</strong></td><td>Small drivers can imply deep bass via harmonics; psychoacoustic bass DSP exploits this.</td></tr>
-    <tr><td><strong>Just-noticeable differences</strong></td><td>Trained listeners detect ~0.5–1 dB broadband shifts; sets tolerances (L/R match ±1.5 dB is a common spec).</td></tr>
+    <tr><th>現象</th><th>設計後果</th></tr>
+    <tr><td><strong>等響曲線</strong>(ISO 226)</td><td>小音量聆聽顯得單薄;動態響度補償 DSP 之依據</td></tr>
+    <tr><td><strong>耳增益區</strong>(2–4 kHz)</td><td>不足 → 悶、遠、「有紗」;過量 → 喊、刺、易疲勞</td></tr>
+    <tr><td><strong>遮蔽效應</strong></td><td>低頻抬升會遮蔽中低頻細節;+6 dB 低頻棚即可使中頻「變糊」</td></tr>
+    <tr><td><strong>頭中定位</strong></td><td>無串音之立體聲成像於顱內;催生 crossfeed 與空間音訊</td></tr>
+    <tr><td><strong>堵耳效應</strong></td><td>密封耳道放大骨導自聲(咀嚼、腳步);IEM / ANC 耳塞之洩壓孔與 DSP 補償由此而來</td></tr>
+    <tr><td><strong>恰可辨差(JND)</strong></td><td>訓練有素者可辨 ~0.5–1 dB 寬頻差異;決定左右配對公差(±1.5 dB 為常見規格)</td></tr>
   </table></div>
-</section>
 
-<!-- ============ 3 ============ -->
-<section id="formfactors">
-  <span class="kicker">Chapter 3</span>
-  <h2>Headphone Categories &amp; Form Factors</h2>
-  <div class="imgrid">
-    <figure><img src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=700&q=80" alt="Closed-back wireless over-ear headphones"><figcaption>Circumaural (over-ear), closed-back</figcaption></figure>
-    <figure><img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?w=700&q=80" alt="Wired on-ear headset"><figcaption>Supra-aural (on-ear)</figcaption></figure>
-    <figure><img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=700&q=80" alt="Classic white non-sealing earbuds"><figcaption>Earbud (non-sealing)</figcaption></figure>
-    <figure><img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=700&q=80" alt="Several true wireless earbuds and charging cases"><figcaption>True wireless (TWS) in-ears</figcaption></figure>
-  </div>
-  <h3>3.1 By wearing style</h3>
+  <h3>2.3 目標曲線:從物理推導到偏好統計</h3>
   <div class="tablewrap"><table>
-    <tr><th>Type</th><th>Coupling</th><th>Driver size</th><th>Strengths</th><th>Weaknesses</th></tr>
-    <tr><td><strong>Circumaural</strong> (over-ear)</td><td>Pad surrounds pinna</td><td>40–110 mm</td><td>Comfort, bass extension, soundstage, room for tech</td><td>Bulk, heat, weight</td></tr>
-    <tr><td><strong>Supra-aural</strong> (on-ear)</td><td>Pad presses on pinna</td><td>30–40 mm</td><td>Compact, lighter</td><td>Pinna pressure pain, leak-sensitive bass</td></tr>
-    <tr><td><strong>Earbud</strong></td><td>Rests in concha</td><td>12–15 mm</td><td>Airy, no occlusion</td><td>No isolation, weak bass, fit lottery</td></tr>
-    <tr><td><strong>IEM</strong></td><td>Seals canal with eartip</td><td>6–12 mm DD and/or BAs</td><td>Isolation, portability, consistent sealed bass</td><td>Occlusion, hygiene, tip-dependent sound</td></tr>
-    <tr><td><strong>TWS</strong></td><td>Sealed/vented in-ear, no cables</td><td>6–12 mm</td><td>Convenience, DSP-defined features</td><td>Battery, latency, tiny acoustic volumes</td></tr>
-    <tr><td><strong>Bone/open-ear</strong></td><td>Bypasses canal</td><td>Piezo/dynamic exciters</td><td>Situational awareness, sports</td><td>Poor fidelity, leakage</td></tr>
+    <tr><th>目標曲線</th><th>理論基礎</th><th>評價與現況</th></tr>
+    <tr><td><strong>自由場 FF</strong>(舊 DIN/IEC)</td><td>正前方無響室音源之耳膜響應</td><td>多數聽者覺得過亮、偏瘦</td></tr>
+    <tr><td><strong>擴散場 DF</strong>(Theile, 1986)</td><td>全方向等能量入射之平均</td><td>經典錄音室參考(Etymotic、舊 AKG / Beyer 調音)</td></tr>
+    <tr><td><strong>Harman</strong>(Olive/Welti, 2013–19)</td><td>受控盲測之偏好統計:≈ DF + 低頻棚(耳罩 &lt;100 Hz 約 +6 dB,入耳更多)+ 略收斂之高頻;分 OE 2018 / IE 2019 兩版</td><td>偏好分群:約 64% 屬「Harman 型」多數;2024–25 於新治具之追蹤研究仍見 ~72% 偏好 Harman 式調音</td></tr>
+    <tr><td><strong>5128 世代目標</strong>(JM-1 等)</td><td>B&amp;K 5128 仿真耳治具之 DF 響應 + 可調偏好斜率(約 −0.8 至 −1.6 dB/oct)與低頻棚</td><td>將「單一曲線」改為「曲線族 + 偏好參數」,為研究前沿</td></tr>
+    <tr><td><strong>空間音訊之疑</strong>(AES, 2025)</td><td>雙耳渲染內容已內含 HRTF 濾波</td><td>空間音訊播放可能需要接近 DF-flat 之不同目標</td></tr>
   </table></div>
+  <div class="callout warn"><strong>學術素養提醒:</strong>目標曲線是「偏好的統計中心」,不是物理正確性的證明。品牌「house sound」(Sennheiser 的暖中性、Beyerdynamic 的高頻抬升、Sony 消費線的低頻)是<em>有意識的偏離</em>,而非誤差。</div>
 
-  <h3>3.2 Open-back vs. closed-back — the fundamental acoustic fork</h3>
-  <div class="grid2">
-    <div class="card"><strong>Open-back.</strong> The rear of the driver radiates freely through a grille. The rear wave never reflects back through the diaphragm, so response is smoother and subjectively more "spacious." Cost: zero isolation, total leakage, and bass roll-off — the front volume can't hold static pressure (no pressure-chamber boost).</div>
-    <div class="card"><strong>Closed-back.</strong> A sealed cup enables passive isolation and stronger low bass, but the rear wave reflects inside the cup, producing standing-wave colorations (typically 200 Hz–1 kHz) that must be tamed with damping materials and cup geometry.</div>
-  </div>
-  <p><strong>Semi-open / vented:</strong> almost every real product sits on the continuum. Controlled leaks are <em>tuning tools</em>, not defects: a bass port relieves pressure and shapes sub-bass; a pad-to-head leak of a few mm² can cut 100 Hz output by several dB — the reason glasses wearers hear less bass on over-ears.</p>
-
-  <h3>3.3 By use case (drives the whole spec)</h3>
-  <ul>
-    <li><strong>Studio/reference:</strong> neutral target, durability, replaceable parts, low unit-to-unit variance, often high impedance.</li>
-    <li><strong>Audiophile:</strong> resolution and timbre priorities; exotic drivers accepted; weight/price tolerance high.</li>
-    <li><strong>Consumer wireless/ANC:</strong> DSP-defined sound, battery, mics, ANC depth, app ecosystem; acoustics designed <em>with</em> DSP correction assumed.</li>
-    <li><strong>Stage/broadcast:</strong> isolation, fit security, cable robustness, sweat resistance.</li>
-    <li><strong>Gaming/comms:</strong> mic quality, long-session comfort, low latency, positional cues.</li>
-    <li><strong>Hearables/health:</strong> heart-rate sensors, hearing-assist DSP; regulatory overlap with medical devices.</li>
-  </ul>
+  <div class="hw"><b>課後作業 2(6%):</b>使用免費參數 EQ 與 AutoEQ 資料庫,將一款耳機分別校正至 Harman IE/OE 與擴散場目標,盲聽比較並撰寫 600 字聆聽報告,必須以頻段語言(而非形容詞)描述差異。<br><b>課前閱讀(第三講):</b>Headphones.com 驅動單元技術導讀;複習電磁感應 F = B·l·i。</div>
 </section>
 
-<!-- ============ 4 ============ -->
-<section id="drivers">
-  <span class="kicker">Chapter 4</span>
-  <h2>Transducer (Driver) Technologies</h2>
-  <p class="lead">Each technology differs in <strong>how force is applied to the diaphragm</strong> — which dictates its distortion, bandwidth, and cost profile.</p>
+<!-- ================= LESSON 3 ================= -->
+<section id="L3">
+  <span class="kicker">Lecture 3 · 2 hours</span>
+  <h2>第三講 換能器技術與電聲系統設計</h2>
+  <div class="lesson-head">
+    <div class="num">03</div>
+    <div class="meta">
+      <b>從動圈到 MEMS:力如何施加在振膜上,決定了一切</b>
+      <span>領域:換能器工程 · 腔體聲學 · 測量 · ANC/DSP</span><br>
+      <span class="chip">動圈</span><span class="chip">平板磁性</span><span class="chip">靜電</span><span class="chip">動鐵 BA</span><span class="chip">ANC</span>
+    </div>
+  </div>
+  <div class="lo"><b>學習目標:</b>能比較五大換能器架構之失真、頻寬與成本輪廓;能以集中參數模型解釋前腔、後腔、洩漏與阻尼對響應的影響;能說明混合式 ANC 之控制迴路架構與工程限制。</div>
 
-  <h3>4.1 Dynamic (moving-coil) — ~95% of the market</h3>
+  <h3>課堂時間配置(120 分鐘)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>時間</th><th>單元</th><th>內容</th></tr>
+    <tr><td class="t">0:00–0:35</td><td>五大換能器</td><td>動圈、平板磁性、靜電、動鐵 BA、混合式 / MEMS:原理、優劣、代表產品</td></tr>
+    <tr><td class="t">0:35–1:05</td><td>腔體聲學設計</td><td>集中參數模型、壓力腔效應、洩漏高通、開放 vs. 密閉、阻尼材料(rayl)、IEM 導管網路</td></tr>
+    <tr><td class="t">1:05–1:15</td><td>休息</td><td>—</td></tr>
+    <tr><td class="t">1:15–1:35</td><td>測量與電氣</td><td>治具(711 / KEMAR / 5128)、核心測量集、阻抗與靈敏度、擴大機匹配八分之一法則</td></tr>
+    <tr><td class="t">1:35–1:55</td><td>ANC 與 DSP</td><td>前饋 / 回授 / 混合式、次級路徑與 FxLMS、通透模式、藍牙編解碼與延遲</td></tr>
+    <tr><td class="t">1:55–2:00</td><td>作業說明</td><td>拆解分析作業之安全與方法提示</td></tr>
+  </table></div>
+
+  <h3>3.1 五大換能器架構</h3>
   <div class="grid2">
     <figure class="diagram">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Loudspeaker_side_en.svg" alt="Cross-section diagram of a moving-coil transducer showing magnet, voice coil and diaphragm">
-      <figcaption>The moving-coil principle (shown as a loudspeaker cross-section): a voice coil in a magnetic gap drives the diaphragm — F = B·l·i. Headphone dynamics are the same motor, miniaturized. <span class="muted">Diagram: Wikimedia Commons (CC BY-SA)</span></figcaption>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Loudspeaker_side_en.svg" alt="動圈換能器剖面圖">
+      <figcaption>動圈原理(以揚聲器剖面示意):磁隙中的音圈驅動振膜,F = B·l·i。耳機動圈即此馬達之微縮。<span class="muted">圖:Wikimedia Commons(CC BY-SA)</span></figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <tr><th>架構</th><th>驅動方式</th><th>關鍵特性</th></tr>
+      <tr><td><strong>動圈</strong></td><td>點驅動(音圈於磁隙)</td><td>市佔 ~95%;低頻衝程大、靈敏度高、成本低;高頻分割振動與馬達非線性為弱點</td></tr>
+      <tr><td><strong>平板磁性</strong></td><td>面驅動(全膜印刷線路)</td><td>低失真(尤其低頻)、阻抗平坦;重、低靈敏度、磁陣成本高(Audeze、HiFiMAN)</td></tr>
+      <tr><td><strong>靜電</strong></td><td>場驅動(1–2 µm 帶電膜於雙定子間,Stax Pro 偏壓 580 V)</td><td>移動質量最低 → 極致解析;需專用高壓耳擴、極限聲壓與低頻受限</td></tr>
+      <tr><td><strong>動鐵 BA</strong></td><td>槓桿驅動(平衡銜鐵)</td><td>微型、高效率;單體頻寬窄 → 多路分音 + 導管阻尼網路;衝程小,低頻靠洩壓或混合動圈</td></tr>
+      <tr><td><strong>MEMS</strong></td><td>矽基壓電微機電</td><td>固態、一致性極高、相位快;TWS / IEM 高音單元之新分支(xMEMS 等)</td></tr>
+    </table></div>
+  </div>
+
+  <h3>3.2 腔體聲學:單體只是三分之一的故事</h3>
+  <ul>
+    <li><strong>集中參數模型:</strong>低頻時系統等效為電路 —— 腔體空氣彈簧與懸邊為電容、振膜質量與孔道空氣柱為電感、阻尼網與洩漏為電阻。設計者先建 SPICE 式模型(或 COMSOL / AKABAK)再開模。</li>
+    <li><strong>壓力腔效應:</strong>密閉前腔中,第一共振以下耳膜聲壓跟隨振膜<em>位移</em> —— 密閉耳機 / IEM 可平直延伸至 20 Hz 以下,這是小房間喇叭做不到的。</li>
+    <li><strong>洩漏即高通:</strong>墊圈與頭部之間數 mm² 的縫隙即可削去 100 Hz 數 dB(戴眼鏡低頻變少的原因)。產品必須選邊:<em>耐洩漏設計</em>(預先開孔 + ANC 補償,如 AirPods Pro)或<em>依賴密封</em>(低頻最大化但對配戴敏感)。</li>
+    <li><strong>開放 vs. 密閉:</strong>開放式後波自由輻射,響應平滑、空間感佳,代價是零隔音與低頻滾降;密閉式得到隔音與低頻,代價是 200 Hz–1 kHz 腔體駐波,需以阻尼與幾何馴服。</li>
+    <li><strong>IEM 特有:</strong>耳塞至耳膜之空氣柱半波共振(約 7–9 kHz)隨插入深度移動;導管內徑與阻尼(以 rayl 值規格化)是 BA 系統的「被動 EQ」。</li>
+  </ul>
+
+  <h3>3.3 測量與電氣匹配(精要)</h3>
+  <ul>
+    <li><strong>治具:</strong>IEC 60318-4「711」耦合器(IEM 標準,>8 kHz 有假影)→ GRAS / KEMAR(耳罩式與 ANC)→ B&amp;K 5128(仿真耳道阻抗至 20 kHz,研究級新標準)。</li>
+    <li><strong>核心測量集:</strong>頻率響應與左右配對、THD 對頻率與聲壓、阻抗與相位、靈敏度、隔音與洩漏、脈衝響應 / CSD、群延遲(&gt;20 ms 影響影音同步)。產線 100% 執行掃頻異音檢測(rub &amp; buzz)。</li>
+    <li><strong>八分之一法則:</strong>訊源輸出阻抗 ≤ 耳機阻抗的 1/8;多路 BA IEM 阻抗可在 8–60 Ω 間擺動,高輸出阻抗訊源會可聞地改變其音色。</li>
+    <li><strong>功率預算:</strong>100 dB/mW 的耳機達 110 dB 峰值僅需 10 mW;83 dB/mW 的平板則需 ~500 mW —— 「需要耳擴」的物理定義。</li>
+  </ul>
+
+  <h3>3.4 ANC 與 DSP 系統</h3>
+  <div class="grid2">
+    <figure class="diagram">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Active_Noise_Reduction.svg" alt="主動降噪反相波示意圖">
+      <figcaption>ANC 原理:產生反相聲波,使環境噪音於耳膜處破壞性干涉。<span class="muted">圖:Wikimedia Commons</span></figcaption>
     </figure>
     <div>
-      <p><strong>Principle:</strong> a voice coil attached to the diaphragm apex sits in the annular gap of a permanent magnet; current produces Lorentz force, driving the diaphragm like a piston.</p>
-      <p><strong>Strengths:</strong> cheap to make well; excellent bass (large excursion); high sensitivity — phone-friendly; robust; one driver covers 20 Hz–20 kHz.</p>
-      <p><strong>Weaknesses:</strong> point-drive flexes the diaphragm at high frequencies (<strong>break-up modes</strong> → treble peaks); coil mass limits transients; motor nonlinearity creates bass harmonic distortion.</p>
-      <p><strong>Design levers:</strong> diaphragm material/dome geometry, surround compliance (sets f₀ ≈ 60–120 Hz), rear-vent damping, magnet strength, CCAW coils.</p>
+      <ul>
+        <li><strong>前饋:</strong>外側麥克風「預測」入侵噪音;主要有效於 &lt;1 kHz,怕風噪。</li>
+        <li><strong>回授:</strong>內側麥克風監聽耳內殘餘;頻寬較廣、能修正配戴差異,但有迴授嘯叫之穩定性風險。</li>
+        <li><strong>混合式:</strong>兩者兼備,旗艦標配;100–300 Hz 可達 30–45 dB 衰減。<em>次級路徑</em>(單體→耳)隨每次配戴改變,靠 FxLMS 自適應濾波與入耳校正音維持最佳化。</li>
+        <li><strong>物理極限:</strong>ANC 僅於 ~1–2 kHz 以下有效;高頻必須交給被動隔音 —— 總衰減 = 被動 + 主動。</li>
+        <li><strong>DSP 堆疊:</strong>調音 EQ、心理聲學低音、動態響度、配戴自適應補償、空間音訊(IMU 頭部追蹤 + 個人化 HRTF)、通話波束成形與 AI 降噪。</li>
+      </ul>
     </div>
   </div>
 
-  <h3>4.2 Planar magnetic</h3>
-  <p>A large, thin film carries a flat serpentine conductor across its whole surface; bar-magnet arrays apply force <strong>uniformly over the entire area</strong> — surface-drive rather than point-drive, so the diaphragm moves like an ideal piston.</p>
-  <ul>
-    <li><strong>Strengths:</strong> very low distortion (especially bass — no coil-in-gap nonlinearity); uniform transients; huge radiating area; flat resistive impedance.</li>
-    <li><strong>Weaknesses:</strong> heavy magnet arrays (flagships historically 400–700 g); low sensitivity (needs a capable amp); costly tensioning/assembly; magnets partially obstruct the sound path.</li>
-    <li><strong>Examples:</strong> Audeze LCD, HiFiMAN Susvara/Arya, Dan Clark Audio (AMTS resonator inserts), Meze Elite.</li>
-  </ul>
+  <div class="hw"><b>課後作業 3(6%):</b>取得一副廢棄耳機(或觀看指定拆解影片),繪製其聲學系統圖:標注前 / 後腔、洩壓孔、阻尼位置與單體形式,並推論每一元素的調音意圖(800 字 + 手繪或照片標注)。<br><b>課前閱讀(第四講):</b>3D 人體計測與耳機舒適度研究節選;CMF 設計方法導讀。</div>
+</section>
 
-  <h3>4.3 Electrostatic</h3>
-  <p>An ultralight ~1–2 µm diaphragm charged to high DC bias (e.g., <strong>580 V "Pro bias"</strong> for Stax) sits between two perforated <strong>stators</strong> carrying the amplified audio signal. Moving mass approaches that of the air itself.</p>
-  <ul>
-    <li><strong>Strengths:</strong> the lowest moving mass of any technology → extraordinary detail, vanishing mid/treble distortion.</li>
-    <li><strong>Weaknesses:</strong> needs a dedicated high-voltage energizer; limited max SPL and bass slam; dust/humidity sensitivity; cost.</li>
-    <li><strong>Examples:</strong> Stax SR-009S/X9000, Sennheiser HE-1, Audeze CRBN, Shure KSE1200 (electrostatic IEM).</li>
-  </ul>
-
-  <h3>4.4 Balanced armature (BA) — the IEM workhorse</h3>
-  <p>A tiny reed balanced between magnets pivots with coil current; a drive rod couples it to a mini-diaphragm; sound exits through a spout. Hearing-aid heritage (Knowles, Sonion dominate supply). Tiny and efficient with superb mid/treble resolution — but narrow bandwidth per unit, so flagships stack multi-driver arrays with <strong>passive crossovers</strong>, tuned tube lengths, and color-coded acoustic dampers. Limited excursion means bass usually comes from vented BAs or a hybrid dynamic woofer.</p>
-
-  <h3>4.5 Hybrids, tribrids &amp; the rest</h3>
-  <div class="grid3">
-    <div class="card"><strong>Hybrid/tribrid IEMs</strong><br>Dynamic woofer + BA mids/highs, often + electret "EST" super-tweeters or piezo ceramics. Challenge: coherence across dissimilar transducers.</div>
-    <div class="card"><strong>AMT</strong><br>Pleated diaphragm squeezes air out ~4–5× faster than it moves (HEDDphone). Treble speed; weight and bass are the cost.</div>
-    <div class="card"><strong>MEMS (xMEMS et al.)</strong><br>Silicon-micromachined piezo drivers — solid-state, ultra-consistent, phase-fast; the genuinely new branch to watch for TWS/IEM tweeters.</div>
-    <div class="card"><strong>Electret</strong><br>Electrostatic with permanent charge, no bias supply; cheap earbuds and EST tweeters.</div>
-    <div class="card"><strong>Piezo / bone conduction</strong><br>Crystal flexure tweeters; skull-vibrating sport devices — awareness over fidelity.</div>
-    <div class="card"><strong>Ribbon / plasma</strong><br>Exotic footnotes with occasional boutique products.</div>
+<!-- ================= LESSON 4 ================= -->
+<section id="L4">
+  <span class="kicker">Lecture 4 · 2 hours</span>
+  <h2>第四講 工業設計、人因工程、材料與結構</h2>
+  <div class="lesson-head">
+    <div class="num">04</div>
+    <div class="meta">
+      <b>夾在頭上的工程:從人體計測到量產良率</b>
+      <span>領域:工業設計 · 人因 · 材料科學 · 結構與製造</span><br>
+      <span class="chip">設計</span><span class="chip">材料</span><span class="chip">結構</span><span class="chip">人因</span><span class="chip">CMF</span><span class="chip">DFM</span>
+    </div>
   </div>
+  <div class="lo"><b>學習目標:</b>能以夾持力、壓力分布與熱舒適指標評估配戴設計;能依「比模數 + 內阻尼」邏輯評選振膜與殼體材料;能描述從單體配對到端末檢測的量產品質體系。</div>
 
-  <h3>4.6 Driver selection cheat-sheet</h3>
+  <h3>課堂時間配置(120 分鐘)</h3>
   <div class="tablewrap"><table>
-    <tr><th>Priority</th><th>Best-fit technology</th></tr>
-    <tr><td>Cost + bass + easy drive</td><td>Dynamic</td></tr>
-    <tr><td>Lowest bass distortion, planar-smooth mids</td><td>Planar magnetic</td></tr>
-    <tr><td>Ultimate resolution, cost no object</td><td>Electrostatic</td></tr>
-    <tr><td>Miniaturization, multi-way IEM</td><td>BA / hybrid</td></tr>
-    <tr><td>Consistency at silicon scale, TWS future</td><td>MEMS</td></tr>
-  </table></div>
-</section>
-
-<!-- ============ 5 ============ -->
-<section id="acoustics">
-  <span class="kicker">Chapter 5</span>
-  <h2>Acoustic Design of the Earcup System</h2>
-  <p class="lead">The driver is perhaps a third of the acoustic story. The system — front volume, rear volume, vents, damping, pads, and the listener's anatomy — determines the final response.</p>
-
-  <h3>5.1 The lumped-element mental model</h3>
-  <p>At low frequencies (wavelength ≫ dimensions), the headphone behaves like an electrical circuit analog:</p>
-  <div class="grid3">
-    <div class="card"><strong>Compliances → capacitors</strong><br>Front-volume air spring, rear-volume air spring, suspension, earpad foam.</div>
-    <div class="card"><strong>Masses → inductors</strong><br>Diaphragm + coil moving mass, air plugs in ports and vents.</div>
-    <div class="card"><strong>Resistances → resistors</strong><br>Damping meshes/foams, leaks, port losses.</div>
-  </div>
-  <p>Designers build SPICE-like network models (or use COMSOL, AKABAK, SonicSurf) before cutting tooling. Key behaviors:</p>
-  <ul>
-    <li><strong>Sealed front volume ("pressure chamber"):</strong> below the first acoustic resonance, eardrum pressure follows diaphragm <em>displacement</em> — why sealed headphones/IEMs deliver flat response to 20 Hz and below, something no small speaker in a room can do.</li>
-    <li><strong>Leaks kill bass predictably:</strong> a leak forms a high-pass with the front-volume compliance. Products are either <em>leak-tolerant</em> (pre-vented + ANC compensation, e.g., AirPods Pro) or <em>seal-dependent</em> (max bass, fit-critical).</li>
-    <li><strong>Rear vents set damping and bass Q:</strong> resistive mesh flattens the fundamental resonance; port area/length tunes a Helmholtz resonance to reinforce or shape bass.</li>
-  </ul>
-
-  <h3>5.2 The high-frequency (modal) region</h3>
-  <p>Above ~1–2 kHz, lumped models break down: the front volume develops standing waves and pad shape becomes a waveguide. Techniques:</p>
-  <ul>
-    <li><strong>Angled drivers/baffles</strong> aim at the canal like a near-field speaker — smooths 2–6 kHz, improves imaging (Sennheiser HD 600 lineage, Audeze).</li>
-    <li><strong>Waveguides &amp; lenses</strong> control the first modes (Focal "M" domes; Dan Clark AMTS tuned resonators absorbing targeted treble modes).</li>
-    <li><strong>Damping schemes:</strong> felt, wool, foam, micro-perforated sheets placed at pressure maxima; materials specified by flow resistance (MKS rayls).</li>
-    <li><strong>Pad acoustics:</strong> depth sets front-volume size; opening shapes pinna interaction; leather (sealed/reflective) vs. velour (leaky/lossy) trades bass for treble smoothness. <strong>Changing pads is changing the headphone</strong> — and pad wear is a major cause of unit drift over years.</li>
-  </ul>
-
-  <h3>5.3 IEM-specific acoustics</h3>
-  <ul>
-    <li>The eartip-to-eardrum column has a <strong>half-wave resonance (~7–9 kHz)</strong> set by insertion depth — deep insertion pushes it out of the sensitive range (the Etymotic philosophy).</li>
-    <li>Nozzle bore diameter and internal tube networks act as acoustic filters; dampers tame BA spout peaks.</li>
-    <li><strong>Front vents</strong> relieve occlusion and static pressure ("driver flex"); <strong>rear vents</strong> tune dynamic-driver bass.</li>
-    <li>Tip material (silicone vs. foam) changes seal and treble absorption — a tuning variable handed to the user.</li>
-  </ul>
-
-  <h3>5.4 Passive isolation</h3>
-  <p>Isolation is a mass-spring problem: cup mass + pad compliance against the head. Closed over-ears manage ~10–25 dB above 1 kHz but little below 200 Hz (that's ANC's job); deep-sealing foam-tip IEMs manage 25–40 dB broadband — the best passive isolation available.</p>
-</section>
-
-<!-- ============ 6 ============ -->
-<section id="targets">
-  <span class="kicker">Chapter 6</span>
-  <h2>Frequency Response &amp; Target Curves</h2>
-  <h3>6.1 Why "flat" is wrong at the eardrum</h3>
-  <p>A loudspeaker calibrated flat in an anechoic room arrives at the eardrum with the body's own gain: torso reflections, pinna gain, and canal resonance produce a large hump near 3 kHz. A headphone measured <strong>flat at the eardrum</strong> would sound dull and wrong — it must <em>reproduce</em> those features. Hence <strong>targets</strong>:</p>
-  <div class="tablewrap"><table>
-    <tr><th>Target</th><th>Basis</th><th>Character / status</th></tr>
-    <tr><td><strong>Free-field</strong> (old DIN/IEC)</td><td>Frontal anechoic source at eardrum</td><td>Too bright/lean for most listeners.</td></tr>
-    <tr><td><strong>Diffuse-field</strong> (Theile, 1986)</td><td>Energy from all directions, averaged</td><td>Classic studio reference (Etymotic, older AKG/Beyer tunings).</td></tr>
-    <tr><td><strong>Harman</strong> (Olive/Welti, 2013–19)</td><td>Preference-tuned + validated with large controlled tests</td><td>≈ DF + bass shelf (~+6 dB &lt;100 Hz over-ear; more in-ear), relaxed treble. Separate OE 2018 / IE 2019 curves. Preference studies: ~64% "Harman-like" majority; 2024–25 follow-ups on newer fixtures found ~72% still preferring Harman-style tunings.</td></tr>
-    <tr><td><strong>5128-era targets</strong> (JM-1, DF+tilt)</td><td>B&amp;K 5128 anatomically-correct fixture</td><td>Fixture DF response + preference <em>tilt</em> (~−0.8 to −1.6 dB/oct) and adjustable bass shelf, rather than one fixed curve.</td></tr>
-    <tr><td><strong>Spatial-audio caveat</strong></td><td>AES research, 2025</td><td>Binaural content already encodes HRTF filtering — a different (roughly DF-flat) target may be more correct for spatial playback.</td></tr>
+    <tr><th>時間</th><th>單元</th><th>內容</th></tr>
+    <tr><td class="t">0:00–0:30</td><td>人因工程</td><td>3D 人體計測資料庫、夾持力窗口、壓力分布、重量與熱舒適</td></tr>
+    <tr><td class="t">0:30–0:55</td><td>機構與結構設計</td><td>頭帶滑軌、軛旋轉自由度、鉸鏈疲勞、墊圈更換設計、異音控制</td></tr>
+    <tr><td class="t">0:55–1:05</td><td>休息</td><td>—</td></tr>
+    <tr><td class="t">1:05–1:30</td><td>材料科學</td><td>振膜材料階梯、磁體、殼體材料(ABS/PC、鋁、鎂)、阻尼網規格化</td></tr>
+    <tr><td class="t">1:30–1:50</td><td>製造與品質</td><td>單體配對、產線 QC、可靠度驗證、成本結構、永續與可維修</td></tr>
+    <tr><td class="t">1:50–2:00</td><td>評圖演練</td><td>兩款市售耳機之 ID / 人因快評</td></tr>
   </table></div>
 
-  <h3>6.2 How designers use targets</h3>
-  <ol>
-    <li>Choose fixture + target for the product class (e.g., "Harman-2018 within ±2 dB, 20 Hz–10 kHz").</li>
-    <li>Tune acoustically as close as possible (pads, damping, vents — EQ-by-construction).</li>
-    <li>For DSP products, finish with fixed or adaptive digital EQ; for passive products, acoustics is all you get.</li>
-    <li>Validate with <strong>blind listening panels</strong> — a target is a statistical preference center, not gospel; deviations are the "house sound" (Sennheiser's warm-neutral, Beyerdynamic's treble lift, Sony consumer bass).</li>
-  </ol>
-
-  <h3>6.3 Reading a measurement</h3>
-  <ul>
-    <li>Deviations &lt;±1 dB over broad bands: subtle. ±3 dB in the ear-gain region: an obvious character change.</li>
-    <li>Narrow spikes above 8 kHz on a coupler are often fixture artifacts — trust ranges, not single points, up top.</li>
-    <li>Bass measured on a flat plate vs. a head with pinna and leak simulation differs hugely — always know the fixture.</li>
-  </ul>
-</section>
-
-<!-- ============ 7 ============ -->
-<section id="measurement">
-  <span class="kicker">Chapter 7</span>
-  <h2>Measurement &amp; Objective Evaluation</h2>
-  <figure>
-    <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=1400&q=80" alt="Wireless over-ear headphones lying on a white desk next to a keyboard">
-    <figcaption>Every serious product is characterized on standardized fixtures before a listener ever hears it. <span class="muted">Photo: Unsplash</span></figcaption>
-  </figure>
-  <h3>7.1 Test fixtures</h3>
-  <div class="tablewrap"><table>
-    <tr><th>Fixture</th><th>What it is</th><th>Use</th></tr>
-    <tr><td><strong>IEC 60318-4 ("711") coupler</strong></td><td>Occluded-ear simulator, canal impedance valid to ~10 kHz</td><td>IEM standard for decades; artifacts above ~8 kHz</td></tr>
-    <tr><td><strong>GRAS 43AG / KEMAR</strong></td><td>Ear/cheek simulator or full head-and-torso with pinna</td><td>Over/on-ear measurement, ANC testing</td></tr>
-    <tr><td><strong>B&amp;K 5128 HATS</strong></td><td>Anatomically realistic canal + eardrum impedance to 20 kHz</td><td>Emerging research-grade standard</td></tr>
-    <tr><td><strong>Flat-plate rigs</strong></td><td>Simple baffle couplers</td><td>Quick comparative QC, hobbyist databases</td></tr>
-  </table></div>
-  <p>Plus anechoic chambers for leakage, ISO 4869 / ANSI S12.42 setups for isolation and ANC attenuation, and head-tracker rigs for spatial-audio latency.</p>
-
-  <h3>7.2 The core measurement set</h3>
-  <ul>
-    <li><strong>Frequency response</strong> vs. target; L/R matching.</li>
-    <li><strong>THD vs. frequency and level:</strong> dynamics rise in bass at high SPL; good planars stay &lt;0.1–0.5% at 94–100 dB. Low-order harmonics are surprisingly tolerable; intermodulation and rub/buzz are not.</li>
-    <li><strong>Impedance &amp; phase vs. frequency:</strong> reveals resonances and crossovers, predicts source interaction.</li>
-    <li><strong>Sensitivity</strong> (dB SPL at 1 mW or 1 V).</li>
-    <li><strong>Isolation and leakage</strong> (office-etiquette spec for consumer products).</li>
-    <li><strong>Time domain:</strong> impulse response, CSD "waterfall" for ringing, group delay/latency (&gt;~20 ms breaks lip-sync uncompensated; gaming targets &lt;40 ms end-to-end).</li>
-    <li><strong>Rub &amp; buzz QC:</strong> 100% end-of-line swept-sine artifact detection (Klippel / Listen SoundCheck), seconds per unit.</li>
-    <li><strong>Wireless metrics:</strong> codec latency, OTA antenna performance, mic polar/noise, sidetone, ANC stability margins across fits.</li>
-  </ul>
-
-  <h3>7.3 Preference prediction</h3>
-  <p>Harman's research produced regression models predicting listener preference from FR-deviation statistics (slope, smoothness, bass/treble deviation) — the basis of "predicted preference scores" in review databases. They are screening tools; exotic designs fall outside model validity.</p>
-</section>
-
-<!-- ============ 8 ============ -->
-<section id="electrical">
-  <span class="kicker">Chapter 8</span>
-  <h2>Electrical Design: Impedance, Sensitivity, Amplification</h2>
-  <h3>8.1 Impedance</h3>
-  <ul>
-    <li>Ranges from ~8 Ω (some IEMs) to 600 Ω (classic Beyerdynamic studio models).</li>
-    <li><strong>Why high impedance exists:</strong> thinner coil wire → lighter coil → better treble behavior; plus broadcast-desk history and voltage-noise immunity.</li>
-    <li><strong>Source interaction:</strong> output impedance forms a divider with the headphone's frequency-dependent impedance. Rule of thumb: <strong>source ≤ ⅛ of headphone impedance</strong>. Multi-BA IEMs with 8→60 Ω swings audibly change tone on high-impedance sources.</li>
-  </ul>
-  <h3>8.2 Sensitivity &amp; power budget</h3>
-  <div class="callout">To hit 110 dB peaks on a 100 dB/mW headphone requires 10 mW; on an 83 dB/mW planar it takes ~500 mW — hence "needs an amp." Phone dongles deliver ~1 Vrms / 30–60 mW; desktop amps deliver 1–10 W into low loads. Convert specs carefully: 100 dB/mW @ 32 Ω ≈ 115 dB/V.</div>
-  <h3>8.3 Cables, connectors, balanced drive</h3>
-  <ul>
-    <li>Measurable cable effects are essentially resistance (level/damping) and extreme-case capacitance for IEMs; most audible "cable differences" trace to fit, seal, and level changes.</li>
-    <li>Connectors: 3.5 mm / 6.35 mm TRS, 4.4 mm Pentaconn balanced, 2-pin 0.78 mm and MMCX for IEMs, USB-C digital.</li>
-    <li><strong>Balanced drive</strong> doubles voltage swing and removes shared-ground crosstalk — matters for hard loads and long runs, not inherently "better sound."</li>
-    <li>Cable microphonics is a real ergonomic spec — solved with over-ear routing and soft jackets.</li>
-  </ul>
-  <h3>8.4 DACs and sources</h3>
-  <p>Modern converter performance (SNR &gt;110 dB, THD &lt;0.001%) exceeds transducer limits; audible source differences today usually come from output impedance, power limits, DSP/EQ, and lossy-codec chains — not converter quality.</p>
-</section>
-
-<!-- ============ 9 ============ -->
-<section id="anc">
-  <span class="kicker">Chapter 9</span>
-  <h2>Wireless, DSP &amp; Active Noise Cancellation</h2>
-  <p class="lead">Modern consumer headphones are <strong>DSP-defined products</strong>: acoustics provide raw capability; software delivers the shipped sound.</p>
-  <h3>9.1 Bluetooth audio</h3>
-  <ul>
-    <li><strong>Codecs:</strong> SBC (baseline), AAC (Apple ecosystem), aptX family (Adaptive/Lossless), LDAC (to 990 kbps), LHDC, and LE Audio's <strong>LC3</strong> (better quality per bit, lower latency, Auracast broadcast). All classic-BT codecs are lossy in practice.</li>
-    <li><strong>Latency:</strong> SBC/AAC ~150–250 ms; game modes/LC3 reach ~40–80 ms; true lip-sync-transparent wireless needs proprietary 2.4 GHz dongles (&lt;20 ms).</li>
-    <li><strong>System design:</strong> SoC selection (Qualcomm, Airoha, BES), antennas inside an RF-hostile head-adjacent enclosure, ear-to-ear links, multipoint, battery (TWS 5–8 h + case; over-ears 30–60+ h with ANC).</li>
-  </ul>
-
-  <h3>9.2 Active Noise Cancellation</h3>
-  <div class="grid2">
-    <figure class="diagram">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Active_Noise_Reduction.svg" alt="Diagram of active noise reduction: noise wave plus inverted anti-noise wave sums to silence">
-      <figcaption>The principle: generate anti-phase sound so ambient noise destructively interferes at the eardrum. <span class="muted">Diagram: Wikimedia Commons</span></figcaption>
-    </figure>
-    <figure>
-      <img src="https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=900&q=80" alt="Premium wireless ANC over-ear headphones in pink lighting">
-      <figcaption>Premium ANC over-ears: hybrid mic topology + serious DSP is today's standard. <span class="muted">Photo: Unsplash</span></figcaption>
-    </figure>
-  </div>
-  <div class="tablewrap"><table>
-    <tr><th>Topology</th><th>Mics</th><th>Bandwidth</th><th>Character</th></tr>
-    <tr><td><strong>Feedforward</strong></td><td>External — hears noise <em>before</em> it enters</td><td>Mostly &lt;1 kHz</td><td>Cancels what it predicts; wrong prediction = added noise; wind-sensitive.</td></tr>
-    <tr><td><strong>Feedback</strong></td><td>Internal, near driver — hears what the ear hears</td><td>Broader low-mid coverage; corrects fit variation</td><td>Stability risk (howl) — a classic control-loop problem.</td></tr>
-    <tr><td><strong>Hybrid</strong></td><td>Both</td><td>Best depth (30–45 dB @ 100–300 Hz in leaders) + robustness</td><td>Two good mic sets + serious DSP; today's premium standard.</td></tr>
-  </table></div>
-  <ul>
-    <li>The <strong>secondary path</strong> (driver→ear transfer) changes with every fit; adaptive filters (FxLMS family) and per-ear calibration keep the loop optimal.</li>
-    <li>ANC only works well below ~1–2 kHz — above that, wavelengths are too short for one-point cancellation; <strong>passive isolation must handle the highs</strong>. Total attenuation = passive + active.</li>
-    <li>Side-effects to engineer around: "eardrum suck" pressure sensation, wind noise on feedforward mics, mic/ADC self-noise floor, occlusion compensation.</li>
-    <li><strong>Transparency/hear-through</strong> is ANC's inverse — reproducing outside sound naturally, with own-voice handling. Arguably harder than cancelling.</li>
-  </ul>
-
-  <h3>9.3 The DSP feature stack</h3>
-  <ul>
-    <li>Corrective/creative EQ, psychoacoustic bass, dynamic equal-loudness compensation.</li>
-    <li><strong>Adaptive fit compensation:</strong> the feedback mic measures in-ear response and auto-EQs bass to seal quality (Apple, Bose, Sony all ship variants).</li>
-    <li><strong>Spatial audio:</strong> binaural rendering with IMU head tracking; personalized HRTF from ear photos/scans.</li>
-    <li><strong>Hearing personalization/assist:</strong> audiogram-based gain — now regulated OTC hearing-aid territory in the U.S.</li>
-    <li><strong>Voice:</strong> beamforming arrays, bone-conduction voice sensors, AI noise suppression for calls.</li>
-  </ul>
-</section>
-
-<!-- ============ 10 ============ -->
-<section id="ergonomics">
-  <span class="kicker">Chapter 10</span>
-  <h2>Ergonomics &amp; Industrial Design</h2>
-  <p class="lead">A headphone is a wearable clamped to the most measured and most variable part of the body. Comfort research is now anthropometrics-driven, using 3D head-scan databases across populations.</p>
-  <h3>10.1 Key anthropometric variables</h3>
-  <p>Head breadth and height, bitragion arc, ear position, pinna dimensions (~55–70 mm typical adult height range), ear-canal size/angle (drives S/M/L tip sizing), and population differences that make single-geometry designs fit unevenly across global markets.</p>
-
-  <h3>10.2 Clamping force &amp; pressure distribution</h3>
+  <h3>4.1 人因工程:數據化的舒適</h3>
   <div class="grid2">
     <div>
       <ul>
-        <li>Practical over-ear comfort window: roughly <strong>3–6 N total clamp</strong> (on a 145–155 mm jig). Above ~5–6 N most users fatigue within an hour; below ~2 N stability and bass seal suffer. On-ears tolerate less — pressure lands on cartilage.</li>
-        <li><strong>Pressure = force ÷ contact area:</strong> comfort correlates with peak pressure distribution, not raw clamp. Bigger, deeper, softer pads spread load; the pinna must never touch the grille.</li>
-        <li><strong>Weight:</strong> under ~250 g "disappears"; 300–400 g needs excellent headband load-spreading; &gt;450 g (some planars) limits session length regardless. Neck torque from cup depth matters, not just grams.</li>
-        <li><strong>Thermal comfort:</strong> leather pads seal heat and moisture; fabric breathes but leaks bass — a genuine acoustic-vs-comfort trade.</li>
+        <li><strong>人體計測基礎:</strong>頭寬、頭高、雙耳屏弧、耳廓高度(成人約 55–70 mm)、耳道尺寸與角度;各人種群差異使單一幾何難以全球通用 —— 3D 掃描資料庫已成大廠標配。</li>
+        <li><strong>夾持力窗口:</strong>耳罩式實務舒適區約<strong>總夾持力 3–6 N</strong>(145–155 mm 治具);&gt;5–6 N 一小時內疲勞,&lt;2 N 穩定性與低頻密封受損。壓耳式(on-ear)承受力更低 —— 壓力落在軟骨上。</li>
+        <li><strong>壓力 = 力 ÷ 接觸面積:</strong>舒適度與「峰值壓力分布」相關,而非夾持力本身;更大、更深、更軟的墊圈分散負載,耳廓絕不可觸及單體護網。</li>
+        <li><strong>重量:</strong>&lt;250 g 近乎無感;300–400 g 需優異的頭帶分載(寬帶、懸吊);&gt;450 g(部分平板)無論如何限制聆聽時長。耳殼深度造成的頸部力矩與克重同等重要。</li>
+        <li><strong>熱舒適:</strong>皮革墊圈鎖熱鎖濕但密封佳;織物透氣但洩漏低頻 —— 這是<em>真實的聲學 vs. 舒適取捨</em>,設計者必須拍板。</li>
       </ul>
     </div>
     <figure>
-      <img src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=900&q=80" alt="Cream-colored on-ear headphones showing pad and headband design">
-      <figcaption>Pad geometry, headband load-spreading, and CMF choices decide whether a headphone survives hour three. <span class="muted">Photo: Unsplash</span></figcaption>
+      <img src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=900&q=80" alt="米色壓耳式耳機之墊圈與頭帶設計">
+      <figcaption>墊圈幾何、頭帶分載與 CMF,決定一副耳機能否撐過第三個小時。<span class="muted">Photo: Unsplash</span></figcaption>
     </figure>
   </div>
 
-  <h3>10.3 Mechanism design</h3>
-  <p>Headband sliders (detented, smooth, self-adjusting), yoke rotation/swivel for cheek-plane conformity, folding hinges (a classic fatigue-failure site), strain reliefs, pad attachment (snap rings, magnets, adhesive — determines user-replaceability). Every joint is a creak risk next to a microphone-grade transducer: mechanical-noise specs are real.</p>
+  <h3>4.2 材料科學:振膜、磁體與殼體</h3>
+  <ul>
+    <li><strong>振膜品質因數 = 比模數(勁度 ÷ 密度)+ 內阻尼。</strong>材料階梯:PET/Mylar → PEN/PEEK 多層 → LCP → 生物纖維素 → 金屬箔(Al、Ti、Mg)→ 鈹(可用比模數最高;加工毒性與成本極高,Focal Utopia)→ 鍍層複合(DLC、CNT、「石墨烯」—— 行銷經常跑在物理前面:多數「石墨烯振膜」實為聚合物膜加鍍層)。</li>
+    <li><strong>磁體:</strong>燒結釹鐵硼 N48–N55 主流,磁通與耐溫互為取捨;平板磁性耗用大量磁材(其成本與重量之源);鐵氧體存活於入門線。磁隙潔淨度是良率關鍵 —— 0.5 mm 磁隙中一粒鐵屑就是一件退貨。</li>
+    <li><strong>殼體與結構:</strong>射出 ABS/PC(玻纖強化)、CNC / 沖壓鋁、壓鑄鎂(勁度 / 阻尼 / 重量三優,用於軛與障板)、不鏽鋼頭帶簧片;客製 IEM 以 3D 列印壓克力 / 尼龍殼體產業化。阻尼網(鋼、尼龍、微孔板)以 rayl 值像電子元件一樣被規格化採購。</li>
+  </ul>
 
-  <h3>10.4 Industrial design &amp; CMF</h3>
+  <h3>4.3 結構機構與量產品質</h3>
+  <ol>
+    <li><strong>單體廠:</strong>振膜熱成形、繞線與貼合、充磁、自動組裝;<strong>每顆單體皆測量分級,並以頻響配對為左右聲道</strong>(高階線 ±0.5–1 dB)。</li>
+    <li><strong>整機組裝:</strong>腔體組裝與阻尼貼放(出乎意料地依賴人工手感)、墊圈、頭帶、線材或無線主板;每個關節都是異音風險 —— 機構噪音是正式規格。</li>
+    <li><strong>端末 100% 檢測:</strong>迷你消音箱內掃頻:頻響遮罩、異音、極性、麥克風;每台數秒(Klippel / Listen SoundCheck)。</li>
+    <li><strong>可靠度驗證:</strong>落下、翻滾、線材彎折 &gt;10k 次、頭帶開合 &gt;50k 次、汗液鹽霧、UV、−20/+60 °C 溫循、墊圈磨耗模擬;TWS 另有充電盒鉸鏈壽命、電池循環、IP 水槽實測。</li>
+    <li><strong>永續與可維修:</strong>電池與墊圈的壽命遠短於單體 —— 膠合電池使 TWS 淪為拋棄式品類;歐盟電池法規與 Fairbuds(可換電池)、HD 25/HD 600(全件可換)指出方向。可換墊圈同時是<em>聲學壽命</em>:墊圈老化即調音漂移。</li>
+  </ol>
   <div class="grid2">
     <figure>
-      <img src="https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=900&q=80" alt="Pastel pink headphones on a split pink and mint background">
-      <figcaption>Color-Material-Finish drives perceived value — ID is brand strategy. <span class="muted">Photo: Unsplash</span></figcaption>
+      <img src="https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=900&q=80" alt="粉彩色系耳機之 CMF 設計">
+      <figcaption>CMF(色彩、材料、表面處理)驅動知覺價值 —— 工業設計即品牌策略。<span class="muted">Photo: Unsplash</span></figcaption>
     </figure>
-    <div>
-      <p>Forged carbon, anodized aluminum, magnesium (light + damped), sustainable fabrics. Iconic design languages — AirPods' white stem, Beats' "b", the HD 800's silver lattice — show industrial design is brand strategy.</p>
-      <p>Controls: buttons vs. capacitive touch vs. rotating crowns. On TWS, the control surface <em>is</em> the transducer enclosure, so touch taps must be mechanically decoupled or DSP-muted.</p>
-    </div>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=900&q=80" alt="鋁合金耳罩之高階無線耳機">
+      <figcaption>陽極鋁、記憶網布、精密鉸鏈:AirPods Max 式的材料敘事將 BOM 轉譯為定價權。<span class="muted">Photo: Unsplash</span></figcaption>
+    </figure>
   </div>
 
-  <h3>10.5 IEM/TWS fit specifics</h3>
-  <p>Concha-lock geometry, forward-down nozzle angles, stem vs. stemless mass distribution, IPX ratings for sport, and eartip science (silicone durometer, foam recovery, flange counts). Custom IEMs go further: ear impressions or 3D scans printed into acrylic/silicone shells — the fit ceiling, at the cost of resale and re-fits as ears change.</p>
+  <div class="hw"><b>課後作業 4(6%):</b>對一款耳罩式耳機執行完整「人因稽核」:實測或估計夾持力、稱重、量測墊圈接觸面積、記錄 1 小時配戴之熱與壓力主觀量表,並提出兩項具體改良設計(1,000 字 + 圖表)。<br><b>課前閱讀(第五講):</b>指定八案例之基本資料卡(課程網站附錄);預習「五構面分析法」。</div>
 </section>
 
-<!-- ============ 11 ============ -->
-<section id="materials">
-  <span class="kicker">Chapter 11</span>
-  <h2>Materials &amp; Manufacturing</h2>
-  <h3>11.1 Diaphragm materials — the heart</h3>
-  <p>Figure of merit: <strong>specific modulus (stiffness ÷ density)</strong> plus internal damping. Roughly by exotic-ness: PET/Mylar → PEN/PEEK multilayers → LCP → bio-cellulose → metal foils (Al, Ti, Mg) → beryllium (highest useful specific modulus; toxic to machine, costly) → coatings (DLC, CNT, graphene-doped — marketing frequently outruns physics; a "graphene driver" is usually a polymer film with a coating).</p>
-  <h3>11.2 Magnets &amp; motors</h3>
-  <p>Sintered NdFeB (N48–N55) dominates; grades trade flux vs. temperature stability. Planars consume large magnet volumes (their cost + weight driver). Ferrite persists in budget lines. Assembly demands magnetized-part automation and gap cleanliness — a steel filing in a 0.5 mm gap is a warranty return.</p>
-  <h3>11.3 Enclosures &amp; structure</h3>
-  <p>Injection-molded ABS/PC (glass-filled for stiffness), CNC or stamped aluminum, die-cast magnesium (superb stiffness/damping/weight for yokes and baffles), stainless headband springs, 3D-printed acrylic/nylon for custom-IEM shells. Acoustic meshes (steel, nylon, MPP) are specified by rayl value like electronic components.</p>
-  <h3>11.4 The production line</h3>
-  <ol class="steps">
-    <li><b>Driver plant</b>Diaphragm thermoforming, coil winding and bonding, magnet charging, automated assembly. <strong>Every driver is measured and graded, then matched into L/R pairs</strong> (±0.5–1 dB for premium lines).</li>
-    <li><b>Final assembly</b>Cup assembly with damping placement (surprisingly manual and skill-dependent), pads, headband join, cabling or board drop-in for wireless.</li>
-    <li><b>End-of-line QC</b>100% acoustic test in mini-chambers: FR mask, rub &amp; buzz, polarity, mic checks. Sampling audits and batch torture tests.</li>
-    <li><b>Reliability qualification</b>Drop, tumble, cable flex (&gt;10k cycles), headband flex (&gt;50k), sweat/salt-fog, UV, −20/+60 °C soak, pad-wear simulation, button life; for TWS: case-hinge life, battery cycles, IP water-tank verification.</li>
-  </ol>
-  <div class="callout warn"><strong>Cost anatomy</strong> (typical consumer wireless over-ear, illustrative): transducers are a minor line item — a few dollars. The money is in SoC/battery/mics, mechanics/CMF, certification, and the software team.</div>
+<!-- ================= LESSON 5 ================= -->
+<section id="L5">
+  <span class="kicker">Lecture 5 · 2 hours</span>
+  <h2>第五講 經典設計分析(八大案例)</h2>
+  <div class="lesson-head">
+    <div class="num">05</div>
+    <div class="meta">
+      <b>讀懂經典:每一款傳世之作都回答了一個時代問題</b>
+      <span>領域:設計史 · 案例研究方法</span><br>
+      <span class="chip">經典設計分析</span><span class="chip">設計脈絡</span><span class="chip">商業影響</span>
+    </div>
+  </div>
+  <div class="lo"><b>學習目標:</b>能運用「五構面分析法」系統性解析一款產品;能從八個經典案例中歸納「技術能力 × 使用情境 × 品牌敘事」三者對齊的成功模式;完成期中報告(20%)。</div>
+
+  <h3>課堂時間配置(120 分鐘)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>時間</th><th>單元</th><th>內容</th></tr>
+    <tr><td class="t">0:00–0:10</td><td>方法論</td><td>五構面分析法:設計脈絡 / 聲學架構 / 工業設計 / 商業影響 / 設計傳承</td></tr>
+    <tr><td class="t">0:10–1:10</td><td>案例 I–IV</td><td>DT 48 → HD 414 → HD 600 家族 → Stax 靜電系譜(各 15 分鐘)</td></tr>
+    <tr><td class="t">1:10–1:20</td><td>休息</td><td>—</td></tr>
+    <tr><td class="t">1:20–1:50</td><td>案例 V–VIII</td><td>Sony 錄音室雙生 → Bose QC → Beats Studio → AirPods 系列(各 7–8 分鐘)</td></tr>
+    <tr><td class="t">1:50–2:00</td><td>報告命題</td><td>期中報告題目認領與評分基準說明</td></tr>
+  </table></div>
+
+  <h3>5.1 五構面分析法(本課核心工具)</h3>
+  <div class="grid3">
+    <div class="card"><strong>① 設計脈絡</strong><br>誰、何時、為了什麼問題而設計?技術與市場的時代條件為何?</div>
+    <div class="card"><strong>② 聲學架構</strong><br>換能器、腔體、調音哲學;它在聲學上的「一手好牌」與代價。</div>
+    <div class="card"><strong>③ 工業設計</strong><br>形式語彙、材料、人因、CMF;辨識度從何而來?</div>
+    <div class="card"><strong>④ 商業影響</strong><br>銷售、定價、品類創造 / 改寫;它改變了誰的損益表?</div>
+    <div class="card"><strong>⑤ 設計傳承</strong><br>它的 DNA 出現在今日哪些產品上?哪些決策被證明是對的 / 錯的?</div>
+    <div class="card"><strong>使用要領</strong><br>五構面必須<em>互相解釋</em>:聲學選擇要能由脈絡說明,商業結果要能回溯到設計決策。</div>
+  </div>
+
+  <h3>5.2 八大經典案例</h3>
+  <div class="tablewrap"><table>
+    <tr><th>案例</th><th>年代</th><th>時代問題</th><th>關鍵設計解答與傳承</th></tr>
+    <tr><td><strong>Beyerdynamic DT 48</strong></td><td>1937</td><td>廣播與量測需要可信賴的監聽工具</td><td>第一款商用動圈耳機;「工具而非玩物」的德式規格哲學,連續生產至 2012 年 —— 產品壽命本身即設計宣言</td></tr>
+    <tr><td><strong>Sennheiser HD 414</strong></td><td>1968</td><td>耳機 = 沉重、密閉、坐著聽</td><td>史上第一款開放式;超輕量 + 鮮黃海綿墊 → 銷售逾千萬副,定義「開放式 = 自然」的聲學想像至今</td></tr>
+    <tr><td><strong>Sennheiser HD 580/600/650 家族</strong></td><td>1993–2003</td><td>發燒參考級是否必然昂貴脆弱?</td><td>角度斜置單體、全件可維修、三十年不改的聲學平台;HD 600 至今仍是頻響教科書與「中性」的社群公約數</td></tr>
+    <tr><td><strong>Stax 靜電系譜(SR-1 → SR-009 → X9000)</strong></td><td>1959–</td><td>換能器物理極限在哪?</td><td>「Earspeaker」概念、Pro 偏壓 580 V 生態;以極小眾守住「解析天花板」的品牌位置六十年(2011 年由漫步者收購後延續)</td></tr>
+    <tr><td><strong>Sony MDR-CD900ST / MDR-R10</strong></td><td>1989</td><td>錄音室標準 vs. 工藝極限,一個品牌能否兼得?</td><td>CD900ST 成為日本錄音室事實標準(至今量產);R10 以生物纖維素振膜與櫸木殼探索 US$2,500 工藝旗艦 —— 雙生策略示範「專業信譽反哺消費品牌」</td></tr>
+    <tr><td><strong>Bose QuietComfort 系列</strong></td><td>2000–</td><td>飛行噪音使音樂無法被聽見</td><td>將軍規 ANC 民用化,創造「通勤靜音」品類;以「安靜」而非「音質」為賣點 —— 重新定義購買理由的經典行銷工程</td></tr>
+    <tr><td><strong>Beats Studio / Solo</strong></td><td>2008–</td><td>耳機能否成為身份符號?</td><td>CMF 與名人敘事優先於測量表現;2014 年 Apple 以 30 億美元收購 —— 證明品牌敘事本身即資產;迫使全產業重修「設計 × 行銷」學分</td></tr>
+    <tr><td><strong>Apple AirPods / Pro / Max</strong></td><td>2016–</td><td>無線化後耳機的本體是什麼?</td><td>H 系晶片、配對體驗、耐洩漏聲學 + 自適應 DSP、生態系鎖定;把品類重心從「換能器」移到「穿戴運算平台」,TWS 品類由此定型</td></tr>
+  </table></div>
+  <div class="callout"><strong>歸納:</strong>八案例的共同結構 —— <u>技術能力、使用情境、品牌敘事三者對齊</u>時,產品成為經典;僅有其一(如 R10 的極致工藝、或部分早期 Beats 的純敘事)則成為註腳或爭議。</div>
+
+  <div class="hw"><b>期中報告(20%):</b>自八案例之外另選一款具歷史意義的耳機(如 AKG K1000、Etymotic ER4、Grado SR60、Audeze LCD-2、Sony WH-1000X 系列、Focal Utopia、水月雨 Blessing 系列…),以五構面分析法撰寫 2,500 字以上分析,須含至少一張自繪之「聲學架構示意圖」與一張「設計傳承譜系圖」。第六講後兩週繳交。</div>
 </section>
 
-<!-- ============ 12 ============ -->
-<section id="process">
-  <span class="kicker">Chapter 12</span>
-  <h2>The End-to-End Design Process</h2>
-  <figure>
-    <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1400&q=80" alt="Recording studio control room with mixing console and instruments">
-    <figcaption>Tuning alternates between the measurement rig and critical listening — measure, listen, hypothesize, modify, repeat. <span class="muted">Photo: Unsplash</span></figcaption>
-  </figure>
-  <p class="lead">A realistic 12–24 month program for a serious headphone:</p>
-  <ol class="steps">
-    <li><b>Definition</b>User, use case, price tier, target curve, isolation/ANC goals, weight/battery/latency budgets — the product requirements document every later trade-off refers to.</li>
-    <li><b>Architecture</b>Form factor, open/closed, driver technology and size, passive vs. DSP-corrected, platform SoC. Simulation begins: lumped-element acoustics + magnetics FEA (COMSOL/JMAG) + early BEM.</li>
-    <li><b>Mule prototypes</b>Existing cups + new drivers, 3D-printed baffles, hand-cut damping — dozens of iterations chasing the target. Experienced acousticians speak in "add 2 rayls behind the driver" moves.</li>
-    <li><b>Alpha / EVT</b>First tooled parts, real electronics; DSP tuning against golden acoustic units; ANC loop-shaping across a fit-variation corpus (many heads, glasses, hair).</li>
-    <li><b>Beta / DVT</b>Design freeze; blind panels vs. competitors; reliability quals; certifications (FCC/CE/BT SIG, EN 50332 / EN 62368 hearing-safety limits).</li>
-    <li><b>PVT &amp; ramp</b>Line yields, test-station correlation to lab fixtures, driver-matching statistics — the quiet battle of keeping unit #100,000 sounding like the golden sample.</li>
-    <li><b>Post-launch</b>Firmware feature cycle (modern headphones improve after purchase), pad/tip spares, telemetry-driven tuning updates.</li>
-  </ol>
-  <div class="callout"><strong>The team:</strong> electroacoustic engineers, DSP/embedded engineers, mechanical engineers, industrial designers, perceptual-audio scientists, reliability and test engineers, firmware/app software. Great headphones are credited to tuners but shipped by systems teams.</div>
-</section>
+<!-- ================= LESSON 6 ================= -->
+<section id="L6">
+  <span class="kicker">Lecture 6 · 2 hours</span>
+  <h2>第六講 品牌研究、市場策略與未來趨勢</h2>
+  <div class="lesson-head">
+    <div class="num">06</div>
+    <div class="meta">
+      <b>品牌是被聽見的:定位、產品組合與下一個十年</b>
+      <span>領域:品牌研究 · 市場策略 · 技術趨勢 · 期末專題</span><br>
+      <span class="chip">品牌研究</span><span class="chip">定位地圖</span><span class="chip">Chi-Fi</span><span class="chip">未來趨勢</span>
+    </div>
+  </div>
+  <div class="lo"><b>學習目標:</b>能繪製耳機品牌定位地圖並解析其產品組合邏輯;能評述近十年產業併購與所有權變動對品牌的影響;能將趨勢判斷轉化為期末專題之設計依據。</div>
 
-<!-- ============ 13 ============ -->
-<section id="safety">
-  <span class="kicker">Chapter 13</span>
-  <h2>Hearing Safety, Standards &amp; Regulation</h2>
+  <h3>課堂時間配置(120 分鐘)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>時間</th><th>單元</th><th>內容</th></tr>
+    <tr><td class="t">0:00–0:40</td><td>品牌深度研究 I</td><td>德奧系(Sennheiser、Beyerdynamic、AKG)與日系(Sony、Audio-Technica、Stax)</td></tr>
+    <tr><td class="t">0:40–1:05</td><td>品牌深度研究 II</td><td>美系(Bose、Grado、Koss)、法系(Focal)、Apple/Beats、中國新勢力(Chi-Fi)</td></tr>
+    <tr><td class="t">1:05–1:15</td><td>休息</td><td>—</td></tr>
+    <tr><td class="t">1:15–1:35</td><td>策略工具</td><td>定位地圖(聲學哲學 × 價格 × 情境)、產品組合金字塔、測量公開化下的行銷語言變遷</td></tr>
+    <tr><td class="t">1:35–1:50</td><td>未來趨勢</td><td>MEMS、LE Audio / Auracast、空間音訊、聽力健康(OTC 助聽)、AI 語音、永續法規</td></tr>
+    <tr><td class="t">1:50–2:00</td><td>期末專題說明</td><td>題目、交付物、評分基準、時程</td></tr>
+  </table></div>
+
+  <h3>6.1 品牌深度研究(節選)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>品牌</th><th>源起</th><th>聲學 / 設計哲學</th><th>關鍵策略事件</th></tr>
+    <tr><td><strong>Sennheiser</strong></td><td>1945,德國 Wedemark</td><td>暖中性參考聲;開放式傳統(HD 414 → HD 800)</td><td>2021 年消費事業售予瑞士 Sonova(聽力集團)—— 專業與消費分軌,預示「耳機 × 聽力健康」整併</td></tr>
+    <tr><td><strong>Beyerdynamic</strong></td><td>1924,德國 Heilbronn</td><td>錄音室工具主義;特斯拉磁路;高頻抬升之「德式清晰」</td><td>百年家族企業於 2023 年售予中國 Cosonic(佳禾智能)—— 供應鏈反向收購品牌之代表案例</td></tr>
+    <tr><td><strong>AKG</strong></td><td>1947,維也納</td><td>擴散場學派;開放通透(K501/K701 系譜)</td><td>1994 年入 Harman,2017 年隨 Harman 併入 Samsung,維也納總部關閉 —— 品牌資產「去實體化」續存於三星生態</td></tr>
+    <tr><td><strong>Sony</strong></td><td>1946,東京</td><td>雙軌:錄音室標準(CD900ST)× 消費旗艦(WH-1000X);工程縱深自製單體</td><td>以 Walkman(1979)與 WH-1000X 系列(2016–)兩度定義隨身聆聽;垂直整合(單體、晶片、DSP)為其護城河</td></tr>
+    <tr><td><strong>Audio-Technica</strong></td><td>1962,東京</td><td>由唱頭工藝延伸之「音色美學」;木殼工藝線</td><td>專業麥克風 × 消費耳機雙引擎;示範中型企業以工藝敘事守住溢價</td></tr>
+    <tr><td><strong>Bose</strong></td><td>1964,MIT 衍生</td><td>心理聲學應用優先於測量話語;「體驗式」行銷</td><td>以 ANC 創造品類並長期壟斷「安靜」心智;面對 Sony/Apple 夾擊後轉向開放耳夾等新形態</td></tr>
+    <tr><td><strong>Apple / Beats</strong></td><td>2014 收購(30 億美元)</td><td>生態系鎖定 + 晶片自研;Beats 保留為「文化 / 運動」副牌</td><td>雙品牌組合覆蓋不同心智:AirPods = 預設選項,Beats = 主動選擇</td></tr>
+    <tr><td><strong>Focal</strong></td><td>1979,法國 St-Étienne</td><td>喇叭單體工藝移植(鈹振膜、M 型盆);法式奢華 CMF</td><td>Utopia(2016)確立「耳機界超跑」定位;與 Naim 合組集團走精品通路</td></tr>
+    <tr><td><strong>Chi-Fi 新勢力</strong>(水月雨、7Hz、KZ、FiiO…)</td><td>2010s,深圳 / 成都</td><td>以公開測量數據 + Harman 目標為共同語言;極致性價比與快速迭代</td><td>測量資料庫(Squig.link)成為新通路;US$20–200 IEM 市場被重新定價 —— 資訊透明如何摧毀與重建溢價,本課最佳教材</td></tr>
+  </table></div>
+
+  <h3>6.2 策略工具:定位地圖與產品組合</h3>
   <ul>
-    <li><strong>Noise-induced hearing loss</strong> is cumulative and permanent. WHO/NIOSH guidance: ~85 dB(A) for 8 h max, halving time per +3 dB — 100 dB(A) is minutes, not hours. Isolation (passive or ANC) is a <em>safety feature</em>: it lets users listen quieter.</li>
-    <li><strong>EN 50332</strong> limits portable output in the EU (~85 dB(A) warnings, 100 dB(A) caps with acknowledgment); phones implement dosage warnings.</li>
-    <li><strong>Key standards:</strong> IEC 60268-7 (headphone measurement), IEC 60318 (ear simulators), ITU-T P.57, ANSI/ASA S3.7, EN 62368-1 (product/battery safety), ISO 4869 (attenuation), BT SIG qualification, regional RF (FCC/CE/MIC/SRRC), and FDA OTC hearing-aid rules (2022) which pulled hearables into regulated territory.</li>
-    <li><strong>Batteries:</strong> li-po cells near the head demand rigorous charge management, cell qualification, and UN 38.3 transport certification.</li>
+    <li><strong>三軸定位地圖:</strong>X 軸「聲學哲學」(測量中性 ↔ 風格調音)、Y 軸「價格帶」、Z 軸(氣泡大小)「情境依賴度」(通勤 / 運動 / 桌面 / 錄音室)。課堂演練:將 12 個品牌放上地圖,尋找空白區。</li>
+    <li><strong>產品組合金字塔:</strong>旗艦(技術宣言、媒體聲量)→ 主力(營收引擎)→ 入門(獲客與通路)。健康組合的特徵:旗艦技術以 2–3 年節奏下放。</li>
+    <li><strong>測量公開化的行銷效應:</strong>當頻響曲線人人可查,「玄學語言」讓位於「目標曲線合規 + 差異化敘事」;品牌溢價來源從「聲音好」轉移至「體驗完整」(App、生態、服務)與「身份認同」。</li>
   </ul>
+
+  <h3>6.3 未來趨勢(期末專題的設計依據)</h3>
+  <div class="grid3">
+    <div class="card"><strong>MEMS 換能器</strong><br>矽基一致性 + 相位精度;TWS 高音與全頻應用正在放量。</div>
+    <div class="card"><strong>LE Audio / Auracast</strong><br>LC3 編碼、廣播音訊、助聽互通 —— 公共空間聆聽基礎設施化。</div>
+    <div class="card"><strong>空間音訊</strong><br>個人化 HRTF + 頭部追蹤;目標曲線理論需重寫(第二講伏筆回收)。</div>
+    <div class="card"><strong>聽力健康</strong><br>OTC 助聽法規(美國 2022)使 TWS 與醫療器材邊界消融;劑量監測成為標配。</div>
+    <div class="card"><strong>AI 語音層</strong><br>對話式助理、選擇性聽取(target speech hearing)、即時翻譯 —— 耳機成為 AI 的「常駐介面」。</div>
+    <div class="card"><strong>永續法規</strong><br>歐盟電池法、維修權:可換電池與模組化將由「美德」變為「合規」。</div>
+  </div>
+
+  <div class="hw"><b>課後作業 5(6%):</b>三選一:(a) 繪製一張含 12 品牌之三軸定位地圖並以 500 字論證一個「空白定位」;(b) 以 800 字評述一樁耳機產業併購案(Sonova–Sennheiser、Samsung–Harman、Cosonic–Beyerdynamic、Edifier–Stax 擇一)之品牌後果;(c) 分析 Chi-Fi 測量透明化對某一傳統品牌定價策略的衝擊(800 字)。</div>
 </section>
 
-<!-- ============ 14 ============ -->
-<section id="sustainability">
-  <span class="kicker">Chapter 14</span>
-  <h2>Sustainability &amp; Repairability</h2>
-  <p><strong>Failure reality:</strong> batteries and pads die long before drivers. Glued-in TWS batteries made earbuds a disposable category; regulatory pressure (EU battery regulation) and design responses (Fairphone Fairbuds' replaceable cells; user-replaceable pads/cables in studio lines like HD 25/HD 600) point the way.</p>
-  <ul>
-    <li>Design levers: modularity (pads/cables/batteries), standard connectors over proprietary, firmware-support lifespan commitments, recycled plastics/aluminum, repair documentation and parts supply.</li>
-    <li>Longevity is also acoustic: replaceable pads restore original tuning; sealed pad designs guarantee drift.</li>
-  </ul>
+<!-- ================= FINAL PROJECT ================= -->
+<section id="project">
+  <span class="kicker">Final Project · 40%</span>
+  <h2>期末專題規格:耳機概念設計與品牌定位提案</h2>
+  <p class="lead">整合六講所學,交付一份可提交給產品委員會等級的完整提案。</p>
+  <div class="tablewrap"><table>
+    <tr><th>交付物</th><th>內容要求</th><th>對應講次</th></tr>
+    <tr><td>① 市場與定位(3–4 頁)</td><td>目標情境與人物誌、價格帶、定位地圖(含競品)、一段品牌敘事</td><td>第一、六講</td></tr>
+    <tr><td>② 聲學規格書(3–4 頁)</td><td>目標曲線選擇與論證、換能器架構、腔體策略(開放/密閉/洩漏設計)、預期測量規格表(FR 公差、THD、隔音、延遲)</td><td>第二、三講</td></tr>
+    <tr><td>③ 工業設計(3–4 頁)</td><td>形式語彙與草圖 / 渲染、人因規格(夾持力、重量、墊圈)、CMF 板、關鍵機構說明</td><td>第四講</td></tr>
+    <tr><td>④ 設計傳承論證(1–2 頁)</td><td>指出提案之設計 DNA 源自哪些經典案例、修正了它們的哪些錯誤</td><td>第五講</td></tr>
+    <tr><td>⑤ 口頭簡報</td><td>8 分鐘簡報 + 4 分鐘答辯</td><td>全部</td></tr>
+  </table></div>
+  <div class="callout"><strong>評分基準:</strong>論證一致性 40%(五份交付物互相解釋的程度)· 專業深度 30%(正確使用課程之工程與商業語言)· 原創性 20% · 表達品質 10%。</div>
 </section>
 
-<!-- ============ 15 ============ -->
-<section id="exercises">
-  <span class="kicker">Chapter 15</span>
-  <h2>Practical Exercises</h2>
-  <ol class="steps">
-    <li><b>Ear-gain safari</b>Play pink noise through speakers, then any headphone; use a parametric EQ to find how much 3 kHz boost/cut makes the headphone match the speakers' timbre. You've just measured your personal ear-gain error.</li>
-    <li><b>Leak lab</b>Lift a pad edge 2 mm while playing a 40 Hz tone, then 1 kHz. Quantify the bass-only loss — the leak high-pass in action. Repeat wearing glasses.</li>
-    <li><b>Pad swap experiment</b>Compare worn vs. new pads (or leather vs. velour) and log the tonal change region by region.</li>
-    <li><b>Target-curve tour</b>Use AutoEQ presets to A/B one IEM against Harman IE 2019, diffuse-field, and flat-at-eardrum; note which regions cause "shouty," "muddy," "dull."</li>
-    <li><b>Impedance interaction</b>Drive a multi-BA IEM from a low-impedance dongle, then through a ~30 Ω series resistor; describe the tonal shift via the impedance-vs-frequency idea.</li>
-    <li><b>Occlusion demo</b>Earplugs deep vs. shallow: hum and chew; note the low-frequency boom shift — then find the vent on any ANC earbud and reason about its job.</li>
-    <li><b>Build one</b>DIY kits (T50RP modding, 3D-printed IEM shells with 10 mm dynamics + mesh dampers) deliver the tune-measure loop firsthand for under $100.</li>
-    <li><b>Blind panel</b>Run a level-matched (±0.5 dB — critical!) blind A/B with three friends; discover how loudness and expectation dominate sighted impressions.</li>
-  </ol>
-</section>
-
-<!-- ============ 16 ============ -->
-<section id="glossary">
-  <span class="kicker">Chapter 16</span>
-  <h2>Glossary</h2>
+<!-- ================= GLOSSARY ================= -->
+<section id="gloss">
+  <span class="kicker">Appendix A</span>
+  <h2>核心術語表</h2>
   <dl class="gloss">
-    <dt>BA</dt><dd>Balanced armature — miniature pivoting-reed transducer used in IEMs and hearing aids.</dd>
-    <dt>Break-up</dt><dd>Region where a diaphragm stops moving as a piston and flexes in modes.</dd>
-    <dt>Clamping force</dt><dd>Total inward headband force, in newtons.</dd>
-    <dt>Coupler / HATS</dt><dd>Standardized artificial ear / head-and-torso simulator for measurement.</dd>
-    <dt>CSD</dt><dd>Cumulative spectral decay ("waterfall") — spectral decay over time; reveals ringing.</dd>
-    <dt>Diffuse field</dt><dd>Sound field with equal energy from all directions; basis of the DF target.</dd>
-    <dt>Ear gain</dt><dd>The ~2–4 kHz boost the outer ear adds to frontal sound; must exist in headphone tuning.</dd>
-    <dt>FxLMS</dt><dd>Adaptive filtering algorithm family behind adaptive ANC.</dd>
-    <dt>Harman target</dt><dd>Preference-derived eardrum response curve (OE 2018 / IE 2019 versions).</dd>
-    <dt>HRTF</dt><dd>Head-related transfer function — direction-dependent ear/torso filtering.</dd>
-    <dt>Occlusion effect</dt><dd>Boomy amplification of one's own body sounds when the canal is blocked.</dd>
-    <dt>Pinna</dt><dd>The visible outer ear.</dd>
-    <dt>Pressure chamber effect</dt><dd>Sealed-volume bass-extension mechanism unique to headphones.</dd>
-    <dt>Rayl</dt><dd>Unit of specific acoustic flow resistance; how damping meshes are specified.</dd>
-    <dt>Sensitivity</dt><dd>SPL produced per milliwatt or per volt.</dd>
-    <dt>THD</dt><dd>Total harmonic distortion.</dd>
-    <dt>TWS</dt><dd>True wireless stereo earbuds.</dd>
+    <dt>耳增益 Ear gain</dt><dd>外耳對正前方聲源施加之 ~2–4 kHz 增益;耳機調音必須重建之。</dd>
+    <dt>HRTF</dt><dd>頭部相關轉移函數 —— 隨方向而異的耳 / 軀幹濾波。</dd>
+    <dt>擴散場 Diffuse field</dt><dd>全方向等能量之聲場;DF 目標曲線之基礎。</dd>
+    <dt>Harman 目標</dt><dd>以受控偏好測試導出之耳膜響應曲線(OE 2018 / IE 2019)。</dd>
+    <dt>壓力腔效應</dt><dd>密閉腔內低頻聲壓跟隨振膜位移 —— 耳機獨有的低頻延伸機制。</dd>
+    <dt>分割振動 Break-up</dt><dd>振膜停止活塞運動、進入模態彎曲之頻區。</dd>
+    <dt>動鐵 BA</dt><dd>平衡銜鐵換能器;IEM 與助聽器之微型單元。</dd>
+    <dt>rayl</dt><dd>比聲阻抗單位;阻尼網之規格語言。</dd>
+    <dt>夾持力 Clamping force</dt><dd>頭帶施加之總內向力(牛頓);舒適窗口約 3–6 N。</dd>
+    <dt>CMF</dt><dd>色彩(Color)、材料(Material)、表面處理(Finish)之工業設計方法。</dd>
+    <dt>次級路徑 Secondary path</dt><dd>ANC 中單體至耳膜之轉移函數;隨配戴改變,需自適應濾波追蹤。</dd>
+    <dt>FxLMS</dt><dd>自適應 ANC 之核心演算法家族。</dd>
+    <dt>堵耳效應 Occlusion</dt><dd>密封耳道放大骨導自聲之現象。</dd>
+    <dt>JND</dt><dd>恰可辨差;人耳可分辨之最小差異,決定工程公差。</dd>
+    <dt>五構面分析法</dt><dd>本課案例研究工具:脈絡 / 聲學 / 工業設計 / 商業 / 傳承。</dd>
+    <dt>Chi-Fi</dt><dd>中國新興高性價比發燒音訊生態;以公開測量為共同語言。</dd>
   </dl>
 </section>
 
-<!-- ============ 17 ============ -->
-<section id="references">
-  <span class="kicker">Chapter 17</span>
-  <h2>References &amp; Further Reading</h2>
+<!-- ================= REFERENCES ================= -->
+<section id="refs">
+  <span class="kicker">Appendix B</span>
+  <h2>參考書目與資源</h2>
   <div class="grid2">
     <div class="card">
-      <h3 style="margin-top:0">Target curves &amp; perception</h3>
+      <h3 style="margin-top:0">指定教材</h3>
       <ul style="margin-bottom:0">
-        <li>Olive, Welti, McMullin — Harman headphone preference papers (AES, 2013–2019)</li>
-        <li><a href="https://headphones.com/pages/measurements-and-frequency-response">Headphones.com — Measurements &amp; FR primer</a></li>
-        <li><a href="https://www.soundguys.com/soundguys-house-curve-54290/">SoundGuys — How we make our target curves</a></li>
-        <li><a href="https://www.headphonesty.com/2025/05/new-sound-curve-harmans-gold-standard-data/">Headphonesty — 2025 target-curve debate</a></li>
-        <li><a href="https://www.researchgate.net/publication/394385386_Towards_a_Headphone_Target_Curve_for_Spatial_Audio">Towards a Headphone Target Curve for Spatial Audio</a></li>
-        <li><a href="https://pro.harman.com/insights/akg/defining-the-standard-the-science-behind-akg-reference-response-studio-headphones/">HARMAN Pro — AKG reference response science</a></li>
+        <li>Toole, F.《Sound Reproduction》(3rd ed.)— 知覺與測量科學</li>
+        <li>Borwick, J.(ed.)《Loudspeaker and Headphone Handbook》(3rd ed.)— 工程標準參考</li>
+        <li>Olive, Welti, McMullin — Harman 耳機偏好系列論文(AES, 2013–2019)</li>
       </ul>
     </div>
     <div class="card">
-      <h3 style="margin-top:0">Driver technology</h3>
+      <h3 style="margin-top:0">延伸閱讀</h3>
       <ul style="margin-bottom:0">
-        <li><a href="https://headphones.com/blogs/features/headphone-driver-types-explained">Headphones.com — How drivers work</a></li>
-        <li><a href="https://www.soundguys.com/driver-types-19347/">SoundGuys — Driver types</a></li>
-        <li><a href="https://www.moon-audio.com/blogs/expert-advice/headphone-driver-technology">Moon Audio — Driver technology</a></li>
-        <li><a href="https://en.pifferia.com/blogs/pifferiatalk/complete-iem-technology-guide-deep-analysis-of-six-driver-technologies">Pifferia — IEM driver deep-dive</a></li>
+        <li>Beranek &amp; Mellow《Acoustics: Sound Fields and Transducers》— 集中參數建模</li>
+        <li>Fastl &amp; Zwicker《Psychoacoustics: Facts and Models》</li>
+        <li><a href="https://headphones.com/pages/measurements-and-frequency-response">Headphones.com — 測量與頻率響應導讀</a></li>
+        <li><a href="https://www.researchgate.net/publication/394385386_Towards_a_Headphone_Target_Curve_for_Spatial_Audio">Towards a Headphone Target Curve for Spatial Audio(2025)</a></li>
       </ul>
     </div>
     <div class="card">
-      <h3 style="margin-top:0">ANC, DSP &amp; ergonomics</h3>
+      <h3 style="margin-top:0">線上資源</h3>
       <ul style="margin-bottom:0">
-        <li><a href="https://www.cardinalpeak.com/blog/what-is-anc-technology-how-does-it-work">Cardinal Peak — ANC explained</a></li>
-        <li><a href="https://www.soundguys.com/noise-canceling-anc-explained-28344/">SoundGuys — ANC types</a></li>
-        <li><a href="https://www.headphonesty.com/2020/10/how-noise-cancelling-headphone-work/">Headphonesty — How NC headphones work</a></li>
-        <li><a href="https://link.springer.com/chapter/10.1007/978-3-031-61060-8_2">Springer — Force comfort from 3D anthropometric data</a></li>
+        <li><a href="https://headphones.com/blogs/features/headphone-driver-types-explained">Headphones.com — 換能器技術</a></li>
+        <li><a href="https://www.soundguys.com/noise-canceling-anc-explained-28344/">SoundGuys — ANC 架構解析</a></li>
+        <li><a href="https://www.cardinalpeak.com/blog/what-is-anc-technology-how-does-it-work">Cardinal Peak — ANC 工程原理</a></li>
+        <li><a href="https://link.springer.com/chapter/10.1007/978-3-031-61060-8_2">Springer — 3D 人體計測與耳罩舒適度研究</a></li>
+        <li>Squig.link / AutoEQ 測量資料庫;REW 測量軟體;AES E-Library</li>
       </ul>
     </div>
     <div class="card">
-      <h3 style="margin-top:0">Books &amp; foundations</h3>
+      <h3 style="margin-top:0">本課程文件</h3>
       <ul style="margin-bottom:0">
-        <li>Borwick (ed.), <em>Loudspeaker and Headphone Handbook</em> (3rd ed.)</li>
-        <li>Toole, <em>Sound Reproduction</em> (3rd ed.)</li>
-        <li>Beranek &amp; Mellow, <em>Acoustics: Sound Fields and Transducers</em></li>
-        <li>Fastl &amp; Zwicker, <em>Psychoacoustics: Facts and Models</em></li>
-        <li>AES E-Library; Squig.link / AutoEQ databases; REW; Klippel &amp; Listen Inc. app notes</li>
+        <li>英文完整講義:本儲存庫 <code>HEADPHONE_DESIGN_LESSON.md</code></li>
+        <li>各講「課前閱讀」清單見各講末之作業框</li>
       </ul>
     </div>
   </div>
@@ -704,21 +666,20 @@
 </div><!-- /wrap -->
 
 <footer>
-  Compiled July 2026 · Numbers given as typical engineering ranges — verify against current standards for formal work.<br>
-  Photos hot-linked from <a href="https://unsplash.com">Unsplash</a> (Unsplash License) · Diagrams from <a href="https://commons.wikimedia.org">Wikimedia Commons</a> (respective free licenses).<br>
-  Companion document: <code>HEADPHONE_DESIGN_LESSON.md</code> in this repository.
+  耳機設計專論 Advanced Headphone Design · 六講 × 2 小時 · 3 學分等級 · 編纂於 2026 年 7 月<br>
+  數據為典型工程範圍與 2020 年代中期市場概況,正式用途請查證最新標準與市場報告。<br>
+  照片熱鏈自 <a href="https://unsplash.com">Unsplash</a>(Unsplash License)· 圖表來自 <a href="https://commons.wikimedia.org">Wikimedia Commons</a>(各自由授權)。
 </footer>
 </main>
 </div><!-- /layout -->
 
-<a class="totop" id="totop" href="#" aria-label="Back to top">↑</a>
+<a class="totop" id="totop" href="#" aria-label="回到頂部">↑</a>
 
 <script>
-  // scrollspy
   const links=[...document.querySelectorAll('#toc a')];
   const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
   const spy=()=>{
-    const y=window.scrollY+120;
+    const y=window.scrollY+130;
     let cur=0;
     secs.forEach((s,i)=>{if(s&&s.offsetTop<=y)cur=i});
     links.forEach((a,i)=>a.classList.toggle('active',i===cur));
