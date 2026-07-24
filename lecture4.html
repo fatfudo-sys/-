@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四講 工業設計、人因工程、材料與結構 — 耳機設計專論</title>
+<style>
+  :root{--bg:#0d1117;--bg2:#161b22;--card:#1b2230;--line:#2b3444;--text:#e6edf3;--muted:#9aa7b8;--accent:#4fc3f7;--accent2:#f7b64f;--code:#0a0e14;--max:980px}
+  @media (prefers-color-scheme: light){:root{--bg:#f7f9fb;--bg2:#fff;--card:#fff;--line:#dde4ec;--text:#1c2733;--muted:#5b6b7d;--accent:#0277bd;--accent2:#b06f00;--code:#eef2f7}}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{background:var(--bg);color:var(--text);font:16px/1.9 "Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  header.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .topbar .logo{font-weight:800;font-size:16px;color:var(--text)}.topbar .logo span{color:var(--accent)}
+  .topbar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+  .topbar nav a{color:var(--muted);font-size:13.5px;font-weight:600}.topbar nav a:hover{color:var(--accent);text-decoration:none}
+  main{max-width:var(--max);margin:0 auto;padding:88px 24px 70px}
+  .kicker{color:var(--accent2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+  h1{font-size:31px;margin:6px 0 16px;line-height:1.4}
+  h2{font-size:24px;margin:44px 0 14px;line-height:1.4;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:19px;margin:28px 0 10px}
+  p{margin:0 0 14px}p.lead{font-size:17.5px;color:var(--muted)}
+  ul,ol{margin:0 0 16px 26px}li{margin-bottom:8px}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:18px 0}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout.warn{border-left-color:var(--accent2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  figure{margin:22px 0}figure img{width:100%;border-radius:12px;display:block;border:1px solid var(--line)}
+  figcaption{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:580px;font-size:14.5px}
+  th{background:var(--bg2);text-align:left;padding:10px 14px;color:var(--accent);border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .lo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .lo b{color:var(--accent2)}
+  .hw{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .hw b{color:var(--accent2)}
+  .disc{border:1px dashed var(--accent);border-radius:12px;padding:14px 18px;margin:18px 0}
+  .disc b{color:var(--accent)}
+  .keys{background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:26px 0}
+  .keys b{color:var(--accent2)}
+  .eq{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:15px;overflow-x:auto}
+  .steps{counter-reset:step;list-style:none;margin-left:0}
+  .steps li{counter-increment:step;position:relative;padding:0 0 18px 52px}
+  .steps li::before{content:counter(step);position:absolute;left:0;top:2px;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#06131c;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .steps li::after{content:"";position:absolute;left:16px;top:40px;bottom:0;width:2px;background:var(--line)}
+  .steps li:last-child::after{display:none}
+  .steps li b{display:block;font-size:16px;margin-bottom:3px}
+  .pn{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--line);padding-top:22px;flex-wrap:wrap}
+  .pn a{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-weight:600}
+  code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:3px 12px;font-size:12.5px;margin:3px 4px 0 0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+  <div class="logo">🎧 耳機設計<span>專論</span></div>
+  <nav><a href="index.html">課程首頁</a><a href="lecture1.html">第一講</a><a href="lecture2.html">第二講</a><a href="lecture3.html">第三講</a><a href="lecture4.html" style="color:var(--accent)">第四講</a><a href="lecture5.html">第五講</a><a href="lecture6.html">第六講</a></nav>
+</div></header>
+<main>
+
+<span class="kicker">Lecture 4 · 120 min · 完整講義</span>
+<h1>第四講 工業設計、人因工程、材料與結構</h1>
+<p class="lead">耳機是被夾在「人體最精密也最多變的部位」上的工程物。本講把舒適變成數字、把材料變成規格、把量產變成品質體系 —— 並在最後面對設計者無法迴避的永續責任。</p>
+<div><span class="chip">人因工程</span><span class="chip">工業設計</span><span class="chip">CMF</span><span class="chip">材料科學</span><span class="chip">結構製造</span><span class="chip">DFM</span></div>
+
+<div class="lo"><b>學習目標:</b>修畢本講後,你應能 (1) 以夾持力、峰值壓力、重量與熱指標量化配戴設計並完成計算例;(2) 依「比模數 + 內阻尼」評選振膜與殼體材料;(3) 描述從單體配對到端末 100% 檢測的量產品質體系;(4) 將可維修性納入設計決策。</div>
+
+<h2>§1 人因工程:把舒適變成數字(0:00–0:30)</h2>
+
+<h3>1.1 人體計測基礎</h3>
+<p>耳機的「安裝面」規格來自人體計測資料庫(現代大廠使用數千人的 3D 頭部掃描):</p>
+<div class="tablewrap"><table>
+  <tr><th>參數</th><th>典型成人範圍</th><th>影響的設計項</th></tr>
+  <tr><td>頭寬(雙耳上方)</td><td>約 135–165 mm</td><td>頭帶展開量與夾持力曲線</td></tr>
+  <tr><td>頭頂至耳道弧長</td><td>約 300–380 mm</td><td>滑軌行程(需覆蓋 5–95 百分位)</td></tr>
+  <tr><td>耳廓高度</td><td>約 55–70 mm</td><td>耳墊內腔開口(耳廓不可觸底或折壓)</td></tr>
+  <tr><td>耳道直徑 / 角度</td><td>直徑約 7–9 mm,朝前下傾</td><td>耳塞尺寸階(S/M/L + 橢圓)、IEM 出音嘴角度</td></tr>
+</table></div>
+<p>關鍵素養:各人群(性別、年齡、族群)分布差異顯著,<strong>單一幾何無法全球通用</strong> —— 這是耳塞附多尺寸、頭帶大行程、以及客製耳模市場存在的統計學原因。</p>
+
+<h3>1.2 夾持力與壓力分布(計算例)</h3>
+<p>耳罩式的實務舒適窗:<strong>總夾持力約 3–6 N</strong>(以 145–155 mm 標準頭治具量測)。&gt;5–6 N 多數人一小時內明顯疲勞;&lt;2 N 則晃動且低頻密封失效(第三講:洩漏=高通)。但夾持力只是入口,真正決定舒適的是<strong>峰值壓力</strong>:</p>
+<div class="eq">平均壓力 P = F / A<br>
+例:F = 5 N,耳墊接觸面積 A = 35 cm² = 3.5×10⁻³ m² → P ≈ 1.4 kPa(舒適)<br>
+同樣 5 N 若集中於 8 cm²(小耳墊 / 壓耳式)→ P ≈ 6.3 kPa(半小時即痛)<br><span class="muted">參考:微血管灌流壓約 4 kPa —— 長時間超過即產生壓迫性不適</span></div>
+<ul>
+  <li><strong>結論一:</strong>「更大、更深、更軟」的耳墊不是奢侈,是壓力管理工程;耳廓絕不可觸及單體護網(點壓力 + 高頻染色雙重災難)。</li>
+  <li><strong>結論二:</strong>壓耳式(on-ear)天生吃虧 —— 壓力直接落在耳廓軟骨;同樣夾持力下不適速度遠快於耳罩式。</li>
+  <li><strong>重量預算:</strong>&lt;250 g「戴著會忘記」;300–400 g 需寬頭帶 / 懸吊帶分載(顱頂壓力同樣適用 P=F/A);&gt;450 g(部分平板旗艦)無論如何限制時長。<strong>耳殼深度造成的頸部力矩</strong>與克重同等重要 —— 重心離頭部旋轉軸越遠,轉頭的慣性負擔越大。</li>
+  <li><strong>熱舒適:</strong>皮革 / 蛋白皮密封佳但鎖熱鎖濕(耳周皮膚溫升 2–4 °C 即感悶熱);絨布透氣但洩漏低頻。這是<em>真實的物理取捨</em>,不存在兩全的材料,只存在為目標情境做的選擇(通勤 ANC → 密封;家用長聆聽 → 透氣)。</li>
+</ul>
+
+<h3>1.3 機構設計:每個關節都是規格</h3>
+<ul>
+  <li><strong>滑軌:</strong>段落式(可重複定位、有刻度感)vs. 平滑式 vs. 自適應懸吊(AKG 傳統);行程須覆蓋 5–95 百分位頭型。</li>
+  <li><strong>軛與轉軸:</strong>耳殼需要俯仰 + 旋轉兩個自由度貼合頰平面;自由度不足 → 墊圈局部洩漏 → 左右低頻不對稱(測量可見!)。</li>
+  <li><strong>摺疊鉸鏈:</strong>經典疲勞破壞點(金屬疲勞 + 塑膠蠕變);規格語言:開合 &gt;50,000 次無功能劣化。</li>
+  <li><strong>異音控制:</strong>耳機是把「震動感測器」戴在耳邊 —— 任何機構微動、線材摩擦(microphonics)都被放大;解方:預壓配合、阻尼油、線材編織外皮與過耳繞線。機構噪音是正式測試項目,不是主觀抱怨。</li>
+</ul>
+
+<h2>§2 工業設計與 CMF(0:30–0:55)</h2>
+<div class="grid2">
+  <figure>
+    <img src="https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=900&q=80" alt="粉彩色系耳機">
+    <figcaption>CMF 不是「上色」:色彩、材料、表面處理共同構成使用者拿到手第一秒的品質判斷。<span class="muted">Photo: Unsplash</span></figcaption>
+  </figure>
+  <figure>
+    <img src="https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=900&q=80" alt="鋁合金耳罩無線耳機">
+    <figcaption>陽極氧化鋁、精密網布、無縫 R 角:材料敘事將 BOM 成本轉譯為定價權(AirPods Max 式策略)。<span class="muted">Photo: Unsplash</span></figcaption>
+  </figure>
+</div>
+<ul>
+  <li><strong>CMF 方法:</strong>Color(色彩計畫:主色 + 材質色 + 點綴色)、Material(觸感與重量感的來源)、Finish(表面處理:陽極、PVD、咬花、軟觸漆)。耳機是「穿戴物」—— CMF 同時對佩戴者與旁觀者說話,這是它與家電 CMF 的根本差異。</li>
+  <li><strong>辨識度資產:</strong>AirPods 的白色柄、Beats 的「b」、HD 800 的銀色鏤空、B&amp;O 的鋁盤 —— 100 公尺外可辨識的輪廓是行銷資產負債表上的真實資產(第五、六講案例展開)。</li>
+  <li><strong>控制介面:</strong>實體鍵(盲操作可靠、有廉價感風險)vs. 觸控(乾淨、誤觸與手套問題)vs. 旋鈕冠(AirPods Max 的數位錶冠 —— 精密機械感即豪華感)。TWS 特有難題:控制面 = 換能器外殼,敲擊聲直接進耳 → 需機構去耦或 DSP 靜音遮罩。</li>
+  <li><strong>IEM / TWS 配戴幾何:</strong>耳甲鎖定(concha-lock)翼型、出音嘴前下傾角、柄式(重心外移、麥克風靠嘴)vs. 豆式(隱蔽、重心入耳);運動線 IPX4 起跳、真運動線 IPX7。客製耳模(CIEM)是配戴的天花板:取模 / 3D 掃描 → 樹脂列印殼體;代價是轉售價值歸零與耳型隨年齡改變需重製。</li>
+</ul>
+
+<h2>§3 材料科學:振膜、磁體、殼體(1:05–1:30)</h2>
+
+<h3>3.1 振膜材料:比模數的競賽</h3>
+<p>振膜要「輕而剛、剛而有阻尼」。品質因數是<strong>比模數 E/ρ</strong>(勁度除以密度,決定分割振動頻率上限)與<strong>內阻尼 tan δ</strong>(決定共振峰的自我抑制):</p>
+<div class="tablewrap"><table>
+  <tr><th>材料</th><th>楊氏模數 E (GPa)</th><th>密度 ρ (g/cm³)</th><th>比模數 E/ρ</th><th>評註</th></tr>
+  <tr><td>PET / Mylar</td><td>~4</td><td>1.40</td><td>~3</td><td>基準材料;便宜、阻尼佳、易熱成形</td></tr>
+  <tr><td>PEEK / PEN 多層膜</td><td>4–6</td><td>1.3</td><td>~4</td><td>耐溫佳;多層複合可調阻尼</td></tr>
+  <tr><td>LCP 液晶聚合物</td><td>~10+</td><td>1.4</td><td>~7</td><td>TWS 高階常客(剛性升、仍有聚合物阻尼)</td></tr>
+  <tr><td>生物纖維素</td><td>~30</td><td>1.2</td><td>~25</td><td>Sony R10 / Fostex 傳統;「紙的極致」,音色評價極高</td></tr>
+  <tr><td>鋁</td><td>69</td><td>2.70</td><td>~26</td><td>金屬入門;需鍍層或複合抑制金屬鈴振</td></tr>
+  <tr><td>鈦</td><td>110</td><td>4.5</td><td>~24</td><td>耐用;鈴振明顯,多作鍍層</td></tr>
+  <tr><td>鎂</td><td>45</td><td>1.74</td><td>~26</td><td>比模數同鋁但阻尼更佳</td></tr>
+  <tr><td><strong>鈹 Be</strong></td><td>287</td><td>1.85</td><td><strong>~155</strong></td><td>可用材料之王(Focal Utopia 純鈹盆);粉塵毒性 → 加工昂貴</td></tr>
+  <tr><td>DLC / CNT / 「石墨烯」鍍層</td><td>鍍層有效勁度提升</td><td>—</td><td>—</td><td>本質是「聚合物膜 + 硬鍍層」複合;行銷經常跑在物理前面,讀規格書時務必追問基材</td></tr>
+</table></div>
+<div class="callout warn"><strong>資料素養:</strong>「石墨烯振膜」十之八九是 PET 膜加奈米碳鍍層。判讀方法:問三個數字 —— 基材是什麼?膜厚多少?break-up 頻率推到哪?答不出來的,是行銷部寫的規格。</div>
+
+<h3>3.2 磁體與馬達</h3>
+<ul>
+  <li><strong>釹鐵硼 NdFeB(N48–N55)</strong>為主流:磁能積越高、磁隙磁通越強 → 靈敏度與阻尼越好;代價是耐溫性(高牌號需鏑摻雜)與成本。鐵氧體存活於入門線(便宜、耐溫、弱磁)。</li>
+  <li><strong>平板磁性的成本結構:</strong>磁陣佔其 BOM 與重量的大宗 —— 單側磁陣(犧牲部分驅動對稱性)是近年減重降價的主要路徑。</li>
+  <li><strong>製程紀律:</strong>充磁後組裝需要防磁吸自動化;磁隙潔淨度是良率生命線 —— 0.5 mm 磁隙中的一粒鐵屑 = 刮圈異音 = 一件退貨。</li>
+</ul>
+
+<h3>3.3 殼體與結構材料</h3>
+<div class="tablewrap"><table>
+  <tr><th>材料 / 製程</th><th>用途</th><th>選用邏輯</th></tr>
+  <tr><td>ABS / PC(射出,玻纖強化)</td><td>耳殼、滑軌、內構</td><td>成本、成形自由度;玻纖提升剛性但增加脆性;咬花掩飾縮水痕</td></tr>
+  <tr><td>鋁(CNC / 沖壓 + 陽極)</td><td>外觀件、軛</td><td>精密感與散熱;CNC 貴、沖壓需分攤模具</td></tr>
+  <tr><td><strong>鎂合金(壓鑄)</strong></td><td>軛、障板、骨架</td><td>剛性/阻尼/重量三優 —— 高階耳機的「隱形冠軍」材料</td></tr>
+  <tr><td>不鏽鋼簧片</td><td>頭帶芯</td><td>夾持力曲線的來源;疲勞壽命設計點</td></tr>
+  <tr><td>3D 列印樹脂 / 尼龍</td><td>CIEM 殼、小量結構</td><td>把「客製」產業化的製程;表面後處理決定質感</td></tr>
+  <tr><td>調音網布(鋼 / 尼龍 / 微孔板)</td><td>聲學阻尼</td><td>以 <strong>rayl 值</strong>規格化採購 —— 聲學工程師的「電阻色環」</td></tr>
+</table></div>
+
+<h2>§4 量產與品質體系(1:30–1:50)</h2>
+<ol class="steps">
+  <li><b>單體廠</b>振膜熱成形 → 音圈繞製與貼合(膠量以 mg 計)→ 充磁 → 自動組裝。<strong>每顆單體 100% 測量、分級,並以頻響曲線配對為左右聲道</strong>(高階線 ±0.5–1 dB)—— 「配對」是高階耳機成本的隱藏項。</li>
+  <li><b>整機組裝</b>腔體組裝與阻尼貼放(位置公差以 0.5 mm 計,依賴治具 + 人工手感)、墊圈、頭帶、焊線或無線主板落板。設計時的 DFM(可製造性設計)決定此站良率:能不能防呆?阻尼會不會貼反?</li>
+  <li><b>端末 100% 檢測</b>迷你消音箱內數秒完成:頻響遮罩比對、掃頻異音(rub &amp; buzz)、極性、麥克風(耳麥產品);Klippel / Listen SoundCheck 為業界標準設備。抽樣再做 THD 與隔音全項。</li>
+  <li><b>可靠度驗證(出貨前的酷刑室)</b>1 m 六面落下、滾筒翻落、線材彎折 &gt;10k 次、頭帶開合 &gt;50k 次、汗液/鹽霧、UV 曝曬、−20/+60 °C 溫度循環、墊圈磨耗模擬、按鍵壽命;TWS 追加:充電盒鉸鏈壽命、電池循環(500 次後容量 ≥80%)、IP 等級水槽實測、UN 38.3 電池運輸認證。</li>
+</ol>
+<div class="callout"><strong>成本解剖(主流無線耳罩,示意):</strong>換能器數美元;SoC + 電池 + 麥克風陣列 + 機構與 CMF + 各國認證構成 BOM 主體;韌體與 App 團隊是持續性最大研發支出。<strong>「維持第 100,000 台與金樣品一致」</strong>—— 治具相關性、單體配對統計、產線 Cpk —— 是消費者永遠看不見、卻決定品牌壽命的戰場。</div>
+
+<h3>§4.5 永續與可維修(併入本節)</h3>
+<ul>
+  <li><strong>失效順序的真相:</strong>電池(2–4 年)與墊圈(1–3 年)遠早於單體(數十年)死亡。膠合電池使 TWS 成為拋棄式品類 —— 每年數億副電子垃圾。</li>
+  <li><strong>法規正在到來:</strong>歐盟電池法規與維修權立法,將「可換電池、零件供應、維修文件」從美德變成合規要求。</li>
+  <li><strong>設計對策:</strong>模組化(可換墊圈 / 線材 / 電池 —— HD 25、HD 600 全件可換是長壽典範;Fairbuds 示範可換電池 TWS)、標準接頭優先於專有、韌體支援年限承諾、再生塑料 / 鋁與無塑包裝。</li>
+  <li><strong>永續 = 聲學:</strong>可換墊圈同時恢復原廠調音 —— 密封墊圈老化即調音漂移,不可換墊的設計等於「內建過期日」。</li>
+</ul>
+
+<h2>§5 評圖演練(1:50–2:00)</h2>
+<div class="disc"><b>課堂演練:</b>兩款市售耳機(一款 US$60 電商爆款、一款 US$400 旗艦)傳閱,各組以本講語言完成 5 分鐘快評:夾持力估計、峰值壓力風險點、材料與表面處理判讀、兩個 DFM 疑點、一個可維修性紅旗。重點不是結論,而是<strong>用數字和製程語言說話</strong>。</div>
+
+<h2>重點整理</h2>
+<div class="keys">
+  <b>本講五個帶得走的觀念:</b>
+  <ol style="margin-bottom:0">
+    <li>舒適是可計算的:P = F/A,對照微血管灌流壓 ~4 kPa;夾持力窗 3–6 N;重量預算分級管理。</li>
+    <li>振膜看兩個數:比模數 E/ρ(推高 break-up)與內阻尼 tan δ(自抑共振)—— 行銷名詞後面永遠追問這兩個數。</li>
+    <li>鎂合金是高階耳機的隱形冠軍;阻尼網以 rayl 值採購 —— 材料在耳機業是以「聲學參數」被規格化的。</li>
+    <li>高階品的隱藏成本在「配對」與「一致性」:單體 100% 測量分級、產線端末 100% 聲學檢測。</li>
+    <li>電池與墊圈先死:可維修性是聲學壽命、商業誠信與即將到來的法規三合一問題。</li>
+  </ol>
+</div>
+
+<div class="hw"><b>課後作業 4(6%):</b>對一款耳罩式耳機執行完整「人因稽核」:實測或估計夾持力與接觸面積(計算平均壓力並與 4 kPa 對照)、稱重、記錄 1 小時配戴之熱與壓力主觀量表(每 15 分鐘一次),提出兩項具體改良設計(1,000 字 + 圖表)。<br><b>課前閱讀(第五講):</b>八大案例基本資料卡(課程首頁附錄);預習「五構面分析法」。</div>
+
+<div class="pn">
+  <a href="lecture3.html">← 第三講 換能器與電聲系統</a>
+  <a href="lecture5.html">第五講 經典設計分析 →</a>
+</div>
+</main>
+</body>
+</html>
