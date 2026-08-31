@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROG GRID WARS v01 — ROG Gaming Mouse TRON Battle</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rog:#ff1e3c; --cyan:#00e5ff; --grid:#062a3a;
+    --razer:#44d62c; --logi:#00b8ff; --steel:#ff2ef5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#02060c;
+    font-family:'Rajdhani','Orbitron',monospace;color:#cfeef7;user-select:none}
+  #game{position:absolute;inset:0;display:block}
+
+  /* ---- scanline / vignette overlay (TRON look) ---- */
+  #fx{position:absolute;inset:0;pointer-events:none;z-index:5;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at center, transparent 55%, rgba(0,10,20,.55) 100%);
+    mix-blend-mode:normal}
+
+  /* ---- HUD ---- */
+  #hud{position:absolute;top:0;left:0;right:0;z-index:10;display:none;
+    padding:10px 18px;justify-content:space-between;align-items:flex-start;
+    pointer-events:none}
+  #hud .brandTitle{font-family:'Orbitron';font-weight:900;font-size:20px;
+    letter-spacing:3px;color:var(--rog);text-shadow:0 0 12px var(--rog)}
+  #hud .brandTitle small{display:block;font-size:10px;color:var(--cyan);
+    letter-spacing:6px;text-shadow:0 0 8px var(--cyan)}
+  #scores{display:flex;gap:14px}
+  .sc{min-width:120px;padding:6px 12px;border:1px solid;position:relative;
+    background:rgba(2,10,18,.72);
+    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+  .sc .nm{font-family:'Orbitron';font-size:11px;font-weight:700;letter-spacing:1px}
+  .sc .pt{font-family:'Orbitron';font-size:22px;font-weight:900;line-height:1}
+  .sc .st{font-size:10px;letter-spacing:2px;opacity:.85}
+  .sc.dead{opacity:.35;filter:grayscale(.6)}
+  #boostWrap{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+    z-index:10;width:280px;display:none;text-align:center}
+  #boostWrap .lbl{font-family:'Orbitron';font-size:10px;letter-spacing:4px;color:var(--cyan)}
+  #boostBar{height:8px;border:1px solid var(--cyan);margin-top:3px;
+    box-shadow:0 0 10px rgba(0,229,255,.4) inset,0 0 8px rgba(0,229,255,.35)}
+  #boostFill{height:100%;width:100%;background:linear-gradient(90deg,#007a8a,var(--cyan));
+    box-shadow:0 0 12px var(--cyan);transition:width .08s linear}
+  #roundTag{position:absolute;bottom:16px;left:18px;z-index:10;display:none;
+    font-family:'Orbitron';font-size:12px;letter-spacing:3px;color:var(--cyan);
+    text-shadow:0 0 8px var(--cyan)}
+  #padTag{position:absolute;bottom:16px;right:18px;z-index:10;display:none;
+    font-size:12px;letter-spacing:2px;color:#7fdc9a}
+
+  /* ---- center overlay (menu / countdown / results) ---- */
+  #overlay{position:absolute;inset:0;z-index:20;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;
+    background:radial-gradient(ellipse at center, rgba(2,8,16,.35) 0%, rgba(1,4,10,.88) 100%)}
+  .panel{text-align:center;padding:34px 46px;border:1px solid var(--cyan);
+    background:rgba(2,12,20,.82);max-width:860px;
+    box-shadow:0 0 30px rgba(0,229,255,.25), inset 0 0 40px rgba(0,229,255,.05);
+    clip-path:polygon(26px 0,100% 0,100% calc(100% - 26px),calc(100% - 26px) 100%,0 100%,0 26px)}
+  .panel h1{font-family:'Orbitron';font-weight:900;font-size:44px;letter-spacing:6px;
+    color:var(--rog);text-shadow:0 0 18px var(--rog),0 0 60px rgba(255,30,60,.6)}
+  .panel h1 span{color:var(--cyan);text-shadow:0 0 18px var(--cyan)}
+  .panel .ver{font-family:'Orbitron';font-size:12px;letter-spacing:8px;color:var(--cyan);
+    margin-top:4px;text-shadow:0 0 8px var(--cyan)}
+  .panel .sub{margin-top:10px;font-size:15px;letter-spacing:2px;color:#9fdaea}
+  #heroWrap{width:80px;height:172px;overflow:hidden;margin:14px auto 4px;
+    filter:drop-shadow(0 0 18px rgba(255,30,60,.85))}
+  #heroImg{width:180px;margin-left:-47px;margin-top:-2px;display:block}
+  .ctrls{display:flex;gap:26px;justify-content:center;margin-top:18px;text-align:left}
+  .ctrls .col{border:1px solid rgba(0,229,255,.35);padding:10px 16px;min-width:220px;
+    background:rgba(0,20,30,.5)}
+  .ctrls h3{font-family:'Orbitron';font-size:12px;letter-spacing:3px;color:var(--cyan);
+    margin-bottom:6px}
+  .ctrls p{font-size:14px;line-height:1.7;color:#bfe9f5}
+  .ctrls b{color:#fff}
+  .foes{margin-top:14px;font-size:13px;letter-spacing:1px;color:#8fb9c9}
+  .foes i{font-style:normal;font-weight:700}
+  #pressStart{margin-top:22px;font-family:'Orbitron';font-size:16px;letter-spacing:4px;
+    color:#fff;animation:blink 1.1s steps(2) infinite}
+  @keyframes blink{50%{opacity:.15}}
+  #countNum{font-family:'Orbitron';font-weight:900;font-size:140px;color:var(--cyan);
+    text-shadow:0 0 40px var(--cyan),0 0 120px rgba(0,229,255,.7)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="fx"></div>
+
+<div id="hud">
+  <div class="brandTitle">ROG GRID WARS<small>REPUBLIC OF GAMERS // LIGHT-TRAIL PROTOCOL</small></div>
+  <div id="scores"></div>
+</div>
+<div id="roundTag"></div>
+<div id="padTag">🎮 GAMEPAD ONLINE</div>
+<div id="boostWrap">
+  <div class="lbl">BOOST // SHIFT ‧ RT</div>
+  <div id="boostBar"><div id="boostFill"></div></div>
+</div>
+
+<div id="overlay">
+  <div class="panel" id="menuPanel">
+    <h1>ROG <span>GRID</span> WARS</h1>
+    <div class="ver">— V01 · ROG GAMING MOUSE · TRON PROTOCOL —</div>
+    <div id="heroWrap"><img id="heroImg" alt="ROG Gaming Mouse"
+      src="https://dlcdnwebimgs.asus.com/gain/56F8A13F-F1E2-4033-A216-5BAC89D0A205/w400"></div>
+    <div class="sub">駕駛你的 ROG GLADIUS III 光軌戰騎,讓其他品牌的電競滑鼠撞上你的光牆!<br>
+      Ride your ROG mouse. Leave a light trail. Derezz the rival gaming mice.</div>
+    <div class="ctrls">
+      <div class="col">
+        <h3>⌨ KEYBOARD 鍵盤</h3>
+        <p><b>W A S D / 方向鍵</b> — 轉向<br>
+           <b>SHIFT</b> — 加速 BOOST<br>
+           <b>ENTER / SPACE</b> — 開始<br>
+           <b>ESC / P</b> — 暫停</p>
+      </div>
+      <div class="col">
+        <h3>🎮 JOYSTICK 搖桿</h3>
+        <p><b>左搖桿 / D-PAD</b> — 轉向<br>
+           <b>RT / RB</b> — 加速 BOOST<br>
+           <b>A / START</b> — 開始<br>
+           <b>START</b> — 暫停</p>
+      </div>
+    </div>
+    <div class="foes">RIVALS 對手:
+      <i style="color:var(--razer)">RAZER DEATHADDER</i> ·
+      <i style="color:var(--logi)">LOGITECH SUPERLIGHT</i> ·
+      <i style="color:var(--steel)">STEELSERIES AEROX</i>
+      &nbsp;— 先取得 <b style="color:#fff">5</b> 分者獲勝</div>
+    <div id="pressStart">▶ PRESS ENTER · SPACE · GAMEPAD A</div>
+  </div>
+  <div id="countNum" class="hidden">3</div>
+  <div class="panel hidden" id="msgPanel">
+    <h1 id="msgTitle">ROUND</h1>
+    <div class="sub" id="msgSub"></div>
+    <div id="msgPress" style="margin-top:18px;font-family:'Orbitron';font-size:14px;letter-spacing:3px;color:#fff"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =========================================================
+   ROG GRID WARS v01 — TRON light-trail battle
+   Player: ASUS ROG Gladius III  vs  Razer / Logitech / SteelSeries
+   Keyboard + Gamepad(Joystick), PC browser, hot-linked web images
+   ========================================================= */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+/* ---------- arena grid ---------- */
+const COLS = 150, ROWS = 84;
+let cell = 10, ox = 0, oy = 0;              // cell px + arena offset
+function resize(){
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  cell = Math.floor(Math.min((innerWidth-40)/COLS, (innerHeight-90)/ROWS));
+  if(cell < 4) cell = 4;
+  ox = Math.floor((innerWidth  - COLS*cell)/2);
+  oy = Math.floor((innerHeight - ROWS*cell)/2) + 18;
+}
+addEventListener('resize', resize); resize();
+
+/* ---------- sprites: real product images from the web ---------- */
+/* rot: extra rotation to normalize sprite to "facing up"          */
+const SPRITES = {
+  rog:{  // ASUS ROG Gladius III — top view, facing up (crop off award badges)
+    url:'https://dlcdnwebimgs.asus.com/gain/56F8A13F-F1E2-4033-A216-5BAC89D0A205/w400',
+    crop:[102,0,180,392], rot:0},
+  razer:{ // Razer DeathAdder V3 — top view, facing up
+    url:'https://medias-p1.phoenix.razer.com/sys-master-phoenix-images-container/h79/haf/9529652674590/deathadder-v3-2-500x500.png',
+    crop:[140,0,220,500], rot:0},
+  logi:{ // Logitech G Pro X Superlight — facing left
+    url:'https://resource.logitechg.com/w_400,c_limit,q_auto,f_png,d_transparent.gif/content/dam/gaming/en/products/pro-x-superlight/pro-x-superlight-black-gallery-1.png',
+    crop:[40,30,330,240], rot:Math.PI/2},
+  steel:{ // SteelSeries Aerox 5 — top view, facing left
+    url:'https://images.ctfassets.net/hmm5mo4qf4mf/6HsIZclfnMWhMB7zPrvWVT/c4927331b2776ac8ce3366e1e604ad57/aerox_5_black_pdp_buyimg_2.png__1920x1080_crop-fit_optimize_subsampling-2-895.png?fm=png&w=500',
+    crop:[55,15,400,250], rot:Math.PI/2}
+};
+for(const k in SPRITES){
+  const s = SPRITES[k];
+  s.img = new Image(); s.ok = false;
+  s.img.onload = ()=>{ s.ok = true; };
+  s.img.onerror = ()=>{ s.ok = false; };
+  s.img.src = s.url;
+}
+
+/* fallback mouse silhouette if a hot-linked image is blocked */
+function drawFallbackMouse(c, color, len, wid){
+  c.save();
+  c.fillStyle = '#0a0f14'; c.strokeStyle = color; c.lineWidth = 2;
+  c.shadowColor = color; c.shadowBlur = 10;
+  c.beginPath(); c.ellipse(0, 0, wid/2, len/2, 0, 0, Math.PI*2);
+  c.fill(); c.stroke();
+  c.shadowBlur = 0;
+  c.strokeStyle = 'rgba(255,255,255,.55)';
+  c.beginPath(); c.moveTo(0,-len/2+3); c.lineTo(0,-len/6); c.stroke();  // split buttons
+  c.fillStyle = color;
+  c.fillRect(-2,-len/3, 4, len/8);                                       // wheel
+  c.beginPath(); c.arc(0, len/5, wid/6, 0, Math.PI*2); c.fill();         // logo dot
+  c.restore();
+}
+
+/* ---------- racers ---------- */
+const RACERS = [
+  {id:0, key:'rog',   name:'ROG GLADIUS III',  brand:'ASUS ROG',    color:'#ff1e3c', human:true},
+  {id:1, key:'razer', name:'DEATHADDER V3',    brand:'RAZER',       color:'#44d62c', human:false},
+  {id:2, key:'logi',  name:'PRO X SUPERLIGHT', brand:'LOGITECH G',  color:'#00b8ff', human:false},
+  {id:3, key:'steel', name:'AEROX 5',          brand:'STEELSERIES', color:'#ff2ef5', human:false},
+];
+const WIN_SCORE = 5;
+const SPEED = 26, BOOST_SPEED = 44;          // cells per second
+
+const occ = new Uint8Array(COLS*ROWS);       // 0 = free, else id+1
+const idx = (x,y)=> y*COLS + x;
+
+const SPAWNS = [
+  {x:12,        y:12,        d:[1,0]},  // player  top-left  → right
+  {x:COLS-13,   y:ROWS-13,   d:[-1,0]}, // razer   bot-right → left
+  {x:COLS-13,   y:12,        d:[0,1]},  // logi    top-right → down
+  {x:12,        y:ROWS-13,   d:[0,-1]}, // steel   bot-left  → up
+];
+
+let state = 'menu';   // menu | countdown | play | pause | roundover | gameover
+let round = 0, countT = 0, roundOverT = 0;
+let particles = [];
+
+function resetRound(){
+  occ.fill(0);
+  particles = [];
+  RACERS.forEach((r,i)=>{
+    const s = SPAWNS[i];
+    r.x = s.x; r.y = s.y; r.dir = [...s.d]; r.pend = null;
+    r.alive = true; r.moveAcc = 0; r.boost = false; r.energy = 100;
+    r.cells = [idx(r.x,r.y)];
+    r.pts = [[r.x,r.y],[r.x,r.y]];           // trail polyline (turn points + head)
+    r.fade = 1; r.aiT = 0;
+    occ[idx(r.x,r.y)] = r.id+1;
+  });
+  updateScoreHud();
+}
+function resetMatch(){ RACERS.forEach(r=> r.score = 0); round = 0; }
+resetMatch(); resetRound();
+
+/* ---------- audio (WebAudio blips, no assets) ---------- */
+let AC = null;
+function audio(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; }
+function beep(f, t, type='square', vol=.06, slide=0){
+  const a = audio(); if(!a) return;
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.value = f;
+  if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide), a.currentTime+t);
+  g.gain.value = vol; g.gain.exponentialRampToValueAtTime(.0001, a.currentTime+t);
+  o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime+t);
+}
+const sTurn  = ()=> beep(300,.04,'square',.03);
+const sBoost = ()=> beep(160,.15,'sawtooth',.05, 420);
+const sCrash = ()=> { beep(520,.4,'sawtooth',.09,-480); beep(90,.5,'square',.07,-60); };
+const sCount = n => beep(n?440:880, n?.12:.4, 'square', .07);
+const sWin   = ()=> [523,659,784,1046].forEach((f,i)=> setTimeout(()=>beep(f,.18,'square',.06), i*110));
+
+/* ---------- input: keyboard ---------- */
+const wantDir = {v:null};       // absolute direction request from any device
+let keyBoost = false, confirmEdge = false, pauseEdge = false;
+addEventListener('keydown', e=>{
+  audio();
+  const k = e.key.toLowerCase();
+  if(k==='arrowup'   || k==='w') wantDir.v=[0,-1];
+  if(k==='arrowdown' || k==='s') wantDir.v=[0,1];
+  if(k==='arrowleft' || k==='a') wantDir.v=[-1,0];
+  if(k==='arrowright'|| k==='d') wantDir.v=[1,0];
+  if(k==='shift') keyBoost = true;
+  if(k==='enter' || k===' ') confirmEdge = true;
+  if(k==='escape' || k==='p') pauseEdge = true;
+  if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)) e.preventDefault();
+});
+addEventListener('keyup', e=>{ if(e.key.toLowerCase()==='shift') keyBoost = false; });
+
+/* ---------- input: gamepad / joystick ---------- */
+let padConnected = false, padPrev = {confirm:false, pause:false};
+addEventListener('gamepadconnected', ()=>{ padConnected = true; });
+addEventListener('gamepaddisconnected', ()=>{ padConnected = !![...navigator.getGamepads()].find(g=>g); });
+function pollPad(){
+  const gp = [...(navigator.getGamepads?.()||[])].find(g=> g && g.connected);
+  document.getElementById('padTag').style.display = gp ? 'block' : 'none';
+  if(!gp) return {boost:false};
+  const ax = gp.axes[0]||0, ay = gp.axes[1]||0, T = .5;
+  const b = i => !!(gp.buttons[i] && gp.buttons[i].pressed);
+  if(Math.abs(ax) > Math.abs(ay)){ if(ax >  T) wantDir.v=[1,0]; if(ax < -T) wantDir.v=[-1,0]; }
+  else                          { if(ay >  T) wantDir.v=[0,1]; if(ay < -T) wantDir.v=[0,-1]; }
+  if(b(12)) wantDir.v=[0,-1]; if(b(13)) wantDir.v=[0,1];
+  if(b(14)) wantDir.v=[-1,0]; if(b(15)) wantDir.v=[1,0];
+  const confirm = b(0) || b(9);
+  if(confirm && !padPrev.confirm) confirmEdge = true;
+  const pause = b(9);
+  if(pause && !padPrev.pause && state==='play') pauseEdge = true;
+  padPrev.confirm = confirm; padPrev.pause = pause;
+  return {boost: b(7) || b(5) || b(4)};
+}
+
+/* ---------- AI ---------- */
+function freeAhead(x, y, d, max){
+  for(let i=1;i<=max;i++){
+    const nx = x+d[0]*i, ny = y+d[1]*i;
+    if(nx<0||ny<0||nx>=COLS||ny>=ROWS||occ[idx(nx,ny)]) return i-1;
+  }
+  return max;
+}
+function aiThink(r){
+  const L = [r.dir[1], -r.dir[0]], R = [-r.dir[1], r.dir[0]];
+  const fS = freeAhead(r.x,r.y,r.dir,18), fL = freeAhead(r.x,r.y,L,18), fR = freeAhead(r.x,r.y,R,18);
+  let turn = null;
+  if(fS < 4){                                    // wall coming → pick best side
+    turn = (fL===fR) ? (Math.random()<.5?L:R) : (fL>fR ? L : R);
+    if(Math.max(fL,fR) === 0) turn = null;       // boxed in, ride it out
+  } else if(Math.random() < .02 && fS < 14){     // organic wandering
+    if(fL > 8 && Math.random()<.5) turn = L; else if(fR > 8) turn = R;
+  }
+  if(turn) r.pend = turn;
+  r.boost = (fS > 24 && r.energy > 55 && Math.random() < .01) ? true
+          : (r.boost && r.energy > 8 && freeAhead(r.x,r.y,r.pend||r.dir,10) > 8);
+}
+
+/* ---------- explosion (derezz) particles ---------- */
+function explode(r){
+  const cx = ox + (r.x+.5)*cell, cy = oy + (r.y+.5)*cell;
+  for(let i=0;i<46;i++){
+    const a = Math.random()*Math.PI*2, v = (Math.random()*3+1)*cell*.45;
+    particles.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v,
+      life:1, dec:Math.random()*.9+.7, c:Math.random()<.6? r.color : '#ffffff'});
+  }
+}
+function crash(r){
+  r.alive = false; r.fade = 1;
+  r.cells.forEach(i=> occ[i]=0);   // trail derezzes — grid frees up
+  explode(r); sCrash();
+  updateScoreHud();
+}
+
+/* ---------- simulation step ---------- */
+function stepRacer(r){
+  if(r.pend && !(r.pend[0]===-r.dir[0] && r.pend[1]===-r.dir[1]) &&
+     !(r.pend[0]===r.dir[0] && r.pend[1]===r.dir[1])){
+    r.dir = r.pend;
+    r.pts[r.pts.length-1] = [r.x,r.y];
+    r.pts.push([r.x,r.y]);
+    if(r.human) sTurn();
+  }
+  r.pend = null;
+  const nx = r.x + r.dir[0], ny = r.y + r.dir[1];
+  if(nx<0||ny<0||nx>=COLS||ny>=ROWS||occ[idx(nx,ny)]){ crash(r); return; }
+  r.x = nx; r.y = ny;
+  occ[idx(nx,ny)] = r.id+1;
+  r.cells.push(idx(nx,ny));
+  r.pts[r.pts.length-1] = [nx,ny];
+}
+
+function update(dt){
+  const pad = pollPad();
+  const player = RACERS[0];
+
+  if(pauseEdge){ pauseEdge = false;
+    if(state==='play'){ state='pause'; showMsg('PAUSED','系統暫停 // SYSTEM HALT','ENTER · A — RESUME'); return; }
+    else if(state==='pause'){ state='play'; hideOverlay(); }
+  }
+  if(confirmEdge){
+    confirmEdge = false;
+    if(state==='menu' || state==='gameover'){ resetMatch(); startRound(); }
+    else if(state==='pause'){ state='play'; hideOverlay(); }
+    else if(state==='roundover' && roundOverT > .6){ startRound(); }
+  }
+  if(state==='countdown'){
+    countT -= dt;
+    const n = Math.ceil(countT);
+    const el = document.getElementById('countNum');
+    if(countT <= 0){ state='play'; hideOverlay(); sCount(0); }
+    else if(el.textContent != n){ el.textContent = n; sCount(n); }
+    return;
+  }
+  if(state!=='play'){
+    if(state==='roundover'||state==='gameover') roundOverT += dt;
+    particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=p.dec*dt;});
+    particles = particles.filter(p=>p.life>0);
+    RACERS.forEach(r=>{ if(!r.alive && r.fade>0) r.fade -= dt*.8; });
+    return;
+  }
+
+  /* player intent */
+  if(wantDir.v){ player.pend = wantDir.v; wantDir.v = null; }
+  const wasBoost = player.boost;
+  player.boost = (keyBoost || pad.boost) && player.energy > 2;
+  if(player.boost && !wasBoost) sBoost();
+
+  RACERS.forEach(r=>{
+    if(!r.alive){ if(r.fade>0) r.fade -= dt*.8; return; }
+    if(!r.human){ r.aiT -= dt; if(r.aiT<=0){ aiThink(r); r.aiT = .045; } }
+    r.energy = Math.max(0, Math.min(100, r.energy + (r.boost ? -34 : 14)*dt));
+    if(r.energy <= 0) r.boost = false;
+    const sp = r.boost ? BOOST_SPEED : SPEED;
+    r.moveAcc += dt*sp;
+    while(r.moveAcc >= 1 && r.alive){ r.moveAcc -= 1; stepRacer(r); }
+  });
+
+  particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=p.dec*dt;});
+  particles = particles.filter(p=>p.life>0);
+
+  /* round resolution */
+  const alive = RACERS.filter(r=>r.alive);
+  if(alive.length <= 1){
+    state = 'roundover'; roundOverT = 0;
+    let subtitle;
+    if(alive.length === 1){
+      alive[0].score++;
+      subtitle = alive.length && alive[0].human
+        ? 'ROG GLADIUS III 稱霸網格!YOUR LIGHT TRAIL PREVAILS'
+        : alive[0].brand + ' ' + alive[0].name + ' 拿下本回合';
+      if(alive[0].human) sWin();
+    } else subtitle = '同歸於盡 // MUTUAL DEREZZ — NO POINT';
+    updateScoreHud();
+    const champ = RACERS.find(r=> r.score >= WIN_SCORE);
+    if(champ){
+      state = 'gameover';
+      showMsg(champ.human ? '🏆 ROG VICTORY' : 'GAME OVER',
+        champ.human ? 'ROG GAMING MOUSE 統治了整個 GRID!' :
+        champ.brand+' 贏得比賽 — 為 ROG 復仇吧!',
+        'ENTER · A — REMATCH');
+      if(champ.human) sWin();
+    } else {
+      showMsg((alive.length===1 ? (alive[0].human?'ROUND WON':'ROUND LOST') : 'DRAW'),
+        subtitle, 'ENTER · A — NEXT ROUND');
+    }
+  }
+}
+
+function startRound(){
+  round++; resetRound();
+  hideOverlay();
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('boostWrap').style.display = 'block';
+  const rt = document.getElementById('roundTag');
+  rt.style.display = 'block'; rt.textContent = 'ROUND '+String(round).padStart(2,'0')+' // FIRST TO '+WIN_SCORE;
+  document.getElementById('countNum').classList.remove('hidden');
+  document.getElementById('countNum').textContent = '3';
+  document.getElementById('overlay').style.display = 'flex';
+  document.getElementById('menuPanel').classList.add('hidden');
+  document.getElementById('msgPanel').classList.add('hidden');
+  state = 'countdown'; countT = 3; sCount(3);
+}
+function hideOverlay(){
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('countNum').classList.add('hidden');
+}
+function showMsg(title, sub, press){
+  document.getElementById('overlay').style.display = 'flex';
+  document.getElementById('menuPanel').classList.add('hidden');
+  document.getElementById('countNum').classList.add('hidden');
+  const p = document.getElementById('msgPanel');
+  p.classList.remove('hidden');
+  document.getElementById('msgTitle').textContent = title;
+  document.getElementById('msgSub').innerHTML = sub;
+  document.getElementById('msgPress').textContent = press || '';
+}
+function updateScoreHud(){
+  document.getElementById('scores').innerHTML = RACERS.map(r=>
+    `<div class="sc ${r.alive?'':'dead'}" style="border-color:${r.color};box-shadow:0 0 12px ${r.color}44">
+       <div class="nm" style="color:${r.color}">${r.brand}</div>
+       <div class="pt" style="color:#fff;text-shadow:0 0 10px ${r.color}">${r.score}</div>
+       <div class="st" style="color:${r.color}">${r.alive?'ONLINE':'DEREZZED'}</div>
+     </div>`).join('');
+}
+
+/* ---------- render ---------- */
+function render(){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#02060c'; ctx.fillRect(0,0,W,H);
+
+  const aw = COLS*cell, ah = ROWS*cell;
+
+  /* TRON floor grid */
+  ctx.save();
+  ctx.strokeStyle = 'rgba(0,120,160,.16)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for(let x=0;x<=COLS;x+=5){ ctx.moveTo(ox+x*cell, oy); ctx.lineTo(ox+x*cell, oy+ah); }
+  for(let y=0;y<=ROWS;y+=5){ ctx.moveTo(ox, oy+y*cell); ctx.lineTo(ox+aw, oy+y*cell); }
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(0,180,220,.10)';
+  ctx.beginPath();
+  for(let x=0;x<=COLS;x+=25){ ctx.moveTo(ox+x*cell, oy); ctx.lineTo(ox+x*cell, oy+ah); }
+  for(let y=0;y<=ROWS;y+=25){ ctx.moveTo(ox, oy+y*cell); ctx.lineTo(ox+aw, oy+y*cell); }
+  ctx.stroke();
+  /* arena wall */
+  ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 2;
+  ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 16;
+  ctx.strokeRect(ox-2, oy-2, aw+4, ah+4);
+  ctx.restore();
+
+  /* light trails */
+  RACERS.forEach(r=>{
+    if(r.pts.length < 2 || (!r.alive && r.fade<=0)) return;
+    const alpha = r.alive ? 1 : Math.max(0, r.fade);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    const path = ()=>{ ctx.beginPath();
+      r.pts.forEach((p,i)=>{ const px=ox+(p[0]+.5)*cell, py=oy+(p[1]+.5)*cell;
+        i? ctx.lineTo(px,py) : ctx.moveTo(px,py); }); };
+    ctx.strokeStyle = r.color; ctx.lineWidth = Math.max(2, cell*.66);
+    ctx.shadowColor = r.color; ctx.shadowBlur = 18; path(); ctx.stroke();
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = Math.max(1, cell*.18);
+    ctx.shadowBlur = 0; ctx.globalAlpha = alpha*.9; path(); ctx.stroke();
+    ctx.restore();
+  });
+
+  /* mice sprites (the light cycles) */
+  RACERS.forEach(r=>{
+    if(!r.alive) return;
+    const s = SPRITES[r.key];
+    const hx = ox+(r.x+.5)*cell, hy = oy+(r.y+.5)*cell;
+    const heading = Math.atan2(r.dir[1], r.dir[0]) + Math.PI/2;
+    const LEN = cell*6.4;
+    ctx.save();
+    ctx.translate(hx, hy);
+    /* engine glow */
+    ctx.save();
+    ctx.rotate(heading);
+    const g = ctx.createRadialGradient(0,0,2, 0,0,LEN*.55);
+    g.addColorStop(0, r.color+'aa'); g.addColorStop(1, r.color+'00');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.ellipse(0, LEN*.1, LEN*.34, LEN*.55, 0, 0, Math.PI*2); ctx.fill();
+    if(r.boost){
+      ctx.fillStyle = 'rgba(255,255,255,.5)';
+      ctx.beginPath(); ctx.ellipse(0, LEN*.5, LEN*.1, LEN*.3, 0, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+    ctx.rotate(heading + s.rot);
+    if(s.ok){
+      const [sx,sy,sw,sh] = s.crop;
+      const aspect = sw/sh;
+      let w,h;
+      if(aspect >= 1){ w = LEN; h = LEN/aspect; } else { h = LEN; w = LEN*aspect; }
+      ctx.shadowColor = r.color; ctx.shadowBlur = 14;
+      ctx.drawImage(s.img, sx,sy,sw,sh, -w/2,-h/2, w,h);
+    } else {
+      drawFallbackMouse(ctx, r.color, LEN, LEN*.55);
+    }
+    ctx.restore();
+  });
+
+  /* derezz particles */
+  particles.forEach(p=>{
+    ctx.globalAlpha = Math.max(0,p.life);
+    ctx.fillStyle = p.c;
+    ctx.fillRect(p.x-2, p.y-2, 4, 4);
+  });
+  ctx.globalAlpha = 1;
+
+  /* boost bar */
+  const player = RACERS[0];
+  document.getElementById('boostFill').style.width = player.energy+'%';
+}
+
+/* ---------- main loop ---------- */
+let last = performance.now();
+function loop(t){
+  const dt = Math.min(.05, (t-last)/1000); last = t;
+  update(dt); render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
